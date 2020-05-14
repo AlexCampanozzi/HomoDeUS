@@ -1,0 +1,63 @@
+VM Ubuntu 16.04.6,  3746 Mb Memory, 24 GB Storage Space
+-------------------------
+
+Follow the instructions on:
+http://wiki.ros.org/Robots/TIAGo/Tutorials/Installation/InstallUbuntuAndROS
+
+We'll be using ROS Kinetic since it seems to be the last supported version of ROS for TIAGo. Maybe it works on Melodic or other versions, but Kinetic seems to be the most stable.
+
+For easy access, here are the lines to copy in a terminal:
+
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+
+sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+
+To update properly, you also have to write that line:
+sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key F42ED6FBAB17C654
+
+Then, continue the tutorial:
+sudo apt-get update
+
+sudo apt-get install git python-rosinstall ros-kinetic-desktop-full python-catkin-tools ros-kinetic-joint-state-controller ros-kinetic-twist-mux ros-kinetic-ompl ros-kinetic-controller-manager ros-kinetic-moveit-core ros-kinetic-moveit-ros-perception ros-kinetic-moveit-ros-move-group ros-kinetic-moveit-kinematics ros-kinetic-moveit-ros-planning-interface ros-kinetic-moveit-simple-controller-manager ros-kinetic-moveit-planners-ompl ros-kinetic-joy ros-kinetic-joy-teleop ros-kinetic-teleop-tools ros-kinetic-control-toolbox ros-kinetic-sound-play ros-kinetic-navigation ros-kinetic-eband-local-planner ros-kinetic-depthimage-to-laserscan  ros-kinetic-openslam-gmapping ros-kinetic-gmapping ros-kinetic-moveit-commander
+
+source /opt/ros/kinetic/setup.bash
+
+--------------------
+Moving on to the next part of the tutorial located at:
+http://wiki.ros.org/Robots/TIAGo/Tutorials/Installation/TiagoSimulation
+
+mkdir ~/tiago_public_ws
+
+cd ~/tiago_public_ws
+
+To download the tiago_public.rosinstall file
+- Right click on the link
+- Click "Save link as..." 
+- Move to the tiago_public_ws folder
+- Click Save
+
+rosinstall src /opt/ros/kinetic tiago_public.rosinstall
+
+sudo rosdep init
+
+rosdep update
+
+rosdep install --from-paths src --ignore-src --rosdistro kinetic --skip-keys="opencv2 opencv2-nonfree pal_laser_filters speed_limit_node sensor_to_cloud hokuyo_node libdw-dev python-graphitesend-pip python-statsd pal_filters pal_vo_server pal_usb_utils pal_pcl pal_pcl_points_throttle_and_filter pal_karto pal_local_joint_control camera_calibration_files pal_startup_msgs pal-orbbec-openni2 dummy_actuators_manager pal_local_planner gravity_compensation_controller current_limit_controller dynamic_footprint dynamixel_cpp tf_lookup slam_toolbox"
+
+Small tip: You don't have to write y each time to accept a prompt, when the Y is in all caps, it is the default choice and you can just click enter to continue
+
+source /opt/ros/kinetic/setup.bash
+
+catkin build -DCATKIN_ENABLE_TESTING=0
+
+This step takes a long time to complete, there are also some warnings that appear, I added them as bugs on the Azure team, but I don't know if they will have an incidence on our project
+
+source ./devel/setup.bash
+
+roslaunch tiago_gazebo tiago_gazebo.launch public_sim:=true robot:=platinum
+
+The simulation should launch!
+
+----------------------
+Now on to the functionalities testing
+
