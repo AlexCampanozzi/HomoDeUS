@@ -10,7 +10,7 @@ def talker():
     vel_msg = Twist()
     pub = rospy.Publisher('/mobile_base_controller/cmd_vel', Twist, queue_size=10)
     rospy.init_node('base_cmds', anonymous=True)
-    rate = rospy.Rate(1) # 1hz
+    rate = rospy.Rate(10) # 10hz
     vel_msg.linear.x = 1
     vel_msg.linear.y = 0
     vel_msg.linear.z = 0
@@ -18,8 +18,8 @@ def talker():
     vel_msg.angular.y = 0
     vel_msg.angular.z = 1
     while not rospy.is_shutdown():
-        vel_msg.linear.x -= 0.05
-        vel_msg.angular.z -= 0.05
+        vel_msg.linear.x -= 0.005
+        vel_msg.angular.z -= 0.005
         if vel_msg.linear.x < -1:
             vel_msg.linear.x = -1
             vel_msg.angular.z = -1
