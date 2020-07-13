@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(tiago_arm_interface)
+project(homodeus_arm_interface)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
- add_compile_options(-std=c++11)
+# add_compile_options(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -109,7 +109,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES tiago_arm_interface
+  LIBRARIES homodeus_arm_interface
   CATKIN_DEPENDS joint_state_publisher moveit_planners_ompl moveit_ros_move_group moveit_ros_visualization moveit_simple_controller_manager robot_state_publisher roscpp xacro
   DEPENDS system_lib
 )
@@ -121,13 +121,13 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  include
+ include
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/tiago_arm_interface.cpp
+#   src/${PROJECT_NAME}/homodeus_arm_interface.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -139,7 +139,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(${PROJECT_NAME}_node
-   src/tiago_arm_interface_node.cpp
+   src/homodeus_arm_interface_node.cpp
    src/ArmInterface.cpp
  )
 
@@ -205,7 +205,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_tiago_arm_interface.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_homodeus_arm_interface.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

@@ -1,4 +1,4 @@
-#include <tiago_arm_interface/ArmInterface.h>
+#include <homodeus_arm_interface/ArmInterface.h>
 
 
 int main(int argc, char **argv)
@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     bool success = arm.moveToJ(0.0, 2.7, 0.2, -2.1, 2.0, 1.0, -0.8, 0.0);
 
     if (success)
-        ROS_INFO("arm_interface_node succeded!");
+        ROS_INFO("arm_interface_node succeeded!");
             
     else
         ROS_INFO("arm_interface_node failed!");
