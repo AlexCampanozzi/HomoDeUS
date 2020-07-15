@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Simple program that publishes geometry_msgs/Strings messages on the /mobile_base_controller/cmd_vel topic  to move the base 
+# Simple program that publishes geometry_msgs/Twist messages on the /mobile_base_controller/cmd_vel topic  to move the base 
 # Executes a spiral that slows and reverses.
 
 import rospy
