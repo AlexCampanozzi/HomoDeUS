@@ -9,6 +9,25 @@ import rospy
 from geometry_msgs.msg import PoseStamped
 
 
+class Navigator:
+    def __init__(self):
+        self.pose_msg = PoseStamped()
+        self.pub = rospy.Publisher('move_base_simple/goal', PoseStamped, queue_size=10)
+        rospy.init_node('base_cmds', anonymous=True)
+
+    def goto(self, posX, posY, oriZ):
+        self.pose_msg.header.seq = 0  # Dunno what this is
+        self.pose_msg.header.stamp = rospy.get_rostime()  # Stamp current time
+        self.pose_msg.header.frame_id = "map"  # always navigating in map frame
+        self.pose_msg.pose.position.x = x
+        self.pose_msg.pose.position.y = y
+        self.pose_msg.pose.position.z = 0  # 2D: z is always 0
+        self.pose_msg.pose.orientation.x = 0  # 2D: always rotated only about z
+        self.pose_msg.pose.orientation.y = 0  # 2D: always rotated only about z
+        self.pose_msg.pose.orientation.z = 1  # 2D: always rotated only about z
+        self.pose_msg.pose.orientation.w = w
+        self.pub.publish(pose_msg)
+
 def setter():
     pose_msg = PoseStamped()
     pub = rospy.Publisher('move_base_simple/goal', PoseStamped, queue_size=10)

@@ -11,7 +11,10 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   roscpp
   rospy
+  actionlib
+  actionlib_msgs
   std_msgs
+  move_base_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -106,7 +109,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES base_navigation
-#  CATKIN_DEPENDS geometry_msgs roscpp rospy std_msgs
+#  CATKIN_DEPENDS geometry_msgs roscpp rospy actionlib std_msgs move_base_msgs actionlib_msgs
 #  DEPENDS system_lib
 )
 
@@ -161,7 +164,8 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
  catkin_install_python(PROGRAMS
-   scripts/point_setter.py
+   scripts/navigator.py
+   scripts/navigator_tester.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 
