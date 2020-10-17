@@ -19,5 +19,11 @@ if __name__ == '__main__':
         nav = Navigator()
         print "attempting to go to (x=1, y=1, w=1)"
         nav.goto(1, 1, 1)
+        print "registering this point as a landmark"
+        nav.registerLandmark("testPoint")
+        print "going back to origin"
+        nav.goto(0,0,0)
+        print "going to registered landmark"
+        nav.goToLandmark("testPoint")
     except rospy.ROSInterruptException:
-        pass
+        nav.cancelAllGoto
