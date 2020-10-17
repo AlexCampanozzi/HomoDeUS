@@ -4,7 +4,7 @@ import rospy
 import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from actionlib_msgs.msg import *
-from geometry_msgs.msg import Point, Transform
+from geometry_msgs.msg import Point
 # import tf
 import tf_lookup.srv
 
@@ -53,14 +53,9 @@ class Navigator:
     def registerLandmark(self, name, x = None, y = None, w = None):
         landmarkGoal = MoveBaseGoal()
         if (x is None or y is None or w is None):
-            rospy.wait_for_service('/lookupTransform')
-            lookup = rospy.ServiceProxy("/lookupTransform", tf_lookup.srv.lookupTransform)
-            try:
-                response = lookup("map", "base_footprint", rospy.Time())
-            except rospy.ServiceException as exc:
-                print("lookup did not process request: " + str(exc))
-            landmarkGoal.target_pose.pose.position = response.transform.transform.translation
-            landmarkGoal.target_pose.pose.orientation = response.transform.transform.rotation
+            curPose = self.getCurPose()
+            landmarkGoal.target_pose.pose.position = curPose.translation
+            landmarkGoal.target_pose.pose.orientation = curPose.rotation
         else:
             landmarkGoal.target_pose.pose.position = Point(x, y, 0)
             landmarkGoal.target_pose.pose.orientation.x = 0.0
@@ -85,3 +80,13 @@ class Navigator:
     def cancelAllGoto(self):
         self.ac.cancel_all_goals()
         self.ac.wait_for_result
+
+    def getCurPose(self):
+        rospy.wait_for_service('/lookupTransform')
+        lookup = rospy.ServiceProxy("/lookupTransform", tf_lookup.srv.lookupTransform)
+        try:
+            response = lookup("map", "base_footprint", rospy.Time())
+        except rospy.ServiceException as exc:
+            print("lookup did not process request: " + str(exc))
+            raise rospy.ServiceException
+        return response.transform.transform
