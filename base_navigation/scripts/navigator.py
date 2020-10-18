@@ -4,7 +4,7 @@ import rospy
 import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from actionlib_msgs.msg import *
-from geometry_msgs.msg import Point
+from geometry_msgs.msg import Point, Pose
 # import tf
 import tf_lookup.srv
 
@@ -54,8 +54,7 @@ class Navigator:
         landmarkGoal = MoveBaseGoal()
         if (x is None or y is None or w is None):
             curPose = self.getCurPose()
-            landmarkGoal.target_pose.pose.position = curPose.translation
-            landmarkGoal.target_pose.pose.orientation = curPose.rotation
+            landmarkGoal.target_pose.pose = curPose
         else:
             landmarkGoal.target_pose.pose.position = Point(x, y, 0)
             landmarkGoal.target_pose.pose.orientation.x = 0.0
@@ -89,4 +88,7 @@ class Navigator:
         except rospy.ServiceException as exc:
             print("lookup did not process request: " + str(exc))
             raise rospy.ServiceException
-        return response.transform.transform
+        pose = Pose()
+        pose.position = response.transform.transform.translation
+        pose.orientation = response.transform.transform.rotation
+        return pose
