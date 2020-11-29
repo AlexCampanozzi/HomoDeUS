@@ -5,7 +5,6 @@ import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from actionlib_msgs.msg import *
 from geometry_msgs.msg import Point, Pose
-# import tf
 import tf_lookup.srv
 
 class Navigator:
@@ -26,8 +25,6 @@ class Navigator:
         # set up the frame parameters
         goal.target_pose.header.frame_id = "map"
         goal.target_pose.header.stamp = rospy.Time.now()
-
-        # moving towards the goal*/
 
         goal.target_pose.pose.position = Point(xGoal, yGoal, 0)
         goal.target_pose.pose.orientation.x = 0.0

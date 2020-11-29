@@ -3,9 +3,8 @@
 """
 Created on Wed Sep  2 21:51:00 2020
 
-@author: root
+@author: CM
 """
-
 
 import sys
 
