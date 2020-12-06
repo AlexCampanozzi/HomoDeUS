@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+ <node name="gui" pkg="image_recognition" type="gui_flann_matching.py"/>
+ <node name="flann_matching" pkg="image_recognition" type="flann_matching" output="screen"/>
+</launch>
