@@ -75,7 +75,8 @@ class Navigator:
 
     def cancelAllGoto(self):
         self.ac.cancel_all_goals()
-        self.ac.wait_for_result
+        # The following comment should fix the call when the server is not up.
+        # self.ac.wait_for_result
 
     def getCurPose(self):
         rospy.wait_for_service('/lookupTransform')
