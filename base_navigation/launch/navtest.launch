@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+	<include file="$(find tiago_2dnav_gazebo)/launch/tiago_navigation.launch">
+		<arg name="public_sim" value="false"/>
+		<arg name="gzclient" value="false"/>
+		<arg name="lost" value="false"/>
+	</include>
+	<node name="navtest" pkg="base_navigation" type="navigator_tester.py"/>
+</launch>
