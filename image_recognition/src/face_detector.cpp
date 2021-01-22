@@ -1,39 +1,3 @@
-/*
- * Software License Agreement (Modified BSD License)
- *
- *  Copyright (c) 2013-14, PAL Robotics, S.L.
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *   * Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *   * Redistributions in binary form must reproduce the above
- *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials provided
- *     with the distribution.
- *   * Neither the name of PAL Robotics, S.L. nor the names of its
- *     contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- *  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- *  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- *  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- *  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
- *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- *  POSSIBILITY OF SUCH DAMAGE.
- */
-
-/** \author Jordi Pages. */
-
 // PAL headers
 #include <pal_detection_msgs/FaceDetections.h>
 
@@ -82,15 +46,18 @@ protected:
 
   void imageCallback(const sensor_msgs::ImageConstPtr& msg);
 
-  void detectFaces(const cv::Mat& img,
-                     std::vector<cv::Rect>& detections);
+  std::vector<cv::Rect> detectFaces(const cv::Mat& img,
+                    cv::CascadeClassifier classifier);
 
+  void detectProfiles(const cv::Mat& img,
+                     std::vector<cv::Rect>& detections);
   void publishDetections(const std::vector<cv::Rect>& faces);
 
   void publishDebugImage(const cv::Mat& img,
                          const std::vector<cv::Rect>& faces);
 
-  cv::CascadeClassifier _faceClassifier;
+  cv::CascadeClassifier _frontClassifier;
+  cv::CascadeClassifier _profileClassifier;
 
   image_transport::ImageTransport _imageTransport;
   image_transport::Subscriber _imageSub;
@@ -114,9 +81,12 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh,
   _minRelEyeDist(0.0375),
   _maxRelEyeDist(0.1)
 {
-  std::string pathToClassifier = ros::package::getPath("image_recognition") +
+  std::string pathToFrontClassifier = ros::package::getPath("image_recognition") +
                                  "/config/haarcascade_frontalface_alt.xml";
-  if ( !_faceClassifier.load(pathToClassifier.c_str()) )
+  std::string pathToProfileClassifier = ros::package::getPath("image_recognition") +
+                                 "/config/haarcascade_profileface.xml";
+  if ( !_frontClassifier.load(pathToFrontClassifier.c_str())  or 
+      ! _profileClassifier.load(pathToProfileClassifier.c_str()) )
     throw std::runtime_error("Error loading classifier");
 
   image_transport::TransportHints transportHint("raw");
@@ -225,44 +195,59 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     _minFaceSize.height = _minFaceSize.width;
     _maxFaceSize.height = _maxFaceSize.width;
 
-    std::vector<cv::Rect> detections;
+    std::vector<cv::Rect> faces;
+    std::vector<cv::Rect> leftProfileFaces;
+    std::vector<cv::Rect> rightProfileFaces;
 
-    detectFaces(imgScaled, detections);
+    cv::Mat flipped;
+
+    faces = detectFaces(imgScaled, _frontClassifier); // Front faces
+    leftProfileFaces = detectFaces(imgScaled, _profileClassifier); // Left profile
+    cv::flip(imgScaled, flipped, 1);
+    rightProfileFaces = detectFaces(flipped, _profileClassifier); // Right Profile
+
+    // Flipping the rectangles detected for the right profile
+    for(int i=0;i<rightProfileFaces.size();i++)
+    {
+      cv::Rect r;
+      r=rightProfileFaces[i];
+      r.x=flipped.cols-r.x-r.width;
+      rightProfileFaces[i]=r;
+    }
+
+    faces.insert(faces.end(), leftProfileFaces.begin(), leftProfileFaces.end());
+    faces.insert(faces.end(), rightProfileFaces.begin(), rightProfileFaces.end()); 
 
     if ( _pub.getNumSubscribers() > 0 &&
-         (!detections.empty() || _verbosePublishing) )
+         (!faces.empty() || _verbosePublishing) )
     {
-      publishDetections(detections);
+      publishDetections(faces);
     }
 
     if ( _imDebugPub.getNumSubscribers() > 0 )
-      publishDebugImage(imgScaled, detections);
-
-    //showDetections(img, detections);
+      publishDebugImage(imgScaled, faces);
   }
 }
 
-void FaceDetector::detectFaces(const cv::Mat& img,
-                               std::vector<cv::Rect>& detections)
+std::vector<cv::Rect> FaceDetector::detectFaces(const cv::Mat& img,
+                               cv::CascadeClassifier classifier)
 {
   cv::Mat imgGray;
 
   cv::cvtColor(img, imgGray, CV_BGR2GRAY);
 
-  //int64 start = cvGetTickCount();
+  std::vector<cv::Rect> detections;
 
-  _faceClassifier.detectMultiScale(imgGray,
+  classifier.detectMultiScale(imgGray,
                                    detections,
-                                   1.1,           //scale factor
-                                   2,             //min neighbors
+                                   1.1,  
+                                   2,
                                    0, //CV_HAAR_DO_CANNY_PRUNING,
                                    _minFaceSize,
                                    _maxFaceSize);
-
-  //int64 stop = cvGetTickCount();
-
-  //ROS_INFO_STREAM("Elapsed time: " << (stop - start)/(cvGetTickFrequency()*1000.0) << " ms");
+  return detections;
 }
+
 
 int main(int argc, char **argv)
 {
