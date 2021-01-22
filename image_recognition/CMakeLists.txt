@@ -2,59 +2,50 @@ cmake_minimum_required(VERSION 2.8.3)
 project(image_recognition)
 
 find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  rospy
-  image_transport
-  pal_detection_msgs
   cv_bridge
-  geometry_msgs
-  message_generation
+  image_transport    
+  pal_detection_msgs
+  sensor_msgs
+  roscpp
 )
+find_package(OpenCV REQUIRED)
 
-find_package(OpenCV COMPONENTS opencv_highgui opencv_features2d opencv_xfeatures2d opencv_calib3d)
-if(NOT OPENCV_FOUND)
-	find_package(OpenCV REQUIRED COMPONENTS opencv_highgui opencv_features2d opencv_calib3d)
-	add_definitions(-DNO_CV_XFEATURES2D)
-endif()
-#list(APPEND OpenCV_LIBRARIES opencv_nonfree)
+##########
+# Flags ##
+##########
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+#add_definitions(-DPAL_MODULE_NAME=\"VISION\")
+#add_definitions(-DPAL_PROJECT_NAME=\"${PROJECT_NAME}\")
+#add_definitions(-DPAL_LIBRARY_NAME=\"${PROJECT_NAME}\")
 
-add_message_files(
-  FILES
-  valueMatrix.msg
- )
+###################################
+## catkin specific configuration ##
+###################################
 
-generate_messages(
-  DEPENDENCIES
-  std_msgs  # Or other packages containing msgs
- )
 
 catkin_package(
-  LIBRARIES image_recognition
-  CATKIN_DEPENDS roscpp rospy image_transport cv_bridge pal_detection_msgs  geometry_msgs message_generation
-  DEPENDS system_lib
+  CATKIN_DEPENDS sensor_msgs pal_detection_msgs
 )
 
+include_directories(SYSTEM ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 
-include_directories(include)
-include_directories(SYSTEM
-  ${catkin_INCLUDE_DIRS}
-  ${OpenCV_INCLUDE_DIRS}
-)
+###########
+## Build ##
+###########
 
-add_executable(track_sequential src/track_sequential.cpp)
-  target_link_libraries(track_sequential ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-  add_dependencies(track_sequential ${PROJECT_NAME}_generate_messages_cpp)
+## Declare a cpp executable
+add_executable(image_recognition src/face_detector.cpp)
+add_dependencies(image_recognition pal_detection_msgs_generate_messages_cpp)
+target_link_libraries(image_recognition ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
-add_executable(corner_detection src/corner_detection.cpp)
-  target_link_libraries(corner_detection ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-  add_dependencies(corner_detection ${PROJECT_NAME}_generate_messages_cpp)
 
-add_executable(find_keypoints src/find_keypoints.cpp)
-  target_link_libraries(find_keypoints ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-  add_dependencies(find_keypoints ${PROJECT_NAME}_generate_messages_cpp)
+#############
+## Install ##
+#############
 
-add_executable(flann_matching src/flann_matching.cpp)
-  target_link_libraries(flann_matching ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-  add_dependencies(flann_matching ${PROJECT_NAME}_generate_messages_cpp)
+install(TARGETS image_recognition
+        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY launch config 
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        USE_SOURCE_PERMISSIONS)
