@@ -1,81 +1,14 @@
-// PAL headers
-#include <pal_detection_msgs/FaceDetections.h>
-
-// ROS headers
-#include <ros/ros.h>
-#include <cv_bridge/cv_bridge.h>
-#include <sensor_msgs/Image.h>
-#include <image_transport/image_transport.h>
-#include <sensor_msgs/image_encodings.h>
-#include <ros/package.h>
-
-// OpenCV headers
-#include <opencv2/objdetect/objdetect.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
-// Boost headers
-#include <boost/foreach.hpp>
-
-// Std C++ headers
-#include <vector>
-#include <stdexcept>
+#include "face_detector.h"
+/**
+ * @brief The FaceDetector class publishes face detection info on a ROS topic
+ */
 
 /**
- * @brief The FaceDetector class encapsulating an image subscriber and the OpenCV's cascade classifier
- *        for face detection
- *
- * @example rosrun face_detector_opencv face_detector image:=/stereo/right/image
- *
+ * @brief Constructor of the class, subscribes to the the image topic and initializes
+ * variables
  */
-class FaceDetector
-{
-public:
-
-  FaceDetector(ros::NodeHandle& nh,
-               bool verbosePublishing);
-
-  virtual ~FaceDetector();
-
-protected:
-
-  ros::NodeHandle _nh;
-  bool _verbosePublishing;
-  ros::Time _imgTimeStamp;
-  std::string _cameraFrameId;
-
-  void imageCallback(const sensor_msgs::ImageConstPtr& msg);
-
-  std::vector<cv::Rect> detectFaces(const cv::Mat& img,
-                    cv::CascadeClassifier classifier);
-
-  void detectProfiles(const cv::Mat& img,
-                     std::vector<cv::Rect>& detections);
-  void publishDetections(const std::vector<cv::Rect>& faces);
-
-  void publishDebugImage(const cv::Mat& img,
-                         const std::vector<cv::Rect>& faces);
-
-  cv::CascadeClassifier _frontClassifier;
-  cv::CascadeClassifier _profileClassifier;
-
-  image_transport::ImageTransport _imageTransport;
-  image_transport::Subscriber _imageSub;
-
-  ros::Publisher _pub;
-  image_transport::Publisher _imDebugPub;
-  cv_bridge::CvImage _cvImg;
-
-  cv::Size _imgProcessingSize, _originalImageSize;
-  double _minRelEyeDist, _maxRelEyeDist;
-  cv::Size _minFaceSize, _maxFaceSize;
-
-};
-
-FaceDetector::FaceDetector(ros::NodeHandle& nh,
-                           bool verbosePublishing):
+FaceDetector::FaceDetector(ros::NodeHandle& nh):
   _nh(nh),
-  _verbosePublishing(verbosePublishing),
   _imageTransport(nh),
   _imgProcessingSize(-1,-1),
   _minRelEyeDist(0.0375),
@@ -104,11 +37,18 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh,
   _nh.param<double>("rel_max_eye_dist", _maxRelEyeDist, _maxRelEyeDist);
 }
 
+/**
+ * @brief Destructor of the class
+ */
 FaceDetector::~FaceDetector()
 {
   cv::destroyWindow("face detections");
 }
 
+/**
+ * @brief Publishes the detected faces on a topic
+ * @params faces (vector of Rect): Contains the face locations
+ */
 void FaceDetector::publishDetections(const std::vector<cv::Rect>& faces)
 {
   pal_detection_msgs::FaceDetections msg;
@@ -138,6 +78,11 @@ void FaceDetector::publishDetections(const std::vector<cv::Rect>& faces)
   _pub.publish(msg);
 }
 
+/**
+ * @brief Puts recognized faces on image to help with debugging
+ * @params: img (Mat): Current image
+ *          faces (vector of Rect): Contains the face locations
+ */
 void FaceDetector::publishDebugImage(const cv::Mat& img,
                                      const std::vector<cv::Rect>& faces)
 {
@@ -162,6 +107,10 @@ void FaceDetector::publishDebugImage(const cv::Mat& img,
   _imDebugPub.publish(imgMsg);
 }
 
+/**
+ * @brief Checks for faces for each new image
+ * @params msg: Image message that will be converted to an OpenCV image
+ */
 void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
   if ( _pub.getNumSubscribers() > 0 || _imDebugPub.getNumSubscribers() > 0 )
@@ -170,6 +119,13 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     _cameraFrameId = msg->header.frame_id;
 
     cv::Mat img;
+    cv::Rect r;
+
+    std::vector<cv::Rect> faces;
+    std::vector<cv::Rect> leftProfileFaces;
+    std::vector<cv::Rect> rightProfileFaces;
+
+    cv::Mat flipped;
 
     cv_bridge::CvImageConstPtr cvImgPtr;
     cvImgPtr = cv_bridge::toCvShare(msg);
@@ -195,13 +151,10 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     _minFaceSize.height = _minFaceSize.width;
     _maxFaceSize.height = _maxFaceSize.width;
 
-    std::vector<cv::Rect> faces;
-    std::vector<cv::Rect> leftProfileFaces;
-    std::vector<cv::Rect> rightProfileFaces;
-
-    cv::Mat flipped;
-
     faces = detectFaces(imgScaled, _frontClassifier); // Front faces
+
+    leftProfileFaces = detectFaces(imgScaled, _profileClassifier); // Left profile
+
     leftProfileFaces = detectFaces(imgScaled, _profileClassifier); // Left profile
     cv::flip(imgScaled, flipped, 1);
     rightProfileFaces = detectFaces(flipped, _profileClassifier); // Right Profile
@@ -209,26 +162,29 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     // Flipping the rectangles detected for the right profile
     for(int i=0;i<rightProfileFaces.size();i++)
     {
-      cv::Rect r;
-      r=rightProfileFaces[i];
-      r.x=flipped.cols-r.x-r.width;
-      rightProfileFaces[i]=r;
+        r=rightProfileFaces[i];
+        r.x=flipped.cols-r.x-r.width;
+        rightProfileFaces[i]=r;
     }
 
     faces.insert(faces.end(), leftProfileFaces.begin(), leftProfileFaces.end());
-    faces.insert(faces.end(), rightProfileFaces.begin(), rightProfileFaces.end()); 
+    faces.insert(faces.end(), rightProfileFaces.begin(), rightProfileFaces.end());
 
-    if ( _pub.getNumSubscribers() > 0 &&
-         (!faces.empty() || _verbosePublishing) )
-    {
+    cv::groupRectangles(faces, 0, 2);
+    if ( _pub.getNumSubscribers() > 0 && !faces.empty())
       publishDetections(faces);
-    }
+
 
     if ( _imDebugPub.getNumSubscribers() > 0 )
       publishDebugImage(imgScaled, faces);
   }
 }
 
+/**
+ * @brief detects faces in image
+ * @params img: Current image
+           classifier: labeled data containing faces
+ */
 std::vector<cv::Rect> FaceDetector::detectFaces(const cv::Mat& img,
                                cv::CascadeClassifier classifier)
 {
@@ -251,20 +207,8 @@ std::vector<cv::Rect> FaceDetector::detectFaces(const cv::Mat& img,
 
 int main(int argc, char **argv)
 {
-  ros::init(argc,argv,"face_detector_opencv"); // Create and name the Node
+  ros::init(argc,argv,"face_detector"); // Create and name the Node
   ros::NodeHandle nh("~");
-
-  bool verbosePublishing = true;
-  if ( argc > 1 )
-  {
-    std::string arg = argv[1];
-    if ( arg == "true" || arg == "True" )
-      verbosePublishing = true;
-    else if ( arg == "false" || arg == "False" )
-      verbosePublishing = false;
-    else
-      throw std::runtime_error("Wrong argument. Boolean expected");
-  }
 
   double frequency = 5;
   if ( argc > 2 )
@@ -274,8 +218,7 @@ int main(int argc, char **argv)
 
   ROS_INFO("Creating face detector");
 
-  FaceDetector detector(nh,
-                        verbosePublishing);
+  FaceDetector detector(nh);
 
   ROS_INFO("Spinning to serve callbacks ...");
 
