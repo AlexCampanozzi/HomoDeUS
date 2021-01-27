@@ -152,9 +152,6 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     _maxFaceSize.height = _maxFaceSize.width;
 
     faces = detectFaces(imgScaled, _frontClassifier); // Front faces
-
-    leftProfileFaces = detectFaces(imgScaled, _profileClassifier); // Left profile
-
     leftProfileFaces = detectFaces(imgScaled, _profileClassifier); // Left profile
     cv::flip(imgScaled, flipped, 1);
     rightProfileFaces = detectFaces(flipped, _profileClassifier); // Right Profile
