@@ -7,13 +7,27 @@ import actionlib
 import control_msgs.msg
 import geometry_msgs
 import math
+from pal_startup_msgs.srv import StartupStart, StartupStop
 
 class HeadActionClient:
     def __init__(self):
         os.system("export ROS_MASTER_URI=http://10.68.0.1:11311")
         os.system("export ROS_IP=10.68.0.127")
         rospy.init_node('headAction', anonymous=False)
-        self.client = actionlib.SimpleActionClient("/head_controller/point_head_action", control_msgs.msg.PointHeadAction)
+        self.client = actionlib.SimpleActionClient(
+            "/head_controller/point_head_action", control_msgs.msg.PointHeadAction)
+
+        try:
+            rospy.wait_for_service('/pal_startup_control/stop', 2)
+        except rospy.ROSException and rospy.ServiceException as e:
+            rospy.logerr('Could not reach pal_startup_control/stop : %s', e.message)
+        pal_stop = rospy.ServiceProxy('/pal_startup_control/stop', StartupStop)
+        try:
+            rospy.loginfo("disabling pal_head_manager.")
+            pal_stop("head_manager")
+        except rospy.ROSException and rospy.ServiceException as e:
+            rospy.logerr('Could not stop head_manager: %s', e.message)
+
         rospy.loginfo("init")
         
         # wait for the action server to come up
