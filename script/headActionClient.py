@@ -10,6 +10,9 @@ import math
 from pal_startup_msgs.srv import StartupStart, StartupStop
 
 class HeadActionClient:
+    """
+    This class provide control to the robot's head as an actionlib server
+    """
     def __init__(self):
         os.system("export ROS_MASTER_URI=http://10.68.0.1:11311")
         os.system("export ROS_IP=10.68.0.127")
@@ -17,6 +20,7 @@ class HeadActionClient:
         self.client = actionlib.SimpleActionClient(
             "/head_controller/point_head_action", control_msgs.msg.PointHeadAction)
 
+        # Disabling the pal_head_manager to prevent unwanted head motion while moving the head
         try:
             rospy.wait_for_service('/pal_startup_control/stop', 2)
         except rospy.ROSException and rospy.ServiceException as e:
@@ -34,7 +38,12 @@ class HeadActionClient:
         while(not self.client.wait_for_server(rospy.Duration.from_sec(5.0))):
             rospy.loginfo("Waiting for the action server to come up")
 
-    def gotoPosition(self, x, y):
+    def GotoPosition(self, x, y):
+        """
+        This method sends a goal to the actionlib in order to move the robot's head
+        x (float): The x position in the optical frame that the robot must reach
+        y (float): The y position in the optical frame that the robot must reach
+        """
         goal = control_msgs.msg.PointHeadGoal()
 
         cameraFrame = "/xtion_rgb_optical_frame"
@@ -58,9 +67,14 @@ class HeadActionClient:
         self.client.send_goal(goal)
         rospy.sleep(0.5)
 
-    def gotoAngle(self, Ytheta, Xtheta):
+    def GotoAngle(self, Ytheta, Xtheta):
+        """
+        This method converts angles value into position before using the GotoPosition function
+        Ytheta (float): The x position in the optical frame that the robot must reach
+        xTheta (float): The y position in the optical frame that the robot must reach
+        """
         Ytheta = Ytheta*math.pi/180
         Xtheta = Xtheta*math.pi/180
 
-        self.gotoPosition(math.tan(Ytheta), math.tan(Xtheta))
+        self.GotoPosition(math.tan(Ytheta), math.tan(Xtheta))
 
