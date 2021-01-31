@@ -166,6 +166,7 @@ include_directories(
  catkin_install_python(PROGRAMS
    scripts/navigator.py
    scripts/navigator_tester.py
+   scripts/goal_setter.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 

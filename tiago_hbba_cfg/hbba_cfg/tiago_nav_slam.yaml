@@ -1,0 +1,43 @@
+# Basic tiago navigation demo (with SLAM) in HBBA.
+
+hbba_conf:
+
+- include: {pkg: 'hbba_synth',         file: 'common.yaml'}
+- include: {pkg: 'tiago_hbba_cfg', file: 'tiago.yaml'}
+
+# Proc modules:
+# - include: {pkg: 'tiago_hbba_cfg', file: 'tiago_proc_slam_gmapping.yaml'}
+
+# Behaviors:
+- include: {pkg: 'tiago_hbba_cfg', file: 'tiago_bhvr_slam_planner.yaml'}
+
+# Combined priorities:
+#- behavior_priority: {name: 'tiago_teleop',            value: 100}
+- behavior_priority: {name: 'tiago_slam_planner',     value: 90}
+
+# Available resources:
+- resources:
+    CPU: 100
+    
+# Needed for localization:
+- desire:
+    id: tiago_slam_static
+    type: SLAM
+    utility: 1
+    intensity: 1.0
+    security: False
+
+# Teleoperation:
+# - desire:
+#     id: tiago_teleop
+#     type: Teleop
+#     utility: 1
+#     intensity: 1.0
+#     security: True
+
+# Goto Generator:
+- motivation:
+    name: goto_generator
+    launch: {pkg: "tiago_hbba_cfg", path: "launch/motv_goto_generator.launch"}
+    input:
+     - goto_goal
