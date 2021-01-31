@@ -1,0 +1,11 @@
+<launch>
+  <include file="$(find tiago_2dnav_gazebo)/launch/tiago_navigation.launch">
+		<arg name="public_sim" value="false"/>
+		<arg name="gzclient" value="false"/>
+		<arg name="lost" value="false"/>
+	</include>
+
+  <include file="$(find base_navigation)/launch/HBBA_nav_listener.launch">
+	</include>
+
+</launch>

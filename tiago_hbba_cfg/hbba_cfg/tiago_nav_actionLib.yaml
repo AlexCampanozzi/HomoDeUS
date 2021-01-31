@@ -10,7 +10,7 @@ hbba_conf:
 # - include: {pkg: 'tiago_hbba_cfg', file: 'tiago_proc_sim_slam.yaml'}
 
 # Behaviors:
-- include: {pkg: 'tiago_hbba_cfg', file: 'tiago_bhvr_slam_planner.yaml'}
+- include: {pkg: 'tiago_hbba_cfg', file: 'tiago_bhvr_nav_actionLib.yaml'}
 
 # Combined priorities:
 #- behavior_priority: {name: 'tiago_teleop',            value: 100}
