@@ -12,7 +12,6 @@ from sphinxbase.sphinxbase import *
 from pocketsphinx.pocketsphinx import *
 
 
-# TODO: Change class name since it also does tts?
 class SpeechRecognizer:
     """
     This class provides functionalities such as Speech-to-Text and Text-
