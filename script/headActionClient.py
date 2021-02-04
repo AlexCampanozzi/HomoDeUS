@@ -9,6 +9,8 @@ import geometry_msgs
 import math
 from pal_startup_msgs.srv import StartupStart, StartupStop
 
+from std_msgs.msg import String
+
 class HeadActionClient:
     """
     This class provide control to the robot's head as an actionlib server
@@ -16,9 +18,12 @@ class HeadActionClient:
     def __init__(self):
         os.system("export ROS_MASTER_URI=http://10.68.0.1:11311")
         os.system("export ROS_IP=10.68.0.127")
+
         rospy.init_node('headAction', anonymous=False)
         self.client = actionlib.SimpleActionClient(
             "/head_controller/point_head_action", control_msgs.msg.PointHeadAction)
+
+        rospy.Subscriber("chatter", String, self.callback)
 
         # Disabling the pal_head_manager to prevent unwanted head motion while moving the head
         try:
@@ -78,3 +83,5 @@ class HeadActionClient:
 
         self.GotoPosition(math.tan(Ytheta), math.tan(Xtheta))
 
+    def callback(data):
+        rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
