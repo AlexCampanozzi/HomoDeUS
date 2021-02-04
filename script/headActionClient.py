@@ -8,6 +8,7 @@ import control_msgs.msg
 import geometry_msgs
 import math
 from pal_startup_msgs.srv import StartupStart, StartupStop
+import rosservice
 
 from std_msgs.msg import String
 
@@ -26,16 +27,18 @@ class HeadActionClient:
         rospy.Subscriber("chatter", String, self.callback)
 
         # Disabling the pal_head_manager to prevent unwanted head motion while moving the head
-        try:
-            rospy.wait_for_service('/pal_startup_control/stop', 2)
-        except rospy.ROSException and rospy.ServiceException as e:
-            rospy.logerr('Could not reach pal_startup_control/stop : %s', e.message)
-        pal_stop = rospy.ServiceProxy('/pal_startup_control/stop', StartupStop)
-        try:
-            rospy.loginfo("disabling pal_head_manager.")
-            pal_stop("head_manager")
-        except rospy.ROSException and rospy.ServiceException as e:
-            rospy.logerr('Could not stop head_manager: %s', e.message)
+        service_list = rosservice.get_service_list()
+        if '/pal_startup_control/stop' in service_list:
+            try:
+                rospy.wait_for_service('/pal_startup_control/stop', 2)
+            except rospy.ROSException or rospy.ServiceException as e:
+                rospy.logerr('Could not reach pal_startup_control/stop : %s', e.message)
+            pal_stop = rospy.ServiceProxy('/pal_startup_control/stop', StartupStop)
+            try:
+                rospy.loginfo("disabling pal_head_manager.")
+                pal_stop("head_manager")
+            except rospy.ROSException and rospy.ServiceException as e:
+                rospy.logerr('Could not stop head_manager: %s', e.message)
 
         rospy.loginfo("init")
         
