@@ -7,9 +7,20 @@ find_package(catkin REQUIRED COMPONENTS
   pal_detection_msgs
   sensor_msgs
   roscpp
+  message_generation
 )
 find_package(OpenCV REQUIRED)
 
+add_message_files(
+  FILES
+  FacePosition.msg
+  FacePositions.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -18,7 +29,7 @@ find_package(OpenCV REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS sensor_msgs pal_detection_msgs
+  CATKIN_DEPENDS sensor_msgs pal_detection_msgs message_runtime
 )
 
 include_directories(include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
@@ -33,8 +44,9 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
    src/face_detector.cpp
    src/face_detection_node.cpp
  )
-###add_dependencies(${PROJECT_NAME} pal_detection_msgs_generate_messages_cpp)
+###
 target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+
 
 
 #############

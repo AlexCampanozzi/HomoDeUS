@@ -1,9 +1,6 @@
 #ifndef FACEDETECTION_H
 #define FACEDETECTION_H
 
-// PAL headers
-#include <pal_detection_msgs/FaceDetections.h>
-
 // ROS headers
 #include <ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
@@ -16,6 +13,10 @@
 #include <opencv2/objdetect/objdetect.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+
+// Custom headers
+#include <face_detection/FacePosition.h>
+#include <face_detection/FacePositions.h>
 
 // Boost headers
 #include <boost/foreach.hpp>

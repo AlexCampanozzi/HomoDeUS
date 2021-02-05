@@ -27,9 +27,8 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
 
   _imageSub = imageTransport.subscribe("image", 1, &FaceDetector::imageCallback, this, transportHint);
 
-  ROS_INFO_STREAM("Subscribing to image topic: " << _imageSub.getTopic());
 
-  _pub = _nh.advertise<pal_detection_msgs::FaceDetections>("faces", 1);
+  _pub = _nh.advertise<face_detection::FacePositions>("faces", 1);
   _imDebugPub = imageTransport.advertise("debug", 1);
 
   _nh.param<int>("processing_img_width", _imgProcessingSize.width, _imgProcessingSize.height);
@@ -61,8 +60,8 @@ Outputs:        None (publishes on /pal_face/faces)
 */
 void FaceDetector::publishDetections(const std::vector<cv::Rect>& faces)
 {
-  pal_detection_msgs::FaceDetections msg;
-  pal_detection_msgs::FaceDetection  detection;
+  face_detection::FacePositions msg;
+  face_detection::FacePosition  detection;
 
   BOOST_FOREACH(const cv::Rect& face, faces)
   {

@@ -10,7 +10,7 @@ ROS package wrapping OpenCV's face detection cascade. It provides a ROS node tha
    /pal_face/debug
    ```
 
-The `/pal_face/faces` topic contains a `pal_detection_msgs/FaceDetections` message with the regions of interest classified as faces.
+The `/pal_face/faces` topic contains a `FaceDetections` message with the regions of interest classified as faces.
 The `/pal_face/debug` is an image topic with the faces detected painted on it.
 
 
