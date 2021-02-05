@@ -46,6 +46,8 @@ class HeadActionClient:
         while(not self.client.wait_for_server(rospy.Duration.from_sec(5.0))):
             rospy.loginfo("Waiting for the action server to come up")
 
+        rospy.spin()
+
     def GotoPosition(self, x, y):
         """
         This method sends a goal to the actionlib in order to move the robot's head
@@ -86,5 +88,6 @@ class HeadActionClient:
 
         self.GotoPosition(math.tan(Ytheta), math.tan(Xtheta))
 
-    def callback(data):
-        rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)
+    def callback(self, data):
+        rospy.loginfo("I heard %s", data.data)
+        self.GotoAngle(30, 0)
