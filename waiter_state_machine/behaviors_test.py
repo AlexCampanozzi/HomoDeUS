@@ -1,3 +1,3 @@
 #! /usr/bin/env python
 
-from modules import *
+from behaviors import *

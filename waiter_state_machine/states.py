@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-from modules import *
+from behaviors import *
 
 
 class StateBase:
@@ -18,7 +18,7 @@ class StateBase:
         self.id = self._set_id()
         self.reset()
 
-        # TODO: Maybe create objects of each module here?
+        # TODO: Maybe create objects of each behavior here?
 
     def reset(self):
         """

@@ -3,9 +3,9 @@
 # TODO: Include dependencies
 
 
-class ModuleBase:
+class BehaviorBase:
     """
-    Base class from which every module inherits from. Each child has
+    Base class from which every behavior inherits from. Each child has
     to provide an implementation for the following methods:
         0. __init__()
         1. _run()
@@ -15,13 +15,13 @@ class ModuleBase:
 
     def activate(self):
         """
-        Activate the module.
+        Activate the behavior.
         """
         self.active = True
 
     def deactivate(self):
         """
-        Deactivate the module.
+        Deactivate the behavior.
         """
         self.active = False
 
@@ -39,7 +39,7 @@ class ModuleBase:
 
     def _run(self, params):
         """
-        Actions associated to the module.
+        Actions associated to the behavior.
 
         Arguments
         ---------
@@ -51,14 +51,14 @@ class ModuleBase:
 
 """
 +-------------------------------------------------+
-|                    Modules                      |
+|                    Behaviors                    |
 +-------------------------------------------------+
 """
 
 
-class FaceTracking(ModuleBase):
+class FaceTracking(BehaviorBase):
     def __init__(self):
-        ModuleBase.__init__(self)
+        BehaviorBase.__init__(self)
         # TODO: Add code here if necessary...
 
     def _run(self, params):
@@ -66,9 +66,9 @@ class FaceTracking(ModuleBase):
         pass
 
 
-class VoiceRecognition(ModuleBase):
+class VoiceRecognition(BehaviorBase):
     def __init__(self):
-        ModuleBase.__init__(self)
+        BehaviorBase.__init__(self)
         # TODO: Add code here if necessary...
 
     def _run(self, params):
@@ -76,19 +76,21 @@ class VoiceRecognition(ModuleBase):
         pass
 
 
-class Voice(ModuleBase):
+class Voice(BehaviorBase):
     def __init__(self):
-        ModuleBase.__init__(self)
-        # TODO: Add code here if necessary...
+        BehaviorBase.__init__(self)
 
     def _run(self, params):
-        # TODO: Add code here if necessary...
-        pass
+        speech = params["speech"]
+        language = params["language"]
+
+        if self.active:
+            
 
 
-class Locomotion(ModuleBase):
+class Locomotion(BehaviorBase):
     def __init__(self):
-        ModuleBase.__init__(self)
+        BehaviorBase.__init__(self)
         # TODO: Add code here if necessary...
 
     def _run(self, params):
