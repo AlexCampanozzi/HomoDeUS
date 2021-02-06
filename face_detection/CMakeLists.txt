@@ -47,15 +47,3 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 ###
 target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
-
-
-#############
-## Install ##
-#############
-
-#install(TARGETS ${PROJECT_NAME}_node
-#       RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-
-#install(DIRECTORY launch config 
-#        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-#        USE_SOURCE_PERMISSIONS)
