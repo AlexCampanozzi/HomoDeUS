@@ -9,6 +9,8 @@ import actionlib
 # from face_detection.msg import FacePositions
 # from headActionClient import HeadActionClient
 
+import pal_interaction_msgs.msg
+from std_msgs.msg import String
 
 class BehaviorBase:
     """
@@ -129,15 +131,40 @@ class VoiceRecognition(BehaviorBase):
 
 class Voice(BehaviorBase):
     def __init__(self):
+        """
+        This method initializes the submodule used for text-to speech.
+        
+        Arguments
+        ---------
+            None
+        """
         BehaviorBase.__init__(self)
 
-    def _run(self, params):
-        speech = params["speech"]
-        language = params["language"]
+        # Setting up Text-to-Speech
+        self.tts_client = actionlib.SimpleActionClient("tts", pal_interaction_msgs.msg.TtsAction)
+        self.tts_client.wait_for_server()
+        self.language = "en_GB"
 
-        if self.active:
-            pass
-            
+    def _run(self, params):
+        """
+        Actions associated to the behavior.
+
+        Arguments
+        ---------
+        params : dict
+            A dictionary with the needed parameters.
+        """
+        self.speech = params["speech"]
+        self.language = params["language"]
+        
+        if not self.active:
+            return
+        else:
+            goal = pal_interaction_msgs.msg.TtsGoal()
+            goal.rawtext.lang_id = language
+            goal.rawtext.text = speech
+
+            self.tts_client.send_goal(goal)
 
 
 class Locomotion(BehaviorBase):
