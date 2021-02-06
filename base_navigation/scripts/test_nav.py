@@ -3,7 +3,7 @@
 import roslib
 #import sys
 import unittest
-import rostest
+#import rostest
 import rospy
 #import script we are testing
 import navigator
@@ -18,7 +18,7 @@ import navigator
 # assertIsNotNone(x)    check=> x is not None
 
 ###run test###
-#rostest HomoDeUS test_nav.test
+#rostest base_navigation test_nav.test
 
 
 
@@ -39,6 +39,6 @@ class NavigatorTest(unittest.TestCase):
         
 if __name__ == '__main__':
     # next two ligne require to wrap test with rosunit to produce XML result
-    #import rostest
-    rostest.rosrun('HomoDeUS', 'test_nav', NavigatorTest)
+    import rostest
+    rostest.rosrun('base_navigation', 'test_nav', NavigatorTest)
     #rostest.rosrun(package_name, test_name, test_case_class)
