@@ -162,7 +162,10 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     faces.insert(faces.end(), leftProfileFaces.begin(), leftProfileFaces.end());
     faces.insert(faces.end(), rightProfileFaces.begin(), rightProfileFaces.end());
 
-    cv::groupRectangles(faces, 1, 0.5); // Merges rectangles that are close to each other
+    cv::groupRectangles(faces,  // Merges rectangles that are close to each other
+                        1, // Min number of rectangles
+                        0.5 // Distance between rectangles to merge
+                        );
 
     if ( _pub.getNumSubscribers() > 0 && !faces.empty())
       publishDetections(faces);
