@@ -3,7 +3,7 @@
 
 int main(int argc, char **argv)
 {
-  ros::init(argc,argv,"face_detection_node"); // Create and name the Node
+  ros::init(argc,argv,"face_detection_node");
   ros::NodeHandle nh("~");
 
   double frequency = 5;

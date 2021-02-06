@@ -1,6 +1,6 @@
 #include <face_detection/face_detector.h>
 
-
+#DEFINE MIN_FACE_SIZE_RATIO 0.00001
 /* FaceDetector: Constructor
 
 Description:    subscribes to the the image topic and initializes variables
@@ -138,7 +138,7 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     cvImgPtr = cv_bridge::toCvShare(msg);
     cvImgPtr->image.copyTo(img);
   
-    _minFaceSize.width = static_cast<int>(0.00001 * _imgProcessingSize.width);
+    _minFaceSize.width = static_cast<int>(MIN_FACE_SIZE_RATIO * _imgProcessingSize.width);
     _maxFaceSize.width = static_cast<int>(_imgProcessingSize.width);
     cv::resize(img, imgScaled, _imgProcessingSize);
 
