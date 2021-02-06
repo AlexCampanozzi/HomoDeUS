@@ -1,6 +1,13 @@
 #! /usr/bin/env python
 
 # TODO: Include dependencies
+import time
+import math
+import threading
+import rospy
+import actionlib
+# from face_detection.msg import FacePositions
+# from headActionClient import HeadActionClient
 
 
 class BehaviorBase:
@@ -59,11 +66,55 @@ class BehaviorBase:
 class FaceTracking(BehaviorBase):
     def __init__(self):
         BehaviorBase.__init__(self)
-        # TODO: Add code here if necessary...
+
+        # Setting up a head action client and a subscriber to /faces
+        self.head_client = HeadActionClient() # <------ WARNING: init_node is used in this class!!
+        rospy.Subscriber('faces', FacePositions, self._head_callback)
+
+        # Collecting image settings
+        self.img_width = rospy.get_param('processing_img_width')
+        self.img_height = rospy.get_param('processing_img_height')
+
+        self.img_center_x = self.img_width // 2
+        self.img_center_y = self.img_height // 2
 
     def _run(self, params):
-        # TODO: Add code here if necessary...
+        # This method is not necessary for this behavior.
         pass
+
+    def _head_callback(self, faces):
+        if not self.active:
+            return
+
+        main_face_x = 0
+        main_face_y = 0
+        main_face_dist = 1000000
+
+        # Find the closest face to the image center (main face)
+        for face in faces:
+            face_x, face_y = _get_face_center_position(face)
+            face_dist = _distance_from_img_center(face_x, face_y)
+
+            if (face_dist < main_face_dist):
+                main_face_x = face_x
+                main_face_y = face_y
+                main_face_dist = face_dist
+
+        # TODO: Convert main face position to angles (w. velocity?)
+        theta = 0.
+        azimuth = 0.
+
+        # Send angle command to move the head
+        self.head_client.GoToAngle(theta, azimuth)
+        
+    def _distance_from_img_center(self, x, y):
+        return math.sqrt((self.img_center_x - x)**2 + (self.img_center_y)**2)
+
+    def _get_face_center_position(face):
+        x = face.x + (face.width // 2)
+        y = face.y + (face.height // 2)
+
+        return x, y
 
 
 class VoiceRecognition(BehaviorBase):
@@ -85,6 +136,7 @@ class Voice(BehaviorBase):
         language = params["language"]
 
         if self.active:
+            pass
             
 
 
@@ -96,3 +148,5 @@ class Locomotion(BehaviorBase):
     def _run(self, params):
         # TODO: Add code here if necessary...
         pass
+
+
