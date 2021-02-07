@@ -17,7 +17,7 @@ if test == "voice":
 elif test == 'face_tracking':
     rospy.init_node('behaviors_test_node')
 
-    face_tracker = Facetracking()
+    face_tracker = FaceTracking()
     face_tracker.activate()
     
     rospy.spin()

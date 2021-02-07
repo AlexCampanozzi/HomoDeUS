@@ -6,8 +6,9 @@ import math
 import threading
 import rospy
 import actionlib
-from face_detection.msg import FacePosition
-from face_detection.msg import FacePositions
+from pal_detection_msgs.msg import FaceDetections
+# from face_detection.msg import FacePosition
+# from face_detection.msg import FacePositions
 # from headActionClient import HeadActionClient
 
 import pal_interaction_msgs.msg
@@ -72,11 +73,11 @@ class FaceTracking(BehaviorBase):
 
         # Setting up a head action client and a subscriber to /faces
         # self.head_client = HeadActionClient() # <------ WARNING: init_node is used in this class!!
-        rospy.Subscriber('/pal_face/faces', FacePositions, self._head_callback)
+        rospy.Subscriber('/pal_face/faces', FaceDetections, self._head_callback)
 
         # Collecting image settings
-        self.img_width = rospy.get_param('processing_img_width')
-        self.img_height = rospy.get_param('processing_img_height')
+        self.img_width = 320 #rospy.get_param('processing_img_width')
+        self.img_height = 240 #rospy.get_param('processing_img_height')
 
         self.img_center_x = self.img_width // 2
         self.img_center_y = self.img_height // 2
@@ -85,8 +86,10 @@ class FaceTracking(BehaviorBase):
         # This method is not necessary for this behavior.
         pass
 
-    def _head_callback(self, faces):
+    def _head_callback(self, detections):
         print('70s show')
+        print(detections.faces[0].x)
+
         if not self.active:
             return
 
@@ -95,7 +98,7 @@ class FaceTracking(BehaviorBase):
         main_face_dist = 1000000
 
         # Find the closest face to the image center (main face)
-        for face in faces:
+        """for face in faces:
             face_x, face_y = _get_face_center_position(face)
             face_dist = _distance_from_img_center(face_x, face_y)
 
@@ -109,7 +112,7 @@ class FaceTracking(BehaviorBase):
         azimuth = 0.
 
         # Send angle command to move the head
-        # self.head_client.GoToAngle(theta, azimuth)
+        # self.head_client.GoToAngle(theta, azimuth)"""
         
     def _distance_from_img_center(self, x, y):
         return math.sqrt((self.img_center_x - x)**2 + (self.img_center_y)**2)
