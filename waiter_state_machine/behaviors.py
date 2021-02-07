@@ -161,8 +161,8 @@ class Voice(BehaviorBase):
             return
         else:
             goal = pal_interaction_msgs.msg.TtsGoal()
-            goal.rawtext.lang_id = language
-            goal.rawtext.text = speech
+            goal.rawtext.lang_id = self.language
+            goal.rawtext.text = self.speech
 
             self.tts_client.send_goal(goal)
 
