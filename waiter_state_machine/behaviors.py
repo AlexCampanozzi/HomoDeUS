@@ -6,7 +6,8 @@ import math
 import threading
 import rospy
 import actionlib
-# from face_detection.msg import FacePositions
+from face_detection.msg import FacePosition
+from face_detection.msg import FacePositions
 # from headActionClient import HeadActionClient
 
 import pal_interaction_msgs.msg
@@ -70,8 +71,8 @@ class FaceTracking(BehaviorBase):
         BehaviorBase.__init__(self)
 
         # Setting up a head action client and a subscriber to /faces
-        self.head_client = HeadActionClient() # <------ WARNING: init_node is used in this class!!
-        rospy.Subscriber('faces', FacePositions, self._head_callback)
+        # self.head_client = HeadActionClient() # <------ WARNING: init_node is used in this class!!
+        rospy.Subscriber('/pal_face/faces', FacePositions, self._head_callback)
 
         # Collecting image settings
         self.img_width = rospy.get_param('processing_img_width')
@@ -85,6 +86,7 @@ class FaceTracking(BehaviorBase):
         pass
 
     def _head_callback(self, faces):
+        print('70s show')
         if not self.active:
             return
 
@@ -107,7 +109,7 @@ class FaceTracking(BehaviorBase):
         azimuth = 0.
 
         # Send angle command to move the head
-        self.head_client.GoToAngle(theta, azimuth)
+        # self.head_client.GoToAngle(theta, azimuth)
         
     def _distance_from_img_center(self, x, y):
         return math.sqrt((self.img_center_x - x)**2 + (self.img_center_y)**2)
