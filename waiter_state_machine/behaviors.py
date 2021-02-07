@@ -127,11 +127,32 @@ class FaceTracking(BehaviorBase):
 class VoiceRecognition(BehaviorBase):
     def __init__(self):
         BehaviorBase.__init__(self)
-        # TODO: Add code here if necessary...
+        
+         # Setting up SpeechRecognition
+        self.actionServer = actionlib.SimpleActionServer("speech_recognition_action_server",SpeechRecognitionActivatedAction,execute_cb=self.execute_cb,auto_start=False)
+        self.recognizer = sr.Recognizer()
+        self.actionServer.register_preempt_callback(self.recognizer.interrupt())
+        self.language = "en-US"
 
     def _run(self, params):
-        # TODO: Add code here if necessary...
-        pass
+            if not skip_keyword:
+                rospy.loginfo("SpeechRecognition: skip_keyword is False")
+                self.interrupted = False
+
+                if (
+                    rospy.is_shutdown() or
+                    self.interrupted or
+                    not self.wait_for_keyword()
+                ):
+                    return ""
+
+                rospy.loginfo("SpeechRecognition: Recognized keyword!")
+                self.say(self.keyword_recognized_text)
+                self.tts_client.wait_for_result()
+
+            result = self.speech_to_text()
+
+            return result
 
 
 class Voice(BehaviorBase):
