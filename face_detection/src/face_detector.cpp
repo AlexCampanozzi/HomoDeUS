@@ -1,6 +1,6 @@
 #include <face_detection/face_detector.h>
 
-#DEFINE MIN_FACE_SIZE_RATIO 0.00001
+#define MIN_FACE_SIZE_RATIO 0.00001
 /* FaceDetector: Constructor
 
 Description:    subscribes to the the image topic and initializes variables
