@@ -11,6 +11,9 @@ from pal_detection_msgs.msg import FaceDetections
 # from face_detection.msg import FacePositions
 # from headActionClient import HeadActionClient
 
+#section for Locomotion
+import navigator
+
 import pal_interaction_msgs.msg
 from std_msgs.msg import String
 
@@ -196,10 +199,11 @@ class Voice(BehaviorBase):
 class Locomotion(BehaviorBase):
     def __init__(self):
         BehaviorBase.__init__(self)
-        # TODO: Add code here if necessary...
+	# if we can't use the navigator, we need to init the client directly
+	self.navigator = Navigator()
 
     def _run(self, params):
-        # TODO: Add code here if necessary...
-        pass
+	# if we can't use the navigator, the client need to do the calls
+        self.navigator.goto(params.x, params.y, params.orientation)
 
 
