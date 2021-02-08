@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 import rospy
 import actionlib
@@ -62,7 +62,7 @@ class Navigator:
         landmarkGoal.target_pose.header.frame_id = "map"
         #Time will have to be overwritten before actually sending the goal
         landmarkGoal.target_pose.header.stamp = rospy.Time.now()
-        print landmarkGoal
+        # print landmarkGoal
         self.landmarks[name] = landmarkGoal
 
     def goToLandmark(self, name):

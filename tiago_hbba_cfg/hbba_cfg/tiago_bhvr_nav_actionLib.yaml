@@ -3,13 +3,12 @@
 hbba_conf:
 
 - behavior:
-    name: tiago_slam_planner
+    name: tiago_nav
     launch: {pkg: 'tiago_hbba_cfg', path: 'launch/tiago_bhvr_nav_actionLib.launch'}
     priority: 10
     input:
-        - hbba_navgoal: {src: move_base_simple/goal, filtered: false}
-        # - map
-        # - scan:          base_scan_nav
+        - hbba_nav_goal: {src: hbba_nav_goal, filtered: false}
+        - move_base: {src: move_base, filtered: false}
     output:
         - cmd_vel
             
@@ -17,8 +16,8 @@ hbba_conf:
     name: TBSLAMPlanner
     class: GoTo
     utility: 8
-    # dependencies: {PlannerSensors: 1}
+    costs: {move_stack: 1}
     # modules:
     #     - tiago_slam_planner
-    custom_bringup: "pubNavGoal('/move_base_simple/goal', params.frame_id, params.x, params.y, params.t);"
+    custom_bringup: "pubNavGoal('/hbba_nav_goal', params.frame_id, params.x, params.y, params.t);"
 

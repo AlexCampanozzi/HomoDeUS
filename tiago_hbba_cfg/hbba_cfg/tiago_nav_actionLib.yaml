@@ -14,7 +14,7 @@ hbba_conf:
 
 # Combined priorities:
 #- behavior_priority: {name: 'tiago_teleop',            value: 100}
-- behavior_priority: {name: 'tiago_slam_planner',     value: 90}
+- behavior_priority: {name: 'tiago_nav',     value: 90}
 
 # Available resources:
 - resources:

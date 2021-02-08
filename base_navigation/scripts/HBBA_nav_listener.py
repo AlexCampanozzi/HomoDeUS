@@ -14,10 +14,14 @@ class HBBA_nav_listener(Navigator):
         self.goto(data.pose.position.x, data.pose.position.y, data.pose.orientation.w)
 
     def listen(self):
-        rospy.Subscriber('hbba_navgoal', PoseStamped, self.callback)
+        rospy.Subscriber('/hbba_nav_goal', PoseStamped, self.callback)
         # spin() simply keeps python from exiting until this node is stopped
         rospy.spin()
 
 if __name__ == '__main__':
-    listener = HBBA_nav_listener()
-    listener.listen()
+    try:
+        listener = HBBA_nav_listener()
+        listener.listen()
+    except rospy.ROSInterruptException:
+        pass
+
