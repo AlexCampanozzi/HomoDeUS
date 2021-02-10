@@ -4,12 +4,12 @@ from states import *
 
 
 class StateMachine:
+
     """
     State Machine to manage states and transitions.
 
     Example on how to use it:
-
-    ­­>>> from states import *
+    >>> from states import *
     >>> from state_machine import *
     >>>
     >>> state_machine = StateMachine()
@@ -23,7 +23,6 @@ class StateMachine:
     >>> while state_machine.get_current_state().id is not 'state 03':
     >>>     state_machine.run_current_state()
     >>>     state_machine.check_transitions()
-
     """
     def __init__(self):
         self.states = {}
