@@ -10,6 +10,10 @@ from pal_detection_msgs.msg import FaceDetections
 # from face_detection.msg import FacePosition
 # from face_detection.msg import FacePositions
 # from headActionClient import HeadActionClient
+from speech_recognition_server.msg import SpeechRecognitionActivatedAction
+from speech_recognition_server.msg import SpeechRecognitionActivatedGoal
+from speech_recognition_server.msg import SpeechRecognitionActivatedFeedback
+
 
 #section for Locomotion
 import navigator
@@ -131,31 +135,26 @@ class VoiceRecognition(BehaviorBase):
     def __init__(self):
         BehaviorBase.__init__(self)
         
-         # Setting up SpeechRecognition
-        self.actionServer = actionlib.SimpleActionServer("speech_recognition_action_server",SpeechRecognitionActivatedAction,execute_cb=self.execute_cb,auto_start=False)
-        self.recognizer = sr.Recognizer()
-        self.actionServer.register_preempt_callback(self.recognizer.interrupt())
-        self.language = "en-US"
+        # Setting up the client
+        self.stt_client = actionlib.SimpleActionClient("speech_recognition_action_server", SpeechRecognitionActivatedAction)
+        self.sst_client.wait_for_server()
 
     def _run(self, params):
-            if not skip_keyword:
-                rospy.loginfo("SpeechRecognition: skip_keyword is False")
-                self.interrupted = False
+        language = params["language"]
+        skip_keyword = (params["skip_keyword"] == "True")
+        tell_back = (params["tell_back"] == "True")
 
-                if (
-                    rospy.is_shutdown() or
-                    self.interrupted or
-                    not self.wait_for_keyword()
-                ):
-                    return ""
+        # TODO: Check this part
+        goal = SpeechRecognitionActivatedGoal()
+        goal.language = language
+        goal.skip_keyword = skip_keyword
+        goal.tell_back = tell_back
 
-                rospy.loginfo("SpeechRecognition: Recognized keyword!")
-                self.say(self.keyword_recognized_text)
-                self.tts_client.wait_for_result()
+        self.stt_client.send_goal(goal)
 
-            result = self.speech_to_text()
+        # TODO: Gather feedback
 
-            return result
+            
 
 
 class Voice(BehaviorBase):
@@ -199,11 +198,15 @@ class Voice(BehaviorBase):
 class Locomotion(BehaviorBase):
     def __init__(self):
         BehaviorBase.__init__(self)
-	# if we can't use the navigator, we need to init the client directly
-	self.navigator = Navigator()
+        # if we can't use the navigator, we need to init the client directly
+        self.navigator = Navigator()
 
     def _run(self, params):
-	# if we can't use the navigator, the client need to do the calls
-        self.navigator.goto(params.x, params.y, params.orientation)
+	    # if we can't use the navigator, the client need to do the calls
+        x = float(params["x"])
+        y = float(params["y"])
+        orientation = float(params["orientation"])
+        
+        self.navigator.goto(x, y, orientation)
 
 
