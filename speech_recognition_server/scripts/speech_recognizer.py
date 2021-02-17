@@ -151,7 +151,7 @@ class SpeechRecognizer:
 
             try:
                 rospy.loginfo("SpeechRecognition: Listening...")
-                speech = self.recognizer.recognize_google(audio, language=lang)
+                speech = self.recognizer.recognize_google(audio, language=language)
                 return speech
 
             except LookupError:
