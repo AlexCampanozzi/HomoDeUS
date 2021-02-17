@@ -139,6 +139,8 @@ class VoiceRecognition(BehaviorBase):
         self.stt_client = actionlib.SimpleActionClient("speech_recognition_action_server", SpeechRecognitionActivatedAction)
         self.stt_client.wait_for_server()
 
+        self.speech = ""
+
     def _run(self, params):
         language = params["language"]
         skip_keyword = (params["skip_keyword"] == "True")
@@ -150,11 +152,13 @@ class VoiceRecognition(BehaviorBase):
         goal.skip_keyword = skip_keyword
         goal.tell_back = tell_back
 
-        self.stt_client.send_goal(goal)
+        self.stt_client.send_goal(goal, feedback_cb=self._feedback_callback)
 
-        # TODO: Gather feedback
+        # Wait for the server to finish
+        self.stt_client.wait_for_result()
 
-            
+    def _feedback_callback(self, feedback):
+        self.speech = feedback.recognition_results
 
 
 class Voice(BehaviorBase):
