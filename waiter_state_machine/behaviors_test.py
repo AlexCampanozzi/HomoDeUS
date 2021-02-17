@@ -2,7 +2,7 @@
 
 from behaviors import *
 
-test = "face_tracking"  
+test = "voice_recognition"  
 
 if test == "voice":
     rospy.init_node('keyword_speech_multi_recognizer_server')
@@ -20,4 +20,33 @@ elif test == 'face_tracking':
     face_tracker = FaceTracking()
     face_tracker.activate()
     
+    rospy.spin()
+
+elif test == "voice_recognition":
+    rospy.init_node('behaviors_test_node')
+
+    voice_recognition = VoiceRecognition()
+    voice_recognition.activate()
+
+    params = {
+        "language": "en-us",
+        "skip_keyword": "False",
+        "tell_back": "True"
+    }
+
+    voice_recognition.run(params)
+
+    rospy.spin()
+
+elif test == "locomotion":
+    locomotion = Locomotion()
+
+    params = {
+        "x" : "1",
+        "y" : "1",
+        "orientation" : "0"
+    }
+
+    locomotion.run(params)
+
     rospy.spin()

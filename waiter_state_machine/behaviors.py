@@ -16,7 +16,7 @@ from speech_recognition_server.msg import SpeechRecognitionActivatedFeedback
 
 
 #section for Locomotion
-import navigator
+from navigator import *
 
 import pal_interaction_msgs.msg
 from std_msgs.msg import String
@@ -137,7 +137,7 @@ class VoiceRecognition(BehaviorBase):
         
         # Setting up the client
         self.stt_client = actionlib.SimpleActionClient("speech_recognition_action_server", SpeechRecognitionActivatedAction)
-        self.sst_client.wait_for_server()
+        self.stt_client.wait_for_server()
 
     def _run(self, params):
         language = params["language"]
