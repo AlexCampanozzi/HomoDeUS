@@ -1,0 +1,3 @@
+<launch>
+    <node name="goto_test" pkg="tiago_hbba_cfg" type="motv_goto_test.py"/>
+</launch>
