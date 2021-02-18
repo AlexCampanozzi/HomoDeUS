@@ -76,7 +76,7 @@ class FaceTracking(BehaviorBase):
         BehaviorBase.__init__(self)
 
         # Setting up a head action client and a subscriber to /faces
-        self.head_client = HeadActionClient() # <------ WARNING: init_node is used in this class!!
+        # self.head_client = HeadActionClient() # <------ WARNING: init_node is used in this class!!
         rospy.Subscriber('/pal_face/faces', FaceDetections, self._head_callback)
 
         # Collecting image settings
@@ -131,7 +131,7 @@ class FaceTracking(BehaviorBase):
         cmd_y = K * error_y
 
         # Send angle command to move the head
-        self.head_client.GoToAngle(cmd_x, cmd_y)
+        # self.head_client.GoToAngle(cmd_x, cmd_y)
         
     def _distance_from_img_center(self, x, y):
         return math.sqrt((self.img_center_x - x)**2 + (self.img_center_y)**2)
