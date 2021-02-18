@@ -35,6 +35,7 @@ elif test == "voice_recognition":
     }
 
     voice_recognition.run(params)
+    print(voice_recognition.speech)
 
     rospy.spin()
 
