@@ -253,19 +253,20 @@ class State02(StateBase):
 
     def get_next_state(self):
 
-        # If the robot is still seeing a face, but the voice recognition failed
-        if voice_recognition.speech == "":
-            return 'state 03'
 
-        # If the customer asked for something on the menu
-        if check_if_any_word_in_menu(voice_recognition.speech):
-            return 'state 05'
+        
+        if voice_recognition.speech is not "":
+            
+            if check_if_any_word_in_menu(voice_recognition.speech):
+                order = extract_order(voice_recognition.speech)
+                return 'state 05'
 
-        # If the customer said something, but it's not on the menu
-        else:
-            self.voice_params["speech"] = "Make sure that you're asking for something on the menu human!"
-            voice.run(self.voice_params)
-            return None
+            else:
+                self.voice_params["speech"] = "Sorry, I didn't catch that. Make sure that you're asking for something on the menu."
+                voice.run(self.voice_params)
+                return None
+
+        return 'state 03'
 
 
 
