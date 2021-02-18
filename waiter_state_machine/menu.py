@@ -19,4 +19,4 @@ def extract_order(sentence):
     string = re.sub(r'[^\w\s]','',sentence).lower()
 
     # Returning the intersection
-    return (set(menu) & set(string.split()))
+    return list(set(menu) & set(string.split()))
