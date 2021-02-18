@@ -99,7 +99,7 @@ class StateBase:
 
 """
 +-------------------------------------------------+
-|                Global behaviors                 |
+|                Global Variables                 |
 +-------------------------------------------------+
 """
 # TODO: Maybe change them for static variables instead?
@@ -107,6 +107,18 @@ face_tracking = FaceTracking()
 voice_recognition = VoiceRecognition()
 voice = Voice()
 locomotion = Locomotion()
+
+master_position = {
+        "x" : "0",
+        "y" : "0",
+        "orientation" : "0"
+    }
+
+kitchen_position = {
+        "x" : "1",
+        "y" : "1",
+        "orientation" : "180"
+    }
 
 """
 +-------------------------------------------------+
@@ -547,28 +559,43 @@ class State08(StateBase):
 class State09(StateBase):
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
+
+        self.voice_params = {
+            "speech" : "Please help me, I'm stuck. \
+            Say OK when I'm good to go",
+            "language" : "en_GB"
+            }
+
+        self.voice_recognition_params = {
+            "language": "en-us",
+            "skip_keyword": "False",
+            "tell_back": "False"
+           }
 
     def _set_id(self):
         return 'state 09'
 
     def _pre_execution(self):
+        # Turning on and off the behaviors
         face_tracking.activate()
         voice_recognition.activate()
         voice.activate()
-        locomotion.deactivate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
         pass
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        voice.run(self.voice_params)
+        voice_recognition.run(self.voice_recognition_params)
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+        if voice_recognition.speech == "OK":
+            return 'state 10'
+        elif voice_recognition.speech == "reset":
+            return 'state 00'
+        else:
+            return None
+
 
 
 class State10(StateBase):
