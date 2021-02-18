@@ -254,7 +254,7 @@ class State02(StateBase):
     def get_next_state(self):
 
         # If the robot is still seeing a face, but the voice recognition failed
-        if voice_recognition.speech == ""
+        if voice_recognition.speech == "":
             return 'state 03'
 
         # If the customer asked for something on the menu
