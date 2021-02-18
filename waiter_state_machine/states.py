@@ -99,7 +99,7 @@ class StateBase:
 
 """
 +-------------------------------------------------+
-|                Global behaviors                 |
+|                Global Variables                 |
 +-------------------------------------------------+
 """
 # TODO: Maybe change them for static variables instead?
@@ -107,6 +107,18 @@ face_tracking = FaceTracking()
 voice_recognition = VoiceRecognition()
 voice = Voice()
 locomotion = Locomotion()
+
+master_position = {
+        "x" : "0",
+        "y" : "0",
+        "orientation" : "0"
+    }
+
+kitchen_position = {
+        "x" : "1",
+        "y" : "1",
+        "orientation" : "180"
+    }
 
 """
 +-------------------------------------------------+
@@ -253,19 +265,20 @@ class State02(StateBase):
 
     def get_next_state(self):
 
-        # If the robot is still seeing a face, but the voice recognition failed
-        if voice_recognition.speech == "":
-            return 'state 03'
 
-        # If the customer asked for something on the menu
-        if check_if_any_word_in_menu(voice_recognition.speech):
-            return 'state 05'
+        
+        if voice_recognition.speech is not "":
+            
+            if check_if_any_word_in_menu(voice_recognition.speech):
+                order = extract_order(voice_recognition.speech)
+                return 'state 05'
 
-        # If the customer said something, but it's not on the menu
-        else:
-            self.voice_params["speech"] = "Make sure that you're asking for something on the menu human!"
-            voice.run(self.voice_params)
-            return None
+            else:
+                self.voice_params["speech"] = "Sorry, I didn't catch that. Make sure that you're asking for something on the menu."
+                voice.run(self.voice_params)
+                return None
+
+        return 'state 03'
 
 
 class State03(StateBase):
@@ -519,26 +532,42 @@ class State05(StateBase):
 class State06(StateBase):
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
+
+        self.voice_params = {
+            "speech" : "Please help me, I'm stuck. \
+            Say OK when I'm good to go",
+            "language" : "en_GB"
+            }
+
+        self.voice_recognition_params = {
+            "language": "en-us",
+            "skip_keyword": "False",
+            "tell_back": "False"
+           }
 
     def _set_id(self):
         return 'state 06'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        # Turning on and off the behaviors
+        face_tracking.activate()
+        voice_recognition.activate()
+        voice.activate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
         pass
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        voice.run(self.voice_params)
+        voice_recognition.run(self.voice_recognition_params)
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+        if voice_recognition.speech == "OK":
+            return 'state 07'
+        elif voice_recognition.speech == "reset":
+            return 'state 00'
+        else:
+            return None
 
 
 class State07(StateBase):
@@ -594,28 +623,43 @@ class State08(StateBase):
 class State09(StateBase):
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
+
+        self.voice_params = {
+            "speech" : "Please help me, I'm stuck. \
+            Say OK when I'm good to go",
+            "language" : "en_GB"
+            }
+
+        self.voice_recognition_params = {
+            "language": "en-us",
+            "skip_keyword": "False",
+            "tell_back": "False"
+           }
 
     def _set_id(self):
         return 'state 09'
 
     def _pre_execution(self):
+        # Turning on and off the behaviors
         face_tracking.activate()
         voice_recognition.activate()
         voice.activate()
-        locomotion.deactivate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
         pass
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        voice.run(self.voice_params)
+        voice_recognition.run(self.voice_recognition_params)
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+        if voice_recognition.speech == "OK":
+            return 'state 10'
+        elif voice_recognition.speech == "reset":
+            return 'state 00'
+        else:
+            return None
+
 
 
 class State10(StateBase):
