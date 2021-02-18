@@ -27,3 +27,7 @@ hbba_conf:
     launch: {pkg: "tiago_hbba_cfg", path: "launch/motv_goto_generator.launch"}
     input:
      - goto_goal
+
+- motivation:
+    name: goto_generator
+    launch: {pkg: "tiago_hbba_cfg", path: "launch/motv_goto_test.launch"}
