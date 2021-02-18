@@ -261,7 +261,7 @@ class State03(StateBase):
             return 'state 01'
 
         # If the robot is still seeing a face, but the voice recognition failed
-        if voice_recognition.speech == ""
+        if voice_recognition.speech == "":
             return None
 
         # If the customer asked for something on the menu
@@ -278,26 +278,65 @@ class State03(StateBase):
 class State04(StateBase):
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
+        
+        self.instructions = [
+            "Could you repeat your order please?",
+            "Could you tell me what you want one more time?",
+            "I'm listening, just repeat your order human."
+            ]
+
+        self.voice_params = {
+            "speech" : "",
+            "language" : "en_GB"
+            }
+
+        self.voice_recognition_params = {
+            "language": "en-us",
+            "skip_keyword": "False",
+            "tell_back": "False"
+           }
 
     def _set_id(self):
         return 'state 04'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        # Turning on and off the behaviors
+        face_tracking.activate()
+        voice_recognition.activate()
+        voice.activate()
+        locomotion.deactivate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        self.voice_params["speech"] = "Sorry, what you want doesn't seem to be on the menu."
+        voice.run(self.voice_params)
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        
+        random_index = random.randint(0, len(self.instructions)-1)
+        self.voice_params["speech"] = self.instructions[random_index]
+        
+        voice.run(self.voice_params)
+
+        voice_recognition.run(self.voice_recognition_params)
+
+        # Letting a clue that the robot isn't listening anymore
+        self.voice_params["speech"] = "Alright, let me process that..."
+        voice.run(self.voice_params)
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+        
+        if voice_recognition.speech is not "":
+            
+            if check_if_any_word_in_menu(voice_recognition.speech):
+                order = extract_order(voice_recognition.speech)
+                return 'state 05'
+
+            else:
+                self.voice_params["speech"] = "Sorry, I didn't catch that. Make sure that you're asking for something on the menu."
+                voice.run(self.voice_params)
+                return None
+
+        return 'state 03'
 
 
 class State05(StateBase):
