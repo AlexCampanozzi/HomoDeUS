@@ -262,7 +262,7 @@ class State03(StateBase):
             return 'state 01'
 
         # If the robot is still seeing a face, but the voice recognition failed
-        if voice_recognition.speech == ""
+        if voice_recognition.speech == "":
             return None
 
         # If the customer asked for something on the menu
@@ -468,7 +468,8 @@ class State11(StateBase):
 
         self.give_order = [
             "Here is your order, have a nice day.",
-            "Here's what you asked for, see you again"
+            "Here's what you asked for, see you again", 
+            "Your slave have returned with your bounty"
             ]
         
         self.voice_params = {
@@ -486,6 +487,7 @@ class State11(StateBase):
         locomotion.deactivate()
 
     def _execution(self):
+        #Donne la commande et attent 20 secondes avant de recommencer la machine a etat
         random_index = random.randint(0, len(self.give_order)-1)
         self.voice_params["speech"] = self.give_order[random_index]
 

@@ -32,7 +32,7 @@ class Navigator:
         goal.target_pose.pose.orientation.z = 1
         goal.target_pose.pose.orientation.w = oriGoal
 
-        self.gotoGoal(goal)
+        return(self.gotoGoal(goal))
 
     def gotoGoal(self, goal):
         rospy.loginfo("Sending goal location ...")
