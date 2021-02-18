@@ -6,11 +6,12 @@ import math
 import threading
 import rospy
 import actionlib
-from pal_detection_msgs.msg import FaceDetections
 from speech_recognition_server.msg import SpeechRecognitionActivatedAction
 from speech_recognition_server.msg import SpeechRecognitionActivatedGoal
 from speech_recognition_server.msg import SpeechRecognitionActivatedFeedback
 
+from face_detection.msg import FacePosition
+from face_detection.msg import FacePositions
 
 #section for Locomotion
 from navigator import *
@@ -77,7 +78,7 @@ class FaceTracking(BehaviorBase):
 
         # Setting up a head action client and a subscriber to /faces
         # self.head_client = HeadActionClient() # <------ WARNING: init_node is used in this class!!
-        rospy.Subscriber('/pal_face/faces', FaceDetections, self._head_callback)
+        rospy.Subscriber('/pal_face/faces', FacePositions, self._head_callback)
 
         # Collecting image settings
         self.img_width = 320 #rospy.get_param('processing_img_width')
