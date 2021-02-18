@@ -1,4 +1,37 @@
 #! /usr/bin/env python
 
+import rospy
 from states import *
 from state_machine import *
+
+bertrand = StateMachine()
+
+def main():
+
+    bertrand = StateMachine()
+    
+    # Assemble the state machine
+    bertrand.add_state(State00())
+    bertrand.add_state(State01())
+    bertrand.add_state(State02())
+    bertrand.add_state(State03())
+    bertrand.add_state(State04())
+    bertrand.add_state(State05())
+    bertrand.add_state(State06())
+    bertrand.add_state(State07())
+    bertrand.add_state(State08())
+    bertrand.add_state(State09())
+    bertrand.add_state(State10())
+    bertrand.add_state(State11())
+
+    # Creating the node
+    rospy.init_node('waiter_state_machine')
+
+    # Main loop
+    while not rospy.is_shutdown():
+        bertrand.run_current_state()
+        bertrand.check_transitions()
+        rospy.sleep(0.01)
+
+if __name__ == "__main__":
+    main()
