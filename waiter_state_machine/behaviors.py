@@ -222,4 +222,4 @@ class Locomotion(BehaviorBase):
         y = float(params["y"])
         orientation = float(params["orientation"])
         
-        self.navigator.goto(x, y, orientation)
+        return(self.navigator.goto(x, y, orientation))
