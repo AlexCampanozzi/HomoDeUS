@@ -113,81 +113,162 @@ locomotion = Locomotion()
 |                 States 0 to 5                   |
 +-------------------------------------------------+
 """
-
-
 class State00(StateBase):
+    """
+    The robot is idling
+    """
+# /!\ WARNING: This code wasn't tested! /!\
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
+        
+        self.voice_recognition_params = {
+            "language": "en-us",
+            "skip_keyword": "False",
+            "tell_back": "False"
+           }
+
+        self.last_face_timestamp = face_tracking.timestamp
 
     def _set_id(self):
         return 'state 00'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        # Turning on and off the behaviors
+        face_tracking.activate()
+        voice_recognition.activate()
+        voice.deactivate()
+        locomotion.deactivate()
 
     def _execution(self):
         # TODO: Add code here if necessary...
         pass
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        
+        # Checking last time a face was detected
+        self.last_face_timestamp = face_tracking.timestamp
+
+        # Listen for an order
+        voice_recognition.run(self.voice_recognition_params)
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+
+        #no face detected, continu idle
+        if self.last_face_timestamp == face_tracking.timestamp:
+            return None
+        #Face detected, move to state 2 of greeting
+        if self.last_face_timestamp != face_tracking.timestamp:
+            return 'state 02'
+
+        # If the robot is still seeing a face, but the voice recognition failed
+        if voice_recognition.speech == "":
+            return None
+
+        # if the keyword is detected, move to state 2
+        if voice_recognition.speech == keyword:
+            return 'state 02'
+        
 
 
 class State01(StateBase):
+    """
+    The robot says goodbye
+    """
+# /!\ WARNING: This code wasn't tested! /!\
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
+        
+        self.voice_params = {
+            "speech" : "",
+            "language" : "en_GB"
+            }
 
     def _set_id(self):
         return 'state 01'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        # Turning on and off the behaviors
+        face_tracking.activate()
+        voice_recognition.deactivate()
+        voice.activate()
+        locomotion.deactivate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        
+        self.voice_params["speech"] = "Goodbye, come again Human!"
+        
+        voice.run(self.voice_params)
 
     def _post_execution(self):
         # TODO: Add code here if necessary...
         pass
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+        return 'state 00'
 
 
 class State02(StateBase):
+    """
+    The robot take the order
+    """
+    # /!\ WARNING: This code wasn't tested! /!\
+
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
+
+        self.voice_params = {
+            "speech" : "",
+            "language" : "en_GB"
+            }
+
+        self.voice_recognition_params = {
+            "language": "en-us",
+            "skip_keyword": "False",
+            "tell_back": "False"
+           }
+        #do i need it
+        self.last_face_timestamp = face_tracking.timestamp
 
     def _set_id(self):
         return 'state 02'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        # Turning on and off the behaviors
+        face_tracking.activate()
+        voice_recognition.activate()
+        voice.activate()
+        locomotion.deactivate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
-        pass
+       
+        # greeting customer and asking for order
+        self.voice_params["speech"] = "Good day Human, what kind of food do you want. Please choose from the menu"
+        
+        voice.run(self.voice_params)
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+
+        # Listen for an order
+        voice_recognition.run(self.voice_recognition_params)
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+
+
+        
+        if voice_recognition.speech is not "":
+            
+            if check_if_any_word_in_menu(voice_recognition.speech):
+                order = extract_order(voice_recognition.speech)
+                return 'state 05'
+
+            else:
+                self.voice_params["speech"] = "Sorry, I didn't catch that. Make sure that you're asking for something on the menu."
+                voice.run(self.voice_params)
+                return None
+
+        return 'state 03'
+
+
 
 
 class State03(StateBase):
@@ -204,7 +285,8 @@ class State03(StateBase):
             "May I suggest some delicious apples?",
             "Go on.",
             "Have you made up your mind human?",
-            "I am waiting for you order human."
+            "I am waiting for you order human.", 
+            "Please give your slave an order"
             ]
         
         self.voice_params = {
@@ -250,7 +332,6 @@ class State03(StateBase):
 
         # Letting a clue that the robot isn't listening anymore
         self.voice_params["speech"] = "Alright, let me process that..."
-
         voice.run(self.voice_params)
 
     def get_next_state(self):
@@ -262,7 +343,7 @@ class State03(StateBase):
             return 'state 01'
 
         # If the robot is still seeing a face, but the voice recognition failed
-        if voice_recognition.speech == ""
+        if voice_recognition.speech == "":
             return None
 
         # If the customer asked for something on the menu
@@ -279,26 +360,65 @@ class State03(StateBase):
 class State04(StateBase):
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
+        
+        self.instructions = [
+            "Could you repeat your order please?",
+            "Could you tell me what you want one more time?",
+            "I'm listening, just repeat your order human."
+            ]
+
+        self.voice_params = {
+            "speech" : "",
+            "language" : "en_GB"
+            }
+
+        self.voice_recognition_params = {
+            "language": "en-us",
+            "skip_keyword": "False",
+            "tell_back": "False"
+           }
 
     def _set_id(self):
         return 'state 04'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        # Turning on and off the behaviors
+        face_tracking.activate()
+        voice_recognition.activate()
+        voice.activate()
+        locomotion.deactivate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        self.voice_params["speech"] = "Sorry, what you want doesn't seem to be on the menu."
+        voice.run(self.voice_params)
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        
+        random_index = random.randint(0, len(self.instructions)-1)
+        self.voice_params["speech"] = self.instructions[random_index]
+        
+        voice.run(self.voice_params)
+
+        voice_recognition.run(self.voice_recognition_params)
+
+        # Letting a clue that the robot isn't listening anymore
+        self.voice_params["speech"] = "Alright, let me process that..."
+        voice.run(self.voice_params)
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+        
+        if voice_recognition.speech is not "":
+            
+            if check_if_any_word_in_menu(voice_recognition.speech):
+                order = extract_order(voice_recognition.speech)
+                return 'state 05'
+
+            else:
+                self.voice_params["speech"] = "Sorry, I didn't catch that. Make sure that you're asking for something on the menu."
+                voice.run(self.voice_params)
+                return None
+
+        return 'state 03'
 
 
 class State05(StateBase):
@@ -417,8 +537,10 @@ class State09(StateBase):
         return 'state 09'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        face_tracking.activate()
+        voice_recognition.activate()
+        voice.activate()
+        locomotion.deactivate()
 
     def _execution(self):
         # TODO: Add code here if necessary...
@@ -436,48 +558,62 @@ class State09(StateBase):
 class State10(StateBase):
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
 
     def _set_id(self):
         return 'state 10'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        face_tracking.deactivate()
+        voice_recognition.deactivate()
+        voice.deactivate()
+        locomotion.activate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        self.result = locomotion.goto(master_position)
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
         pass
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+        if self.result:
+            return 'state 11'
+        return 'state 09'
 
 
 class State11(StateBase):
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
+
+        self.give_order = [
+            "Here is your order, have a nice day.",
+            "Here's what you asked for, see you again", 
+            "Your slave have returned with your bounty"
+            ]
+        
+        self.voice_params = {
+            "speech" : "",
+            "language" : "en_GB"
+            }
 
     def _set_id(self):
         return 'state 11'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        face_tracking.activate()
+        voice_recognition.deactivate()
+        voice.activate()
+        locomotion.deactivate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        #Donne la commande et attent 20 secondes avant de retourner au debut de la machine a etat
+        random_index = random.randint(0, len(self.give_order)-1)
+        self.voice_params["speech"] = self.give_order[random_index]
+
+        voice.run(self.voice_params)
+        rospy.sleep(20.)
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
         pass
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+        return 'state 00'
