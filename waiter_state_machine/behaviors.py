@@ -88,11 +88,17 @@ class FaceTracking(BehaviorBase):
 
         self.threshold = 10
 
+        # Timestamp updated each time a face is detected
+        self.timestamp = time.time()
+
     def _run(self, params):
         # This method is not necessary for this behavior.
         pass
 
     def _head_callback(self, detections):
+
+        # TODO: Maybe this should go after the activation check?
+        self.timestamp = time.time()
 
         if not self.active:
             return

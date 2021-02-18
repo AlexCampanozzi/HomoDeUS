@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 
 from behaviors import *
+from menu import *
+import random
 
 
 class StateBase:
@@ -94,6 +96,18 @@ class StateBase:
         """
         raise NotImplementedError()
 
+
+"""
++-------------------------------------------------+
+|                Global behaviors                 |
++-------------------------------------------------+
+"""
+# TODO: Maybe change them for static variables instead?
+face_tracking = FaceTracking()
+voice_recognition = VoiceRecognition()
+voice = Voice()
+locomotion = Locomotion()
+
 """
 +-------------------------------------------------+
 |                 States 0 to 5                   |
@@ -177,28 +191,87 @@ class State02(StateBase):
 
 
 class State03(StateBase):
+    """
+    The robot is pushing the customer to order
+    """
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
+        
+        self.provocations = [
+            "Whenever you're ready, I'm ready human.",
+            "I have all day.",
+            "May I suggest some delicious apples?",
+            "Go on.",
+            "Have you made up your mind human?",
+            "I am waiting for you order human."
+            ]
+        
+        self.voice_params = {
+            "speech" : "",
+            "language" : "en_GB"
+            }
+
+        self.voice_recognition_params = {
+            "language": "en-us",
+            "skip_keyword": "False",
+            "tell_back": "False"
+           }
+
+        self.last_face_timestamp = face_tracking.timestamp
 
     def _set_id(self):
         return 'state 03'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        # Turning on and off the behaviors
+        face_tracking.activate()
+        voice_recognition.activate()
+        voice.activate()
+        locomotion.deactivate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
+        # This state is more an idling thing, so this method isn't useful in this case
         pass
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+
+        # Checking last time a face was detected
+        self.last_face_timestamp = face_tracking.timestamp
+        
+        # Push the customer to order something
+        random_index = random.randint(0, len(self.provocations)-1)
+        self.voice_params["speech"] = self.provocations[random_index]
+
+        voice.run(self.voice_params)
+
+        # Listen for an order
+        voice_recognition.run(self.voice_recognition_params)
+
+        # Letting a clue that the robot isn't listening anymore
+        self.voice_params["speech"] = "Alright, let me process that..."
+
+        voice.run(self.voice_params)
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+        
+        # If the robot didn't recognize a face during the execution,
+        # we assume that the customer left
+        if self.last_face_timestamp == face_tracking.timestamp:
+            return 'state 01'
+
+        # If the robot is still seeing a face, but the voice recognition failed
+        if voice_recognition.speech == ""
+            return None
+
+        # If the customer asked for something on the menu
+        if check_if_any_word_in_menu(voice_recognition.speech):
+            return 'state 05'
+
+        # If the customer said something, but it's not on the menu
+        else:
+            self.voice_params["speech"] = "Make sure that you're asking for something on the menu human!"
+            voice.run(self.voice_params)
+            return None
 
 
 class State04(StateBase):
