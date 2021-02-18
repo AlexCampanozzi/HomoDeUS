@@ -204,7 +204,8 @@ class State03(StateBase):
             "May I suggest some delicious apples?",
             "Go on.",
             "Have you made up your mind human?",
-            "I am waiting for you order human."
+            "I am waiting for you order human.", 
+            "Please give your slave an order"
             ]
         
         self.voice_params = {
@@ -416,8 +417,10 @@ class State09(StateBase):
         return 'state 09'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        face_tracking.activate()
+        voice_recognition.activate()
+        voice.activate()
+        locomotion.deactivate()
 
     def _execution(self):
         # TODO: Add code here if necessary...
@@ -441,8 +444,10 @@ class State10(StateBase):
         return 'state 10'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        face_tracking.deactivate()
+        voice_recognition.deactivate()
+        voice.deactivate()
+        locomotion.activate()
 
     def _execution(self):
         # TODO: Add code here if necessary...
@@ -460,23 +465,35 @@ class State10(StateBase):
 class State11(StateBase):
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
+
+        self.give_order = [
+            "Here is your order, have a nice day.",
+            "Here's what you asked for, see you again"
+            ]
+        
+        self.voice_params = {
+            "speech" : "",
+            "language" : "en_GB"
+            }
 
     def _set_id(self):
         return 'state 11'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        face_tracking.activate()
+        voice_recognition.deactivate()
+        voice.activate()
+        locomotion.deactivate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        random_index = random.randint(0, len(self.give_order)-1)
+        self.voice_params["speech"] = self.give_order[random_index]
+
+        voice.run(self.voice_params)
+        rospy.sleep(20.)
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
         pass
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+        return 'state 00'
