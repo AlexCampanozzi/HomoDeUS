@@ -522,6 +522,7 @@ class State07(StateBase):
         locomotion.activate()
 
     def _execution(self):
+        voice.run(self.voice_params)
         self.result = locomotion.goto(kitchen_position)
 
     def _post_execution(self):
@@ -535,26 +536,29 @@ class State07(StateBase):
 class State08(StateBase):
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
+
+        self.voice_params = {
+            "speech" : "",
+            "language" : "en_GB"
+            }
 
     def _set_id(self):
         return 'state 08'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        face_tracking.activate()
+        voice.activate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        self.voice_params["speech"] = order
+        voice.run(self.voice_params)
+        rospy.sleep(15)
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
         pass
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+        return "state 10"
 
 
 class State09(StateBase):
