@@ -4,12 +4,11 @@ import rospy
 from states import *
 from state_machine import *
 
-bertrand = StateMachine()
 
 def main():
 
     bertrand = StateMachine()
-    
+
     # Assemble the state machine
     bertrand.add_state(State00())
     bertrand.add_state(State01())
