@@ -89,13 +89,13 @@ class FaceTracking(BehaviorBase):
         self.img_center_x = self.img_width // 2
         self.img_center_y = self.img_height // 2
 
+        self.threshold = 10
+
     def _run(self, params):
         # This method is not necessary for this behavior.
         pass
 
     def _head_callback(self, detections):
-        print('70s show')
-        print(detections.faces[0].x)
 
         if not self.active:
             return
@@ -105,7 +105,7 @@ class FaceTracking(BehaviorBase):
         main_face_dist = 1000000
 
         # Find the closest face to the image center (main face)
-        """for face in faces:
+        for face in detections.faces:
             face_x, face_y = _get_face_center_position(face)
             face_dist = _distance_from_img_center(face_x, face_y)
 
@@ -114,12 +114,21 @@ class FaceTracking(BehaviorBase):
                 main_face_y = face_y
                 main_face_dist = face_dist
 
-        # TODO: Convert main face position to angles (w. velocity?)
-        theta = 0.
-        azimuth = 0.
+        # If the main face is inside the limit, don't move the head
+        if main_face_dist ­­­< self.threshold:
+            return
+
+        # Simple proportional controller
+        K = 0.5
+        
+        error_x = (main_face_x - self.img_center_x) // self.img_center_x
+        error_y = (main_face_y - self.img_center_y) // self.img_center_y
+
+        cmd_x = K * error_x
+        cmd_y = K * error_y
 
         # Send angle command to move the head
-        # self.head_client.GoToAngle(theta, azimuth)"""
+        self.head_client.GoToAngle(cmd_x, cmd_y)
         
     def _distance_from_img_center(self, x, y):
         return math.sqrt((self.img_center_x - x)**2 + (self.img_center_y)**2)
