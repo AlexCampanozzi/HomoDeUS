@@ -456,26 +456,42 @@ class State05(StateBase):
 class State06(StateBase):
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
+
+        self.voice_params = {
+            "speech" : "Please help me, I'm stuck. \
+            Say OK when I'm good to go",
+            "language" : "en_GB"
+            }
+
+        self.voice_recognition_params = {
+            "language": "en-us",
+            "skip_keyword": "False",
+            "tell_back": "False"
+           }
 
     def _set_id(self):
         return 'state 06'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        # Turning on and off the behaviors
+        face_tracking.activate()
+        voice_recognition.activate()
+        voice.activate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
         pass
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        voice.run(self.voice_params)
+        voice_recognition.run(self.voice_recognition_params)
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+        if voice_recognition.speech == "OK":
+            return 'state 07'
+        elif voice_recognition.speech == "reset":
+            return 'state 00'
+        else:
+            return None
 
 
 class State07(StateBase):
