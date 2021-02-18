@@ -118,7 +118,7 @@ class FaceTracking(BehaviorBase):
                 main_face_dist = face_dist
 
         # If the main face is inside the limit, don't move the head
-        if main_face_dist ­­­< self.threshold:
+        if main_face_dist < self.threshold:
             return
 
         # Simple proportional controller
