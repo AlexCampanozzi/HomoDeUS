@@ -438,7 +438,6 @@ class State09(StateBase):
 class State10(StateBase):
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
 
     def _set_id(self):
         return 'state 10'
@@ -450,16 +449,15 @@ class State10(StateBase):
         locomotion.activate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        self.result = locomotion.goto(master_position)
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
         pass
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+        if self.result:
+            return 'state 11'
+        return 'state 09'
 
 
 class State11(StateBase):
@@ -487,7 +485,7 @@ class State11(StateBase):
         locomotion.deactivate()
 
     def _execution(self):
-        #Donne la commande et attent 20 secondes avant de recommencer la machine a etat
+        #Donne la commande et attent 20 secondes avant de retourner au debut de la machine a etat
         random_index = random.randint(0, len(self.give_order)-1)
         self.voice_params["speech"] = self.give_order[random_index]
 
