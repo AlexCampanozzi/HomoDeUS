@@ -254,7 +254,7 @@ class State02(StateBase):
     def get_next_state(self):
 
         # If the robot is still seeing a face, but the voice recognition failed
-        if voice_recognition.speech == ""
+        if voice_recognition.speech == "":
             return 'state 03'
 
         # If the customer asked for something on the menu
@@ -266,8 +266,6 @@ class State02(StateBase):
             self.voice_params["speech"] = "Make sure that you're asking for something on the menu human!"
             voice.run(self.voice_params)
             return None
-
-
 
 
 class State03(StateBase):
@@ -423,26 +421,92 @@ class State04(StateBase):
 class State05(StateBase):
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
+        
+        self.run_count = 0
+
+        self.voice_params = {
+            "speech" : "",
+            "language" : "en_GB"
+            }
+
+        self.voice_recognition_params = {
+            "language": "en-us",
+            "skip_keyword": "False",
+            "tell_back": "False"
+           }
+
+        self.affirmative_answers = [
+            "yes",
+            "right",
+            "algright",
+            "correct"
+            ]
 
     def _set_id(self):
         return 'state 05'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        self.run_count = 0
+
+        # Turning on and off the behaviors
+        face_tracking.activate()
+        voice_recognition.activate()
+        voice.activate()
+        locomotion.deactivate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        speech = "If I understood you right, you want"
+
+        for index in range(len(order)):
+
+            dish = order[index]
+
+            # Adding the dishes to the string
+            if dish[-1] == 's':
+                speech += " some " + dish
+
+            else:
+                if dish[0] == 'b':
+                    speech += " a " + dish
+                else:
+                    speech += " an " + dish
+            
+            if index < len(order) - 1:
+                speech += ","
+            
+            elif (index >= len(order) - 1) and (len(order) is not 1):
+                speech += " and"
+
+        speech += "."
+
+        self.voice_params["speech"] = speech
+        voice.run(self.voice_params)
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        self.voice_params["speech"] = "Did I get the order right? Yes or No."
+        voice.run(self.voice_params)
+
+        voice_recognition.run(self.voice_recognition_params)
+        
+        self.run_count += 1
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
+
+        if voice_recognition.speech == "":
+            
+            if self.run_count < 3:
+                return None
+            
+            else:
+                return 'state 04'
+        
+        voice_recognition_results = re.sub(r'[^\w\s]','', voice_recognition.speech).lower()
+        is_affirmative_answer = bool(set(self.affirmative_answers) & set(voice_recognition_results.split()))
+
+        if is_affirmative_answer:
+            return 'state 07'
+        
+        return 'state 04'
 
 
 """
