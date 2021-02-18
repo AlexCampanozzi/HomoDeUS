@@ -7,9 +7,6 @@ import threading
 import rospy
 import actionlib
 from pal_detection_msgs.msg import FaceDetections
-# from face_detection.msg import FacePosition
-# from face_detection.msg import FacePositions
-# from headActionClient import HeadActionClient
 from speech_recognition_server.msg import SpeechRecognitionActivatedAction
 from speech_recognition_server.msg import SpeechRecognitionActivatedGoal
 from speech_recognition_server.msg import SpeechRecognitionActivatedFeedback
@@ -155,7 +152,6 @@ class VoiceRecognition(BehaviorBase):
         skip_keyword = (params["skip_keyword"] == "True")
         tell_back = (params["tell_back"] == "True")
 
-        # TODO: Check this part
         goal = SpeechRecognitionActivatedGoal()
         goal.language = language
         goal.skip_keyword = skip_keyword
@@ -221,5 +217,3 @@ class Locomotion(BehaviorBase):
         orientation = float(params["orientation"])
         
         self.navigator.goto(x, y, orientation)
-
-
