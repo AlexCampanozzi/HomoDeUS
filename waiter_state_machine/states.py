@@ -194,6 +194,7 @@ class State03(StateBase):
     """
     The robot is pushing the customer to order
     """
+    # /!\ WARNING: This code wasn't tested! /!\
     def __init__(self):
         StateBase.__init__(self)
         
@@ -256,6 +257,7 @@ class State03(StateBase):
         
         # If the robot didn't recognize a face during the execution,
         # we assume that the customer left
+        # TODO: /!\ This might be wrong, I need to think about it! /!\
         if self.last_face_timestamp == face_tracking.timestamp:
             return 'state 01'
 
