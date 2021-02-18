@@ -11,3 +11,12 @@ def check_if_any_word_in_menu(sentence):
     co_occuring_words = set(menu) & set(string.split())
 
     return bool(co_occuring_words)
+
+
+def extract_order(sentence):
+
+    # Remove punctuation and capital letters
+    string = re.sub(r'[^\w\s]','',sentence).lower()
+
+    # Returning the intersection
+    return (set(menu) & set(string.split()))

@@ -250,7 +250,6 @@ class State03(StateBase):
 
         # Letting a clue that the robot isn't listening anymore
         self.voice_params["speech"] = "Alright, let me process that..."
-
         voice.run(self.voice_params)
 
     def get_next_state(self):
