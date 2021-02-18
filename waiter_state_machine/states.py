@@ -4,7 +4,6 @@ from behaviors import *
 from menu import *
 import random
 
-
 class StateBase:
     """
     Base class from which every state inherits from. Each child has
@@ -19,7 +18,7 @@ class StateBase:
     def __init__(self):
         self.id = self._set_id()
         self.reset()
-
+        
         # TODO: Maybe create objects of each behavior here?
 
     def reset(self):
@@ -509,27 +508,29 @@ class State06(StateBase):
 class State07(StateBase):
     def __init__(self):
         StateBase.__init__(self)
-        # TODO: Add code here if necessary...
+
+        self.voice_params = {
+            "speech" : "Order coming right on!",
+            "language" : "en_GB"
+            }
 
     def _set_id(self):
         return 'state 07'
 
     def _pre_execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        voice.activate()
+        locomotion.activate()
 
     def _execution(self):
-        # TODO: Add code here if necessary...
-        pass
+        self.result = locomotion.goto(kitchen_position)
 
     def _post_execution(self):
-        # TODO: Add code here if necessary...
         pass
 
     def get_next_state(self):
-        # TODO: Add code here if necessary...
-        pass
-
+        if self.result:
+            return 'state 08'
+        return 'state 06'
 
 class State08(StateBase):
     def __init__(self):
