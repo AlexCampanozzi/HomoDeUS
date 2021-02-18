@@ -76,7 +76,7 @@ class FaceTracking(BehaviorBase):
         BehaviorBase.__init__(self)
 
         # Setting up a head action client and a subscriber to /faces
-        # self.head_client = HeadActionClient() # <------ WARNING: init_node is used in this class!!
+        self.head_client = HeadActionClient() # <------ WARNING: init_node is used in this class!!
         rospy.Subscriber('/pal_face/faces', FaceDetections, self._head_callback)
 
         # Collecting image settings

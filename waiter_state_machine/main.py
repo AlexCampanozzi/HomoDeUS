@@ -27,10 +27,16 @@ def main():
     # Creating the node
     rospy.init_node('waiter_state_machine')
 
+    # Printing the current state id
+    rospy.loginfo("Switched to state: " + bertrand.get_current_state().get_id())
+
     # Main loop
     while not rospy.is_shutdown():
         bertrand.run_current_state()
-        bertrand.check_transitions()
+        
+        if bertrand.check_transitions():
+            rospy.loginfo("Switched to state: " + bertrand.get_current_state().get_id())
+        
         rospy.sleep(0.01)
 
 if __name__ == "__main__":
