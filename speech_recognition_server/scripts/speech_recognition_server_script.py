@@ -9,11 +9,11 @@ from speech_recognition_server.msg import SpeechRecognitionActivatedFeedback
 
 
 class SpeechRecognitionServer():
-  """
+    """
     This class provides a server to which you can send goal about speech recognition tasks.
     """
     def __init__(self):
-         """
+        """
         This method initializes and start the server to which you send your goals and initialize the recognizer able to understand 
         what is said to the robot.
         """
@@ -31,7 +31,7 @@ class SpeechRecognitionServer():
         rospy.loginfo("SpeechRecongitionServer: Running.")
 
     def execute_cb(self, goal):
-         """
+        """
         This method receive a goal and deal with it by translating it into a command for the recognizer. 
         It also deals with what to send as feedback to the action server by sending the word(s) recognize by the recognizer
 
@@ -73,10 +73,10 @@ class SpeechRecognitionServer():
 
 
 if __name__ == '__main__':
-     """
-        This if condition tells what to do if the script is called directely. Otherwise, this part should be ignored.
-        It vreates a node and starts the speechRecognition server in it.
-        """
+    """
+    This if condition tells what to do if the script is called directely. Otherwise, this part should be ignored.
+    It vreates a node and starts the speechRecognition server in it.
+    """
     rospy.init_node('keyword_speech_multi_recognizer_server')
     try:
         SpeechRecognitionServer()
