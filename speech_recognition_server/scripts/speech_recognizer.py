@@ -45,9 +45,9 @@ class SpeechRecognizer:
         # Time out for keywords detection
         self.timeout = timeout
 
-        # Setting up Pocket Sphinx
-        model_dir = "/home/pal/Downloads/pocketsphinx-5prealpha/model"
-
+        # Setting up Pocket Sphinx        
+        model_dir = os.path.join(os.path.dirname(__file__), '../pocketsphinx-5prealpha/model')
+        
         self.config = Decoder.default_config()
         self.config.set_string(
             '-hmm', os.path.join(model_dir, 'en-us/en-us'))
@@ -147,6 +147,7 @@ class SpeechRecognizer:
             value is set to american english.
         """
         with sr.Microphone() as source:
+            # self.recognizer.adjust_for_ambient_noise(source, duration=1) #if problem with listen, uncomment this to see if it is caused by the ambiant noise
             audio = self.recognizer.listen(source)
 
             try:
@@ -228,7 +229,7 @@ class SpeechRecognizer:
                 rospy.loginfo("SpeechRecognition: Recognized keyword!")
                 self.say(self.keyword_recognized_text)
                 self.tts_client.wait_for_result()
-
+            
             result = self.speech_to_text()
 
             if tell_back and result:
