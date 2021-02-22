@@ -46,7 +46,7 @@ class SpeechRecognizer:
         self.timeout = timeout
 
         # Setting up Pocket Sphinx        
-        model_dir = os.path.join(os.path.dirname(__file__), '../pocketsphinx-5prealpha/model')
+        model_dir = os.path.join(os.path.dirname(__file__), '../include/pocketsphinx-5prealpha/model')
         
         self.config = Decoder.default_config()
         self.config.set_string(
@@ -147,11 +147,12 @@ class SpeechRecognizer:
             value is set to american english.
         """
         with sr.Microphone() as source:
-            # self.recognizer.adjust_for_ambient_noise(source, duration=1) #if problem with listen, uncomment this to see if it is caused by the ambiant noise
+            # self.recognizer.adjust_for_ambient_noise(source, duration=1) 
+            # #if problem with listen, uncomment this to see if it is caused by the ambiant noise
+            rospy.loginfo("SpeechRecognition: Listening...")
             audio = self.recognizer.listen(source)
 
             try:
-                rospy.loginfo("SpeechRecognition: Listening...")
                 speech = self.recognizer.recognize_google(audio, language=language)
                 return speech
 
