@@ -56,6 +56,7 @@ class StateMachine:
         Method to check if a transition should occur and to perform
         the switch of state if necessary.
         """
+        print("statemachine checkTransition")
         next_state = self.current_state.get_next_state()
 
         if (next_state is not None) and (next_state in self.states.keys()):

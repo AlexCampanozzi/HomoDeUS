@@ -9,9 +9,9 @@ import tf_lookup.srv
 
 class Navigator:
     def __init__(self):
-        rospy.init_node('base_cmds', anonymous=False)
+        #rospy.init_node('base_cmds', anonymous=False)
         self.landmarks = {}
-        
+        print("InitNavigator")
         # define a client for to send goal requests to the move_base server through a SimpleActionClient
         self.ac = actionlib.SimpleActionClient("move_base", MoveBaseAction)
 
@@ -21,9 +21,9 @@ class Navigator:
 
     def goto(self, xGoal, yGoal, oriGoal):
         goal = MoveBaseGoal()
-
+        print("GoTo")
         # set up the frame parameters
-        goal.target_pose.header.frame_id = "map"
+        goal.target_pose.header.frame_id = "odom"
         goal.target_pose.header.stamp = rospy.Time.now()
 
         goal.target_pose.pose.position = Point(xGoal, yGoal, 0)
@@ -32,18 +32,20 @@ class Navigator:
         goal.target_pose.pose.orientation.z = 1
         goal.target_pose.pose.orientation.w = oriGoal
 
-        self.gotoGoal(goal)
+        return(self.gotoGoal(goal))
 
     def gotoGoal(self, goal):
         rospy.loginfo("Sending goal location ...")
         self.ac.send_goal(goal)
-
+        print(self.getCurPose())
+        print(goal)
         self.ac.wait_for_result(rospy.Duration(60))
 
         if(self.ac.get_state() == GoalStatus.SUCCEEDED):
                 rospy.loginfo("The robot reached the destination")
                 return True
         else:
+                
                 rospy.loginfo("The robot failed to reach the destination")
                 return False
 
@@ -59,7 +61,7 @@ class Navigator:
             landmarkGoal.target_pose.pose.orientation.z = 1
             landmarkGoal.target_pose.pose.orientation.w = w
         
-        landmarkGoal.target_pose.header.frame_id = "map"
+        landmarkGoal.target_pose.header.frame_id = "odom"
         #Time will have to be overwritten before actually sending the goal
         landmarkGoal.target_pose.header.stamp = rospy.Time.now()
         print landmarkGoal
