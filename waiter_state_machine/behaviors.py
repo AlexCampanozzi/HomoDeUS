@@ -182,6 +182,7 @@ class VoiceRecognition(BehaviorBase):
         self.speech = ""
 
     def _run(self, params):
+        self.speech = ""
         language = params["language"]
         skip_keyword = (params["skip_keyword"] == "True")
         tell_back = (params["tell_back"] == "True")
@@ -242,7 +243,6 @@ class Voice(BehaviorBase):
 
             self.tts_client.send_goal(goal)
             rospy.sleep(5.)
-
 
 class Locomotion(BehaviorBase):
     def __init__(self):

@@ -21,6 +21,10 @@ class StateBase:
         
         # TODO: Maybe create objects of each behavior here?
 
+        self.run_pre_execution = True
+        self.run_execution = True
+        self.run_post_execution = True
+
     def reset(self):
         """
         This method gets called by the StateMachine to reset the state
@@ -45,6 +49,11 @@ class StateBase:
         after the activation while self._post_execution() will be ran in a
         loop and can be used to idle while waiting for a transition.
         """
+        print("")
+        print("Should run pre execution: " + str(self.run_pre_execution))
+        print("Should run execution: " + str(self.run_execution))
+        print("Should run post execution: " + str(self.run_post_execution))
+        print("")
         if self.run_pre_execution:
             self._pre_execution()
             self.run_pre_execution = False

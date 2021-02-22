@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 from states import *
+import rospy
 
 
 class StateMachine:
@@ -38,7 +39,7 @@ class StateMachine:
             self.states[key] = state
 
             if self.current_state is None:
-                self.current_state = self.states[key]
+                self.current_state = self.states.get(key)
 
             return True
 
@@ -61,7 +62,11 @@ class StateMachine:
 
         if (next_state is not None) and (next_state in self.states.keys()):
             self.current_state.reset()
-            self.current_state = self.states[next_state]
+            self.current_state = self.states.get(next_state)
+            self.current_state.run_pre_execution = True
+            self.current_state.run_execution = True
+            self.current_state.run_post_execution = True
+            rospy.sleep(0.5)
             return True
 
         return False
