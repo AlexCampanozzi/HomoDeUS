@@ -22,12 +22,12 @@ hbba_conf:
     move_stack: 1
 
 # Goto Generator:
-- motivation:
-    name: goto_generator
-    launch: {pkg: "tiago_hbba_cfg", path: "launch/motv_goto_generator.launch"}
-    input:
-     - goto_goal
+# - motivation:
+#     name: goto_generator
+#     launch: {pkg: "tiago_hbba_cfg", path: "launch/motv_goto_generator.launch"}
+#     input:
+#      - goto_goal
 
 - motivation:
-    name: goto_generator
+    name: goto_tester
     launch: {pkg: "tiago_hbba_cfg", path: "launch/motv_goto_test.launch"}
