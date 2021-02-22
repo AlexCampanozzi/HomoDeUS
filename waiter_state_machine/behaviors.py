@@ -82,6 +82,7 @@ class FaceTracking(BehaviorBase):
         print("Face tracking constructing 2")
         rospy.Subscriber('/pal_face/faces', FacePositions, self._head_callback)
 
+
         # Collecting image settings
         self.img_width = 320 #rospy.get_param('processing_img_width')
         self.img_height = 240 #rospy.get_param('processing_img_height')
@@ -102,6 +103,9 @@ class FaceTracking(BehaviorBase):
 
     def _head_callback(self, detections):
         print("HeadCallBack")
+        # TODO: Maybe this should go after the activation check?
+        self.timestamp = time.time()
+
         # TODO: Maybe this should go after the activation check?
         self.timestamp = time.time()
 
