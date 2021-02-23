@@ -56,6 +56,7 @@ class SpeechRecognitionServer():
         action_feedback.recognition_results="A goal was sent setting the language at: " + lang + " and skip_keyword at:" + str(goal.skip_keyword)
         self.actionServer.publish_feedback(action_feedback)
         action_result = SpeechRecognitionActivatedResult()
+        
         # Run the main recognition loop
         while not rospy.is_shutdown() and not self.actionServer.is_preempt_requested():
             try:
