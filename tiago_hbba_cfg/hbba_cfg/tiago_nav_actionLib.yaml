@@ -31,3 +31,13 @@ hbba_conf:
 - motivation:
     name: goto_tester
     launch: {pkg: "tiago_hbba_cfg", path: "launch/motv_goto_test.launch"}
+    input:
+        - events
+
+- motivation:
+    name: goto_results_observer
+    launch: {pkg: "tiago_hbba_cfg", path: "launch/motv_goto_results_observer.launch"}
+    input:
+        - nav_result
+    output:
+        - events

@@ -127,6 +127,7 @@ add_hbba_cfg(tiago_nav_actionLib hbba_cfg/tiago_nav_actionLib.yaml)
 ## in contrast to setup.py, you can choose the destination
 install(PROGRAMS
   tiago_motivations/scripts/motv_goto_test.py
+  tiago_motivations/scripts/motv_goto_results_observer.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

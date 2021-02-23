@@ -1,5 +1,3 @@
-# SLAM Planner can be used either GMapping or static maps as they both provide
-# SLAM strategies, see the related proc modules configurations.
 hbba_conf:
 
 - behavior:
@@ -11,13 +9,14 @@ hbba_conf:
         - move_base: {src: move_base, filtered: false}
     output:
         - cmd_vel
+        - nav_result
             
 - strat:
-    name: TBSLAMPlanner
+    name: TIAGoTo
     class: GoTo
     utility: 8
     costs: {move_stack: 1}
-    # modules:
-    #     - tiago_slam_planner
+    modules:
+        - tiago_nav
     custom_bringup: "pubNavGoal('/hbba_nav_goal', params.frame_id, params.x, params.y, params.t);"
 

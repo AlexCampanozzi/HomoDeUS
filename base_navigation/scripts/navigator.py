@@ -6,6 +6,7 @@ from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from actionlib_msgs.msg import *
 from geometry_msgs.msg import Point, Pose
 import tf_lookup.srv
+from tf.transformations import quaternion_from_euler, euler_from_quaternion
 
 class Navigator:
     def __init__(self):
@@ -27,12 +28,15 @@ class Navigator:
         goal.target_pose.header.stamp = rospy.Time.now()
 
         goal.target_pose.pose.position = Point(xGoal, yGoal, 0)
-        goal.target_pose.pose.orientation.x = 0.0
-        goal.target_pose.pose.orientation.y = 0.0
-        goal.target_pose.pose.orientation.z = 1
-        goal.target_pose.pose.orientation.w = oriGoal
+        quaternion = quaternion_from_euler(0, 0, oriGoal)
+        goal.target_pose.pose.orientation.x = quaternion[0]
+        goal.target_pose.pose.orientation.y = quaternion[1]
+        goal.target_pose.pose.orientation.z = quaternion[2]
+        goal.target_pose.pose.orientation.w = quaternion[3]
 
-        self.gotoGoal(goal)
+        print oriGoal
+
+        return self.gotoGoal(goal)
 
     def gotoGoal(self, goal):
         rospy.loginfo("Sending goal location ...")
@@ -71,7 +75,7 @@ class Navigator:
             return
         goal = self.landmarks[name]
         goal.target_pose.header.stamp = rospy.Time.now()
-        self.gotoGoal(goal)
+        return self.gotoGoal(goal)
 
     def cancelAllGoto(self):
         self.ac.cancel_all_goals()
