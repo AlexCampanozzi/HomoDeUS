@@ -75,8 +75,8 @@ class SpeechRecognizer:
         self.recognizer = sr.Recognizer()
 
         # Setting up Text-to-Speech
-        self.tts_client = actionlib.SimpleActionClient("tts", pal_interaction_msgs.msg.TtsAction)
-        self.tts_client.wait_for_server()
+        #self.tts_client = actionlib.SimpleActionClient("tts", pal_interaction_msgs.msg.TtsAction)
+        #self.tts_client.wait_for_server()
 
     def say(self, text):
         """

@@ -1,0 +1,20 @@
+hbba_conf:
+
+- procmodule:
+    name: tiago_proc_listen
+    launch: {pkg: 'tiago_hbba_cfg', path: 'launch/tiago_proc_listen_actionLib.launch'}
+    input: 
+        - voix
+    output:
+        - text
+
+- strat:
+    name: Listen
+    class: Listening
+    utility: 10
+    costs: {microphone: 1}
+    modules:
+        - tiago_listen:
+            - scan: 1
+            - odom: 1
+

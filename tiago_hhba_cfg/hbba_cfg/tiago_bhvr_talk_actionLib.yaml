@@ -1,0 +1,23 @@
+# SLAM Planner can be used either GMapping or static maps as they both provide
+# SLAM strategies, see the related proc modules configurations.
+hbba_conf:
+
+- behavior:
+    name: tiago_bhvr_talk
+    launch: {pkg: 'tiago_hbba_cfg', path: 'launch/tiago_bhvr_talk_actionLib.launch'}
+    priority: 10
+    # nom random pour le input, la source vient de topic
+    input:
+        - speech_recognition_feedback: {src: /speech_recognition_action_server/feedback, filtered: false}
+    output:
+        - TtsGoal
+            
+- strat:
+    name: welcoming
+    class: Talking
+    utility: 8
+    costs: {speaker: 1}
+     modules:
+         - tiago_talk
+    #custom_bringup: "pubNavGoal('/hbba_nav_goal', params.frame_id, params.x, params.y, params.t);"
+

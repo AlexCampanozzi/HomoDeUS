@@ -1,0 +1,33 @@
+# Basic tiago navigation demo (with a static map) in HBBA.
+# WARNING: Not up to date with Melodic / TB3 config (2019/09)
+
+hbba_conf:
+
+- include: {pkg: 'hbba_synth',         file: 'common.yaml'}
+- include: {pkg: 'tiago_hbba_cfg', file: 'tiago.yaml'}
+
+# Proc modules:
+- include: {pkg: 'tiago_hbba_cfg', file: 'tiago_proc_listen_actionLib.yaml'}
+
+# Behaviors:
+- include: {pkg: 'tiago_hbba_cfg', file: 'tiago_bhvr_talk_actionLib.yaml'}
+
+# Motivation:
+- include: {pkg: 'tiago_hbba_cfg', file: 'tiago_motv_talk_actionLib.yaml'}
+
+# Combined priorities:
+- behavior_priority: {name: 'tiago_talk',     value: 90}
+
+# Available resources:
+- resources:
+    CPU: 100
+    microphone: 1
+    speaker: 1
+
+# Periodically look up to reset the head's tilt (on by default):
+- desire:
+   id: listening_scenarios
+   type: Listening
+   utility: 1
+   intensity: 1.0
+   security: False

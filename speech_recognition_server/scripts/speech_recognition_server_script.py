@@ -5,8 +5,8 @@ import sys
 import actionlib
 import speech_recognizer as sr
 from speech_recognition_server.msg import SpeechRecognitionActivatedAction
+from speech_recognition_server.msg import SpeechRecognitionActivatedResult
 from speech_recognition_server.msg import SpeechRecognitionActivatedFeedback
-
 
 class SpeechRecognitionServer():
     """
@@ -28,7 +28,7 @@ class SpeechRecognitionServer():
         self.actionServer.register_preempt_callback(self.recognizer.interrupt())
 
         self.actionServer.start()
-        rospy.loginfo("SpeechRecongitionServer: Running.")
+        rospy.loginfo("SpeechRecognitionServer: Running.")
 
     def execute_cb(self, goal):
         """
@@ -46,30 +46,30 @@ class SpeechRecognitionServer():
                 A bool pointing out if the robot has to repeat the words just said to it
         """
         rospy.loginfo("SpeechRecognitionServer: Received a goal")
-
+        action_feedback = SpeechRecognitionActivatedFeedback()
         # If the user specifies a language
         if bool(goal.language and goal.language.strip()):
             lang = goal.language
         else:
             lang = "en-US"
-
-        feedback = SpeechRecognitionActivatedFeedback()
-
+        
+        action_feedback.recognition_results="A goal was sent setting the language at: " + lang + " and skip_keyword at:" + str(goal.skip_keyword)
+        self.actionServer.publish_feedback(action_feedback)
+        action_result = SpeechRecognitionActivatedResult()
         # Run the main recognition loop
         while not rospy.is_shutdown() and not self.actionServer.is_preempt_requested():
             try:
-                results = self.recognizer.run(
-                    lang,
-                    skip_keyword=goal.skip_keyword,
-                    tell_back=goal.tell_back)
-
-                feedback.recognition_results = results
-                self.actionServer.publish_feedback(feedback)
+                results = self.recognizer.run(lang,
+                    skip_keyword=goal.skip_keyword)
+                action_result.recognition_results = results
+                self.actionServer.set_succeeded(result=action_result,text="Goal achieve youhou!")
 
             except Exception as e:
                 rospy.logerr(str(e))
 
         self.actionServer.set_preempted()
+
+#On dirait que result peut seulement etre envoye par set_succeeded alors cela fermerait laction server?
 
 
 if __name__ == '__main__':
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     This if condition tells what to do if the script is called directely. Otherwise, this part should be ignored.
     It vreates a node and starts the speechRecognition server in it.
     """
-    rospy.init_node('keyword_speech_multi_recognizer_server')
+    rospy.init_node('speech_recognition_server_node')
     try:
         SpeechRecognitionServer()
         rospy.spin()
