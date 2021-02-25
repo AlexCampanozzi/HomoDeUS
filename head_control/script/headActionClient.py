@@ -5,10 +5,13 @@ import rospy
 import roslib
 import actionlib
 import control_msgs.msg
+from geometry_msgs.msg import PoseStamped
 import geometry_msgs
 import math
 from pal_startup_msgs.srv import StartupStart, StartupStop
 import rosservice
+
+from std_msgs.msg import String
 
 class HeadActionClient:
     """
@@ -17,9 +20,12 @@ class HeadActionClient:
     def __init__(self):
         os.system("export ROS_MASTER_URI=http://10.68.0.1:11311")
         os.system("export ROS_IP=10.68.0.127")
+
         rospy.init_node('headAction', anonymous=False)
         self.client = actionlib.SimpleActionClient(
             "/head_controller/point_head_action", control_msgs.msg.PointHeadAction)
+
+        rospy.Subscriber("tiago_head_controller", geometry_msgs.msg.PoseStamped, self.callback)
 
         # Disabling the pal_head_manager to prevent unwanted head motion while moving the head
         service_list = rosservice.get_service_list()
@@ -40,6 +46,8 @@ class HeadActionClient:
         # wait for the action server to come up
         while(not self.client.wait_for_server(rospy.Duration.from_sec(5.0))):
             rospy.loginfo("Waiting for the action server to come up")
+
+        rospy.spin()
 
     def GotoPosition(self, x, y):
         """
@@ -73,11 +81,18 @@ class HeadActionClient:
     def GotoAngle(self, Ytheta, Xtheta):
         """
         This method converts angles value into position before using the GotoPosition function
-        Ytheta (float): The x position in the optical frame that the robot must reach
-        xTheta (float): The y position in the optical frame that the robot must reach
+        Ytheta (float): The x angle in the optical frame that the robot must reach
+        xTheta (float): The y angle in the optical frame that the robot must reach
         """
         Ytheta = Ytheta*math.pi/180
         Xtheta = Xtheta*math.pi/180
 
         self.GotoPosition(math.tan(Ytheta), math.tan(Xtheta))
 
+    def callback(self, data):
+        rospy.loginfo("I heard %s", data.pose.position.x)
+        rospy.loginfo("I heard %s", data.pose.position.y)
+        rospy.loginfo("I heard %s", data.pose.orientation.w)
+        rospy.loginfo("I heard %s", data.header.frame_id)
+
+        self.GotoAngle(data.pose.position.x, data.pose.position.y)
