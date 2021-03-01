@@ -1,0 +1,32 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/pal/catkin_ws/devel/include/**",
+        "/opt/pal/ferrum/include/**",
+        "/opt/ros/melodic/include/**",
+        "/home/pal/catkin_ws/src/HBBA/hbba_base/abtr_priority/include/**",
+        "/home/pal/catkin_ws/src/aruco_ros/aruco/include/**",
+        "/home/pal/catkin_ws/src/aruco_ros/aruco_ros/include/**",
+        "/home/pal/catkin_ws/src/HBBA/emotion_generator/include/**",
+        "/home/pal/catkin_ws/src/HBBA/iw/include/**",
+        "/home/pal/catkin_ws/src/HBBA/iw_observer/include/**",
+        "/home/pal/catkin_ws/src/HBBA/hbba_base/iw_tools/include/**",
+        "/home/pal/catkin_ws/src/HBBA/iw_translator/include/**",
+        "/home/pal/catkin_ws/src/HBBA/script_engine/include/**",
+        "/home/pal/catkin_ws/src/HBBA/hbba_base/script_engine_plugins/include/**",
+        "/home/pal/catkin_ws/src/HomoDeUS/speech_recognition_server/include/**",
+        "/home/pal/catkin_ws/src/tiago_tutorials/tiago_pcl_tutorial/include/**",
+        "/home/pal/catkin_ws/src/HBBA/hbba_base/topic_filters/include/**",
+        "/home/pal/catkin_ws/src/HBBA/topic_filters_manager/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}
