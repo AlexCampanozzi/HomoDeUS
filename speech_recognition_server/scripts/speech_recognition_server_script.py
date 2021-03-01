@@ -5,8 +5,10 @@ import sys
 import actionlib
 import speech_recognizer as sr
 from speech_recognition_server.msg import SpeechRecognitionActivatedAction
+from speech_recognition_server.msg import SpeechRecognitionActivatedResult
 from speech_recognition_server.msg import SpeechRecognitionActivatedFeedback
 
+from bondpy import bondpy
 
 class SpeechRecognitionServer():
     """
@@ -22,13 +24,24 @@ class SpeechRecognitionServer():
             SpeechRecognitionActivatedAction,
             execute_cb=self.execute_cb,
             auto_start=False)
-
         self.recognizer = sr.SpeechRecognizer()
 
         self.actionServer.register_preempt_callback(self.recognizer.interrupt())
 
         self.actionServer.start()
-        rospy.loginfo("SpeechRecongitionServer: Running.")
+        
+        #bool used for bond_connexion
+        self.not_shutting_down = True
+        self.bond_connexion_loop()
+        rospy.loginfo("SpeechRecognitionServer: Running.")
+
+    def bond_connexion_loop(self):
+        if hasattr(self,'bond'):
+            self.bond.break_bond()
+            self.bond.shutdown()
+        if not self.actionServer.is_preempt_requested():
+            self.bond = bondpy.Bond("/listenManager_bond_topic", "1234",self.bond_connexion_loop)
+            self.bond.start()
 
     def execute_cb(self, goal):
         """
@@ -45,41 +58,48 @@ class SpeechRecognitionServer():
             tell_back: bool
                 A bool pointing out if the robot has to repeat the words just said to it
         """
+        if self.actionServer.is_preempt_requested():
+            rospy.loginfo('%s: Preempted' % self.actionServer.__class__.__name__)
+            self.actionServer.set_preempted()
+        
         rospy.loginfo("SpeechRecognitionServer: Received a goal")
+        action_feedback = SpeechRecognitionActivatedFeedback()
 
         # If the user specifies a language
         if bool(goal.language and goal.language.strip()):
             lang = goal.language
         else:
             lang = "en-US"
-
-        feedback = SpeechRecognitionActivatedFeedback()
-
+        
+        action_feedback.feedback_on_goal="A goal was sent setting the language at: " + lang + " and skip_keyword at:" + str(goal.skip_keyword)
+        self.actionServer.publish_feedback(action_feedback)
+        
+        action_result = SpeechRecognitionActivatedResult()
+        
         # Run the main recognition loop
-        while not rospy.is_shutdown() and not self.actionServer.is_preempt_requested():
+        while not rospy.is_shutdown() and not self.actionServer.is_preempt_requested() and self.actionServer.is_active():
             try:
-                results = self.recognizer.run(
-                    lang,
-                    skip_keyword=goal.skip_keyword,
-                    tell_back=goal.tell_back)
-
-                feedback.recognition_results = results
-                self.actionServer.publish_feedback(feedback)
+                results = self.recognizer.run(lang,
+                    skip_keyword=goal.skip_keyword)
+                action_result.recognition_results = results
+                self.actionServer.set_succeeded(result=action_result,text="Goal achieved")
 
             except Exception as e:
                 rospy.logerr(str(e))
 
-        self.actionServer.set_preempted()
-
-
+    def shutting_down(self):
+        self.not_shutting_down = False
+        self.bond_connexion_loop()
+        
 if __name__ == '__main__':
     """
     This if condition tells what to do if the script is called directely. Otherwise, this part should be ignored.
     It vreates a node and starts the speechRecognition server in it.
     """
-    rospy.init_node('keyword_speech_multi_recognizer_server')
     try:
-        SpeechRecognitionServer()
+        rospy.init_node('speech_recognition_server_node')
+        node = SpeechRecognitionServer()
+        rospy.on_shutdown(node.shutting_down)
         rospy.spin()
 
     except Exception:

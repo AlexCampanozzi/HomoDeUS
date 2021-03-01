@@ -75,8 +75,8 @@ class SpeechRecognizer:
         self.recognizer = sr.Recognizer()
 
         # Setting up Text-to-Speech
-        self.tts_client = actionlib.SimpleActionClient("tts", pal_interaction_msgs.msg.TtsAction)
-        self.tts_client.wait_for_server()
+        #self.tts_client = actionlib.SimpleActionClient("tts", pal_interaction_msgs.msg.TtsAction)
+        #self.tts_client.wait_for_server()
 
     def say(self, text):
         """
@@ -92,7 +92,7 @@ class SpeechRecognizer:
         goal.rawtext.lang_id = "en_GB"
         goal.rawtext.text = text
 
-        self.tts_client.send_goal(goal)
+        #self.tts_client.send_goal(goal)
 
     def interrupt(self):
         """
@@ -147,7 +147,7 @@ class SpeechRecognizer:
             value is set to american english.
         """
         with sr.Microphone() as source:
-            # self.recognizer.adjust_for_ambient_noise(source, duration=1) 
+            self.recognizer.adjust_for_ambient_noise(source, duration=1) 
             # #if problem with listen, uncomment this to see if it is caused by the ambiant noise
             rospy.loginfo("SpeechRecognition: Listening...")
             audio = self.recognizer.listen(source)
@@ -228,14 +228,14 @@ class SpeechRecognizer:
                     return ""
 
                 rospy.loginfo("SpeechRecognition: Recognized keyword!")
-                self.say(self.keyword_recognized_text)
-                self.tts_client.wait_for_result()
+                #self.say(self.keyword_recognized_text)
+                #self.tts_client.wait_for_result()
             
             result = self.speech_to_text()
 
-            if tell_back and result:
-                self.say(result)
-                self.tts_client.wait_for_result()
+            #if tell_back and result:
+                #self.say(result)
+                #self.tts_client.wait_for_result()
 
             return result
 
