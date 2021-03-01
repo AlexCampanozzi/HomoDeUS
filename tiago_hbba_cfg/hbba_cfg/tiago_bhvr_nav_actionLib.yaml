@@ -6,6 +6,7 @@ hbba_conf:
     priority: 10
     input:
         - hbba_nav_goal: {src: hbba_nav_goal, filtered: false}
+        - hbba_landmark_nav_goal: {src: hbba_landmark_nav_goal, filtered: false}
         - move_base: {src: move_base, filtered: false}
     output:
         - cmd_vel
@@ -19,4 +20,12 @@ hbba_conf:
     modules:
         - tiago_nav
     custom_bringup: "pubNavGoal('/hbba_nav_goal', params.frame_id, params.x, params.y, params.t);"
-
+    
+- strat:
+    name: TIAGoToLandmark
+    class: GoToLandmark
+    utility: 8
+    costs: {move_stack: 1}
+    modules:
+        - tiago_nav
+    custom_bringup: "pubString('/hbba_landmark_nav_goal', params.name);"

@@ -10,14 +10,14 @@ from tf.transformations import quaternion_from_euler, euler_from_quaternion
 
 class Navigator:
     def __init__(self):
-        rospy.init_node('base_cmds', anonymous=False)
+        # rospy.init_node('base_cmds', anonymous=False)
         self.landmarks = {}
         
         # define a client for to send goal requests to the move_base server through a SimpleActionClient
         self.ac = actionlib.SimpleActionClient("move_base", MoveBaseAction)
 
         # wait for the action server to come up
-        while(not self.ac.wait_for_server(rospy.Duration.from_sec(5.0))):
+        while(not self.ac.wait_for_server(rospy.Duration.from_sec(5.0)) and not rospy.is_shutdown()):
             rospy.loginfo("Waiting for the move_base action server to come up")
 
     def goto(self, xGoal, yGoal, oriGoal):
@@ -34,22 +34,31 @@ class Navigator:
         goal.target_pose.pose.orientation.z = quaternion[2]
         goal.target_pose.pose.orientation.w = quaternion[3]
 
-        print oriGoal
-
-        return self.gotoGoal(goal)
+        self.gotoGoal(goal)
 
     def gotoGoal(self, goal):
         rospy.loginfo("Sending goal location ...")
-        self.ac.send_goal(goal)
+        self.ac.send_goal(goal, self.gotoDoneCB)
 
-        self.ac.wait_for_result(rospy.Duration(60))
+        # Old way of doing it, we non-blocking now
+        # self.ac.wait_for_result(rospy.Duration(60))
 
-        if(self.ac.get_state() == GoalStatus.SUCCEEDED):
+        # if(self.ac.get_state() == GoalStatus.SUCCEEDED):
+        #         rospy.loginfo("The robot reached the destination")
+        #         return True
+        # else:
+        #         rospy.loginfo("The robot failed to reach the destination")
+        #         return False
+
+    def gotoDoneCB(self, state, result):
+        # We do a bit of witchcraft here and call a method from the child class
+        print("result" + str(result))
+        if(state == GoalStatus.SUCCEEDED):
                 rospy.loginfo("The robot reached the destination")
-                return True
+                self.doneCB(True)
         else:
                 rospy.loginfo("The robot failed to reach the destination")
-                return False
+                self.doneCB(False)
 
     def registerLandmark(self, name, x = None, y = None, w = None):
         landmarkGoal = MoveBaseGoal()
@@ -66,21 +75,18 @@ class Navigator:
         landmarkGoal.target_pose.header.frame_id = "map"
         #Time will have to be overwritten before actually sending the goal
         landmarkGoal.target_pose.header.stamp = rospy.Time.now()
-        # print landmarkGoal
         self.landmarks[name] = landmarkGoal
 
-    def goToLandmark(self, name):
+    def gotoLandmark(self, name):
         if name not in self.landmarks:
             rospy.loginfo("Name does not correspond to any known landmark")
             return
         goal = self.landmarks[name]
         goal.target_pose.header.stamp = rospy.Time.now()
-        return self.gotoGoal(goal)
+        self.gotoGoal(goal)
 
     def cancelAllGoto(self):
         self.ac.cancel_all_goals()
-        # The following comment should fix the call when the server is not up.
-        # self.ac.wait_for_result
 
     def getCurPose(self):
         rospy.wait_for_service('/lookupTransform')

@@ -1,0 +1,3 @@
+<launch>
+    <node name="gotoLandmark_test" pkg="tiago_hbba_cfg" type="motv_gotoLandmark_test.py" output="screen"/>
+</launch>
