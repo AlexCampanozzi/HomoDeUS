@@ -82,7 +82,6 @@ class FaceTracking(BehaviorBase):
         print("Face tracking constructing 2")
         rospy.Subscriber('/pal_face/faces', FacePositions, self._head_callback)
 
-
         # Collecting image settings
         self.img_width = 320 #rospy.get_param('processing_img_width')
         self.img_height = 240 #rospy.get_param('processing_img_height')
@@ -103,9 +102,6 @@ class FaceTracking(BehaviorBase):
 
     def _head_callback(self, detections):
         print("HeadCallBack")
-        # TODO: Maybe this should go after the activation check?
-        self.timestamp = time.time()
-
         # TODO: Maybe this should go after the activation check?
         self.timestamp = time.time()
 
@@ -192,7 +188,7 @@ class VoiceRecognition(BehaviorBase):
         goal.skip_keyword = skip_keyword
         goal.tell_back = tell_back
 
-        self.stt_client.send_goal(goal)
+        self.stt_client.send_goal_and_wait(goal)
         self.stt_client.wait_for_result(timeout=rospy.Duration(30.))
         result = self.stt_client.get_result()
         if result == None:
@@ -241,8 +237,7 @@ class Voice(BehaviorBase):
             goal.rawtext.lang_id = self.language
             goal.rawtext.text = self.speech
 
-            self.tts_client.send_goal(goal)
-            rospy.sleep(5.)
+            self.tts_client.send_goal_and_wait(goal)
 
 class Locomotion(BehaviorBase):
     def __init__(self):

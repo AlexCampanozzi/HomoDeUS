@@ -17,7 +17,6 @@ class StateBase:
     """
     def __init__(self):
         self.id = self._set_id()
-        self.reset()
         
         # TODO: Maybe create objects of each behavior here?
 
@@ -49,20 +48,20 @@ class StateBase:
         after the activation while self._post_execution() will be ran in a
         loop and can be used to idle while waiting for a transition.
         """
-        print("")
-        print("Should run pre execution: " + str(self.run_pre_execution))
-        print("Should run execution: " + str(self.run_execution))
-        print("Should run post execution: " + str(self.run_post_execution))
-        print("")
+        #print("")
+        #print("Should run pre execution: " + str(self.run_pre_execution))
+        #print("Should run execution: " + str(self.run_execution))
+        #print("Should run post execution: " + str(self.run_post_execution))
+        #print("")
         if self.run_pre_execution:
             self._pre_execution()
             self.run_pre_execution = False
 
-        elif self.run_execution:
+        if self.run_execution:
             self._execution()
             self.run_execution = False
 
-        elif self.run_post_execution:
+        if self.run_post_execution:
             self._post_execution()
 
     def _set_id(self):
@@ -143,7 +142,7 @@ master_position = {
 kitchen_position = {
         "x" : "1",
         "y" : "1",
-        "orientation" : "180"
+        "orientation" : "1.57"
     }
 
 order = []
@@ -266,7 +265,7 @@ class State02(StateBase):
 
         self.voice_recognition_params = {
             "language": "en-us",
-            "skip_keyword": "False",
+            "skip_keyword": "True",
             "tell_back": "False"
            }
         #do i need it
@@ -277,6 +276,7 @@ class State02(StateBase):
 
     def _pre_execution(self):
         # Turning on and off the behaviors
+        #print("pre_execution")
         face_tracking.activate()
         voice_recognition.activate()
         voice.activate()
@@ -284,20 +284,22 @@ class State02(StateBase):
 
     def _execution(self):
        
+        #print("execution")
         # greeting customer and asking for order
-        self.voice_params["speech"] = "Good day Human, what kind of food do you want. Please choose from the menu"
+        self.voice_params["speech"] = "Good day Human, what kind of food do you want, Please choose from the menu"
         
         voice.run(self.voice_params)
+        rospy.sleep(2.)
 
     def _post_execution(self):
 
+        #print("postExecution")
         # Listen for an order
         voice_recognition.run(self.voice_recognition_params)
 
     def get_next_state(self):
 
-
-        
+        global order
         if voice_recognition.speech is not "":
             
             if check_if_any_word_in_menu(voice_recognition.speech):
@@ -340,7 +342,7 @@ class State03(StateBase):
 
         self.voice_recognition_params = {
             "language": "en-us",
-            "skip_keyword": "False",
+            "skip_keyword": "True",
             "tell_back": "False"
            }
 
@@ -362,6 +364,7 @@ class State03(StateBase):
 
     def _post_execution(self):
 
+        global order
         # Checking last time a face was detected
         self.last_face_timestamp = face_tracking.timestamp
         
@@ -373,6 +376,7 @@ class State03(StateBase):
 
         # Listen for an order
         voice_recognition.run(self.voice_recognition_params)
+        order = extract_order(voice_recognition.speech)
 
         # Letting a clue that the robot isn't listening anymore
         self.voice_params["speech"] = "Alright, let me process that..."
@@ -418,7 +422,7 @@ class State04(StateBase):
 
         self.voice_recognition_params = {
             "language": "en-us",
-            "skip_keyword": "False",
+            "skip_keyword": "True",
             "tell_back": "False"
            }
 
@@ -450,7 +454,8 @@ class State04(StateBase):
         voice.run(self.voice_params)
 
     def get_next_state(self):
-        
+
+        global order
         if voice_recognition.speech is not "":
             
             if check_if_any_word_in_menu(voice_recognition.speech):
@@ -478,14 +483,14 @@ class State05(StateBase):
 
         self.voice_recognition_params = {
             "language": "en-us",
-            "skip_keyword": "False",
+            "skip_keyword": "True",
             "tell_back": "False"
            }
 
         self.affirmative_answers = [
             "yes",
             "right",
-            "algright",
+            "alright",
             "correct"
             ]
 
@@ -503,12 +508,17 @@ class State05(StateBase):
 
     def _execution(self):
         speech = "If I understood you right, you want"
-
+        global order
         for index in range(len(order)):
 
             dish = order[index]
+            print(dish)
 
             # Adding the dishes to the string
+            if (index >= len(order) - 1) and (len(order) is not 1):
+                speech += " and"
+
+
             if dish[-1] == 's':
                 speech += " some " + dish
 
@@ -520,9 +530,6 @@ class State05(StateBase):
             
             if index < len(order) - 1:
                 speech += ","
-            
-            elif (index >= len(order) - 1) and (len(order) is not 1):
-                speech += " and"
 
         speech += "."
 
@@ -530,7 +537,7 @@ class State05(StateBase):
         voice.run(self.voice_params)
 
     def _post_execution(self):
-        self.voice_params["speech"] = "Did I get the order right? Yes or No."
+        self.voice_params["speech"] = "Did I get the order right?"
         voice.run(self.voice_params)
 
         voice_recognition.run(self.voice_recognition_params)
@@ -621,8 +628,9 @@ class State07(StateBase):
         locomotion.activate()
 
     def _execution(self):
+        global kitchen_position
         voice.run(self.voice_params)
-        self.result = locomotion.goto(kitchen_position)
+        self.result = locomotion.run(kitchen_position)
 
     def _post_execution(self):
         pass
@@ -645,13 +653,43 @@ class State08(StateBase):
         return 'state 08'
 
     def _pre_execution(self):
+        self.run_count = 0
         face_tracking.activate()
         voice.activate()
 
     def _execution(self):
-        self.voice_params["speech"] = order
+        speech = "Hi Mr. Cook, I need"
+        global order
+        for index in range(len(order)):
+
+            dish = order[index]
+            print(dish)
+
+            if (index >= len(order) - 1) and (len(order) is not 1):
+                speech += " and"
+
+            # Adding the dishes to the string
+            if dish[-1] == 's':
+                speech += " some " + dish
+
+            else:
+                if dish[0] == 'b':
+                    speech += " a " + dish
+                else:
+                    speech += " an " + dish
+            
+            if index < len(order) - 1:
+                speech += ","
+
+        speech += "for Table 1 please."
+
+        self.voice_params["speech"] = speech
         voice.run(self.voice_params)
-        rospy.sleep(15)
+        rospy.sleep(5)
+        
+        self.voice_params["speech"] = "Thank you."
+        voice.run(self.voice_params)
+
 
     def _post_execution(self):
         pass
@@ -716,7 +754,8 @@ class State10(StateBase):
         locomotion.activate()
 
     def _execution(self):
-        self.result = locomotion.goto(master_position)
+        global master_position
+        self.result = locomotion.run(master_position)
 
     def _post_execution(self):
         pass

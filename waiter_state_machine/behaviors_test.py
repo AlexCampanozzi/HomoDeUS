@@ -45,9 +45,9 @@ elif test == "locomotion":
     locomotion.activate()
     
     params = {
-        "x" : "0",
+        "x" : "1",
         "y" : "0",
-        "orientation" : "0"
+        "orientation" : "1.57"
     }
 
     locomotion.run(params)

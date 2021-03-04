@@ -26,10 +26,10 @@ class Navigator:
         goal.target_pose.header.frame_id = "odom"
         goal.target_pose.header.stamp = rospy.Time.now()
 
-        goal.target_pose.pose.position = Point(xGoal, yGoal, 0)
+        goal.target_pose.pose.position = Point(xGoal, yGoal, 0.)
         goal.target_pose.pose.orientation.x = 0.0
         goal.target_pose.pose.orientation.y = 0.0
-        goal.target_pose.pose.orientation.z = 1
+        goal.target_pose.pose.orientation.z = 1.
         goal.target_pose.pose.orientation.w = oriGoal
 
         return(self.gotoGoal(goal))

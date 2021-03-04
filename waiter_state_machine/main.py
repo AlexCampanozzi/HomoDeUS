@@ -39,7 +39,7 @@ def main():
         if bertrand.check_transitions():
             rospy.loginfo("Switched to state: " + bertrand.get_current_state().get_id())
         
-        rospy.sleep(0.01)
+        #rospy.sleep(0.1)
 
 if __name__ == "__main__":
     main()
