@@ -78,22 +78,6 @@ class SpeechRecognizer:
         #self.tts_client = actionlib.SimpleActionClient("tts", pal_interaction_msgs.msg.TtsAction)
         #self.tts_client.wait_for_server()
 
-    def say(self, text):
-        """
-        This method converts text to speech using the proper action server
-        made by PAL Robotics.
-
-        Arguments
-        ---------
-        text : string
-            The text the robot has to say.
-        """
-        goal = pal_interaction_msgs.msg.TtsGoal()
-        goal.rawtext.lang_id = "en_GB"
-        goal.rawtext.text = text
-
-        self.tts_client.send_goal(goal)
-
     def interrupt(self):
         """
         This method can be used to interrupt the whole recognition pipeline.
@@ -147,8 +131,8 @@ class SpeechRecognizer:
             value is set to american english.
         """
         with sr.Microphone() as source:
-            #self.recognizer.adjust_for_ambient_noise(source, duration=1) 
-            # if problem with listen, uncomment this to see if it is caused by the ambiant noise
+            self.recognizer.adjust_for_ambient_noise(source, duration=1) 
+            # #if problem with listen, uncomment this to see if it is caused by the ambiant noise
             rospy.loginfo("SpeechRecognition: Listening...")
             audio = self.recognizer.listen(source)
 
@@ -228,14 +212,14 @@ class SpeechRecognizer:
                     return ""
 
                 rospy.loginfo("SpeechRecognition: Recognized keyword!")
-                self.say(self.keyword_recognized_text)
-                self.tts_client.wait_for_result()
+                #self.say(self.keyword_recognized_text)
+                #self.tts_client.wait_for_result()
             
             result = self.speech_to_text()
 
-            if tell_back and result:
-                self.say(result)
-                self.tts_client.wait_for_result()
+            #if tell_back and result:
+                #self.say(result)
+                #self.tts_client.wait_for_result()
 
             return result
 

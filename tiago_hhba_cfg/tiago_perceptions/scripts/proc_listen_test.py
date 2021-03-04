@@ -1,17 +1,15 @@
 #! /usr/bin/env python
 
-import os
 import rospy
-import roslib
 import actionlib
-import control_msgs.msg
-import geometry_msgs
-import math
+from HomoDeUS_common.HomoDeUS_common import convert_char_array_to_string 
 from pal_startup_msgs.srv import StartupStart, StartupStop
 from speech_recognition_server.msg import SpeechRecognitionActivatedAction
 from speech_recognition_server.msg import SpeechRecognitionActivatedGoal
 from speech_recognition_server.msg import SpeechRecognitionActivatedFeedback
-import rosservice
+
+from bondpy import bondpy
+from functools import partial
 
 from std_msgs.msg import String
 
@@ -21,14 +19,19 @@ class listenManager:
     """
     def __init__(self):
         self.client = actionlib.SimpleActionClient(
-            "speech_recognition_action_server", SpeechRecognitionActivatedAction)
+            "/speech_recognition_action_server", SpeechRecognitionActivatedAction)
 
-        rospy.loginfo("init")
-        self.feedback_Pub = rospy.Publisher("speech_recognition", String, queue_size=10)
+        bond_cb = partial(self.client_shutdown, "the server is now down")
+        self.bond = bondpy.Bond(str("/listenManager_bond_topic"),str("1234"),bond_cb)
+        self.bond.start()
 
+        self.feedback_Pub = rospy.Publisher("proc_listen_module", String, queue_size=10)
+        
         # wait for the action server to come up
-        while(not self.client.wait_for_server(rospy.Duration.from_sec(5.0))):
+        while(not self.client.wait_for_server(rospy.Duration.from_sec(5.0)) and not rospy.is_shutdown()):
             rospy.loginfo("Waiting for the action server to come up")
+ 
+        print("Connection to server speech_recognition")
         rospy.Subscriber("/speech_recognition_action_server/feedback", String, self.callback)
         rospy.loginfo("Connection to server done")
 
@@ -39,7 +42,6 @@ class listenManager:
         y (float): The y position in the optical frame that the robot must reach
         """
         goal = SpeechRecognitionActivatedGoal()
-        
         goal.language="en-US"
         goal.skip_keyword=False
         self.client.send_goal(goal)
@@ -54,12 +56,25 @@ class listenManager:
         self.feedback_Pub.publish(result)
 
     def callback(self, feedback):
-        if (self.client.wait_for_result(timeout=20)):
+        if (self.client.wait_for_result(timeout=rospy.Duration(20))):
             result = self.client.get_result()
-            self.send_feedback(result)
-        else:
-            rospy.loginfo("I heard %s", feedback)
-            rospy.loginfo("But there was no result from that")    
+            if result is not None:    
+                rospy.loginfo(result.recognition_results)
+                result = convert_char_array_to_string(result.recognition_results)
+                self.send_feedback(result)
+                self.client_shutdown("Goal succeeded, a result was receive")
+    
+        self.client_shutdown("Goal failed, nothing received")
+            
+        
+    def client_shutdown(self,reason):
+        rospy.signal_shutdown(self.__class__.__name__ + reason)
+
+    def end_Communication_with_server(self):
+        self.client.cancel_goal()
+        self.bond.break_bond()
+        rospy.loginfo("Goood Bye my friend")
+        print("End_Communication_with_server")
 
 if __name__ == "__main__":
     try:
@@ -67,6 +82,7 @@ if __name__ == "__main__":
 
         node = listenManager()
         node.send_goal()
+        rospy.on_shutdown(node.end_Communication_with_server)
         rospy.spin()
 
     except rospy.ROSInterruptException:

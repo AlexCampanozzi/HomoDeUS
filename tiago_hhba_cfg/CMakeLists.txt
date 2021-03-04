@@ -112,9 +112,7 @@ include_directories(
 #   ${catkin_LIBRARIES}
 # )
 
-add_hbba_cfg(tiago_nav      hbba_cfg/tiago_nav.yaml)
-add_hbba_cfg(tiago_nav_slam hbba_cfg/tiago_nav_slam.yaml)
-add_hbba_cfg(tiago_nav_actionLib hbba_cfg/tiago_nav_actionLib.yaml)
+add_hbba_cfg(tiago_listen_talk      hbba_cfg/tiago_listen_talk.yaml)
 
 #############
 ## Install ##
@@ -126,7 +124,11 @@ add_hbba_cfg(tiago_nav_actionLib hbba_cfg/tiago_nav_actionLib.yaml)
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 install(PROGRAMS
-  tiago_motivations/scripts/motv_goto_test.py
+  tiago_motivations/scripts/motv_talk_actionLib.py
+  tiago_motivations/scripts/motv_listenTalk_results_observer.py
+  tiago_perceptions/scripts/proc_listen_test.py
+  tiago_behaviors/scripts/bhvr_talk_test.py
+
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

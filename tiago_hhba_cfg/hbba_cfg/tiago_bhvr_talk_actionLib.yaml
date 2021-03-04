@@ -7,17 +7,16 @@ hbba_conf:
     launch: {pkg: 'tiago_hbba_cfg', path: 'launch/tiago_bhvr_talk_actionLib.launch'}
     priority: 10
     # nom random pour le input, la source vient de topic
-    input:
-        - speech_recognition_feedback: {src: /speech_recognition_action_server/feedback, filtered: false}
     output:
-        - TtsGoal
+        - tts
+        - talk_simul
             
 - strat:
     name: welcoming
     class: Talking
     utility: 8
     costs: {speaker: 1}
-     modules:
-         - tiago_talk
+    modules:
+        - tiago_bhvr_talk
     #custom_bringup: "pubNavGoal('/hbba_nav_goal', params.frame_id, params.x, params.y, params.t);"
 

@@ -4,9 +4,10 @@ hbba_conf:
     name: tiago_proc_listen
     launch: {pkg: 'tiago_hbba_cfg', path: 'launch/tiago_proc_listen_actionLib.launch'}
     input: 
-        - voix
+        - speech_recognition_feedback: {src: speech_recognition_feedback, filtered: false}
     output:
-        - text
+        - speech_recognition_goal
+        - proc_listen_module
 
 - strat:
     name: Listen
@@ -14,7 +15,5 @@ hbba_conf:
     utility: 10
     costs: {microphone: 1}
     modules:
-        - tiago_listen:
-            - scan: 1
-            - odom: 1
+        - tiago_proc_listen
 

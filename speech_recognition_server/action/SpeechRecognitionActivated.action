@@ -1,11 +1,9 @@
 #goal definition
 string language
 bool skip_keyword #Start recognizing immediately, without waiting for keyword
-bool tell_back   #Robot tell back what it just heard
 ---
-#result
 string[] recognition_results
 ---
 #Each time a keyword is detected and speech is recognized, a new vector is sent
 #with the recognitions
-string feedback_results
+string[] feedback_on_goal

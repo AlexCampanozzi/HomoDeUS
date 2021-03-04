@@ -1,5 +1,9 @@
 hbba_conf:
 
  - remap: {from: 'base_scan', to: 'scan'}
+ - remap: {from: 'events', to: 'hbba/events'}
+ - remap: {from: 'talk_simul', to: '/talkManagerSimul_topic'}
+ - remap: {from: 'speech_recognition_goal', to: '/speech_recognition_action_server/goal'}
+ - remap: {from: 'speech_recognition_feedback', to: '/speech_recognition_action_server/feedback'}
 # No mux on TB3, straight cmd_vel input (at least in Gazebo):
 # - remap: {from: 'cmd_vel',   to: '/cmd_vel_mux/input/navi'}

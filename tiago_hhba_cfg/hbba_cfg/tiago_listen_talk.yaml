@@ -1,0 +1,46 @@
+# Basic tiago navigation demo (with a static map) in HBBA.
+# WARNING: Not up to date with Melodic / TB3 config (2019/09)
+
+hbba_conf:
+
+- include: {pkg: 'hbba_synth',         file: 'common.yaml'}
+- include: {pkg: 'tiago_hbba_cfg', file: 'tiago.yaml'}
+
+# Proc modules:
+- include: {pkg: 'tiago_hbba_cfg', file: 'tiago_proc_listen_actionLib.yaml'}
+
+# Behaviors:
+- include: {pkg: 'tiago_hbba_cfg', file: 'tiago_bhvr_talk_actionLib.yaml'}
+
+# Combined priorities:
+#- behavior_priority: {name: 'tiago_teleop',            value: 100}
+- behavior_priority: {name: 'tiago_bhvr_talk',     value: 90}
+
+# Available resources:
+- resources:
+    CPU: 100
+    microphone: 1
+    speaker: 1
+
+- desire:
+   id: ListenToHuman
+   type: Listening
+   utility: 1
+   intensity: 1.0
+   security: False
+
+# ListenTalk :
+- motivation:
+    name: ListenTalkManager
+    launch: {pkg: "tiago_hbba_cfg", path: "launch/tiago_motv_talk_actionLib.launch"}
+    input:
+        - events
+        - proc_listen_module
+
+- motivation:
+    name: ListenTalk_results_observer
+    launch: {pkg: "tiago_hbba_cfg", path: "launch/tiago_motv_listenTalk_results_observer.launch"}
+    input:
+        - talk_simul
+    output:
+        - events
