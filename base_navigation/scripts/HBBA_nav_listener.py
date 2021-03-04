@@ -42,11 +42,9 @@ class HBBA_nav_listener(Navigator):
 
     def listenGoto(self):
         rospy.Subscriber('/hbba_nav_goal', PoseStamped, self.gotoCallback)
-        # spin() simply keeps python from exiting until this node is stopped
 
     def listenGotoLandmark(self):
         rospy.Subscriber('/hbba_landmark_nav_goal', String, self.gotoLandmarkCallback)
-        # spin() simply keeps python from exiting until this node is stopped
 
 if __name__ == '__main__':
     try:
