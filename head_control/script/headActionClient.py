@@ -25,7 +25,11 @@ class HeadActionClient:
         self.client = actionlib.SimpleActionClient(
             "/head_controller/point_head_action", control_msgs.msg.PointHeadAction)
 
+<<<<<<< HEAD:head_control/script/headActionClient.py
         rospy.Subscriber("tiago_head_controller", geometry_msgs.msg.PoseStamped, self.callback)
+=======
+        rospy.Subscriber("chatter", String, self.callback)
+>>>>>>> ab615ca0605e78b09dc289943efa3a63d51fc0c0:head_control/script/headActionClient.py
 
         # Disabling the pal_head_manager to prevent unwanted head motion while moving the head
         service_list = rosservice.get_service_list()
