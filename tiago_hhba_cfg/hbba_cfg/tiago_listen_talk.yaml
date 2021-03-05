@@ -41,6 +41,6 @@ hbba_conf:
     name: ListenTalk_results_observer
     launch: {pkg: "tiago_hbba_cfg", path: "launch/tiago_motv_listenTalk_results_observer.launch"}
     input:
-        - talk_simul
+        - talkManagerSimul_topic
     output:
         - events

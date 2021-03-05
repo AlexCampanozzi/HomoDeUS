@@ -82,6 +82,7 @@ class SpeechRecognitionServer():
                 results = self.recognizer.run(lang,
                     skip_keyword=goal.skip_keyword)
                 action_result.recognition_results = results
+                rospy.loginfo(results)
                 self.actionServer.set_succeeded(result=action_result,text="Goal achieved")
 
             except Exception as e:

@@ -25,7 +25,7 @@ class talkManager:
         # wait for the action server to come up
         while(not self.client.wait_for_server(rospy.Duration.from_sec(5.0)) and not rospy.is_shutdown()):
             rospy.loginfo("Waiting for the action server to come up")
- 
+        rospy.loginfo(self.__class__.__name__ + "should start AFTER DESIRE SENT, in behaviour module!")
         rospy.loginfo("Connection to server done")
 
     def send_goal(self, text):
@@ -59,7 +59,7 @@ class talkManagerSimul:
     This class provide control to the robot's head as an actionlib server
     """
     def __init__(self):
-        self.feedback_Pub = rospy.Publisher("/talkManagerSimul_topic", String, queue_size=10)
+        self.feedback_Pub = rospy.Publisher("talkManagerSimul_topic", String, queue_size=10)
 
     def send_goal(self, text):
         """
@@ -71,7 +71,9 @@ class talkManagerSimul:
         text : string
             The text the robot has to say.
         """
-        self.feedback_Pub.publish(text)
+        for i in range (0,100):
+            self.feedback_Pub.publish(text)
+            rospy.sleep(5)
         self.client_shutdown(reason="goal achieved, the robot talked")
 
 
@@ -80,7 +82,7 @@ class talkManagerSimul:
 
     def end_Communication_with_server(self):
         self.feedback_Pub.unregister()
-        rospy.loginfo("Goood Bye my friend")
+        rospy.loginfo("Goood Bye my friend FROM BEHAVIOUR")
 
 
 
@@ -93,6 +95,7 @@ if __name__ == "__main__":
     #args = parser.parse_args()
 
     #if args.mode == 'real':
+    rospy.loginfo("..........should start AFTER DESIRE SENT, in behaviour module!.......")
     if False: 
         try:
             rospy.init_node("bhvr_talk_test")

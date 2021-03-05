@@ -9,7 +9,7 @@ hbba_conf:
     # nom random pour le input, la source vient de topic
     output:
         - tts
-        - talk_simul
+        - talkManagerSimul_topic
             
 - strat:
     name: welcoming
@@ -18,5 +18,5 @@ hbba_conf:
     costs: {speaker: 1}
     modules:
         - tiago_bhvr_talk
-    #custom_bringup: "pubNavGoal('/hbba_nav_goal', params.frame_id, params.x, params.y, params.t);"
+    custom_bringup: "pubEmpty('/testBEHAVIOUR');"
 

@@ -11,32 +11,36 @@ class GoToResultObserver:
     def __init__(self):
         self.eventPublisher = rospy.Publisher("events", Event, queue_size = 10)
         self.curDesireSet = DesiresSet()
+        rospy.loginfo("init motv_listenTalk_results_observer")
 
     def listenDesiresSet(self):
         self.desiresSetSubscriber = rospy.Subscriber("desires_set", DesiresSet, self.listenDesiresSetCB)
 
     def listenDesiresSetCB(self, desireSet):
+        print(str(desireSet))
         self.curDesireSet = desireSet
+        rospy.loginfo(self.__class__.__name__ + "------------SHOULD GOTORESULTOBSERVER AFTER DESIRE SENT----------")
+
 
     def listenTalkResult(self):
-        self.goToResultSubscriber = rospy.Subscriber("/talkManagerSimul_topic",String, self.listenTalkResultCB)
+        rospy.Subscriber("/talkManagerSimul_topic",String, self.listenTalkResultCB, queue_size=5)
 
     def listenTalkResultCB(self, text):
-        if text == "Command receive, I'm starting scenario 1!" :
-            for desire in self.curDesireSet.desires:
-                if desire.type == "Talking":
-                    print "Position found within tolerance of a goal position"
+        rospy.loginfo(self.__class__.__name__ + "*****************I am in the LAST step of everything******************")
+        print(text)
+        for desire in self.curDesireSet.desires:
+            if desire.type == "Talking":
+                if text.data == "Command receive, I'm starting scenario 1!" :
+                    rospy.loginfo(self.__class__.__name__ +"CHANGING EVENT TALKING")
                     event = Event()
                     event.desire = desire.id
                     event.desire_type = desire.type
                     event.type = Event.ACC_ON
                     self.eventPublisher.publish(event)
                     break
-                else:
-                    pass           
-        else:
-            print "not the text I was looking for"
-            pass
+            else:
+                print "not the desire I was looking for"
+                pass
 
 if __name__ == "__main__":
     try:
