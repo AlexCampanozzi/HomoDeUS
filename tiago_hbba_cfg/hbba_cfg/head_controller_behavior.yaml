@@ -5,7 +5,7 @@ hbba_conf:
     launch: {pkg: "tiago_hbba_cfg", path: "launch/tiago_head_action_client.launch"}
     priority: 10
     input:
-        - tiago_head_controller: {src: tiago_head_controller, filtered: false}
+        - tiago_head_controller
         - head_controller/point_head_action: {src: head_controller/point_head_action, filtered: false}
 
     output:
@@ -13,9 +13,10 @@ hbba_conf:
             
 - strat:
     name: head_controller
-    class: GoTo # a changer
+    class: GoTo
     utility: 8
     modules:
         - tiago_head_controller
 
-    custom_bringup: "pubNavGoal('/tiago_head_controller', params.frame_id, params.x, params.y, params.yaw);"
+    #custom_bringup: "pubNavGoal('/tiago_head_controller', params.frame_id, params.x, params.y, params.yaw);"
+    

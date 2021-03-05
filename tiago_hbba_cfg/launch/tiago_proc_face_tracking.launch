@@ -1,0 +1,3 @@
+<launch>
+    <node name="faceRecognition" pkg="HomoDeUS" type="tiago_proc_face_tracking.py" output="screen"/>
+</launch>

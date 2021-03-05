@@ -90,5 +90,6 @@ class HeadActionClient:
         self.GotoPosition(math.tan(Ytheta), math.tan(Xtheta))
 
     def callback(self, data):
-        rospy.loginfo("I heard %s", data.data)
-        self.GotoAngle(30, 0)
+        rospy.loginfo("I heard %s", data.pose.position.x)
+
+        self.GotoAngle(data.pose.position.x, data.pose.position.y)
