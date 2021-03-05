@@ -1,0 +1,32 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/root/catkin_ws/devel/include/**",
+                "/opt/pal/ferrum/include/**",
+                "/opt/ros/melodic/include/**",
+                "/root/catkin_ws/src/hbba/hbba_base/abtr_priority/include/**",
+                "/root/catkin_ws/src/hbba/emotion_generator/include/**",
+                "/root/catkin_ws/src/hbba/iw/include/**",
+                "/root/catkin_ws/src/hbba/iw_observer/include/**",
+                "/root/catkin_ws/src/hbba/hbba_base/iw_tools/include/**",
+                "/root/catkin_ws/src/hbba/iw_translator/include/**",
+                "/root/catkin_ws/src/hbba/script_engine/include/**",
+                "/root/catkin_ws/src/hbba/hbba_base/script_engine_plugins/include/**",
+                "/root/catkin_ws/src/hbba/hbba_base/topic_filters/include/**",
+                "/root/catkin_ws/src/hbba/topic_filters_manager/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++14"
+        }
+    ],
+    "version": 4
+}

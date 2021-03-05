@@ -6,12 +6,12 @@ hbba_conf:
 # Behaviors:
 - include: {pkg: 'tiago_hbba_cfg', file: 'head_controller_behavior.yaml'}
 
+# Motivations
+- include: {pkg: 'tiago_hbba_cfg', file: 'tiago_motv_gaze_following.yaml'}
+
+# Perceptions
+- include: {pkg: 'tiago_hbba_cfg', file: 'tiago_proc_face_tracking.yaml'}
+
 # Available resources:
 - resources:
     CPU: 100
-    
-- motivation:
-    name: goto_generator
-    launch: {pkg: "tiago_hbba_cfg", path: "launch/events_generator.launch"}
-    input:
-     - goto_goal

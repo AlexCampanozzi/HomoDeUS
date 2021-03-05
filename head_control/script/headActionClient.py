@@ -91,8 +91,8 @@ class HeadActionClient:
 
     def callback(self, data):
         rospy.loginfo("I heard %s", data.pose.position.x)
-        rospy.loginfo("I heard %s", data.pose.position.y)
-        rospy.loginfo("I heard %s", data.pose.orientation.w)
-        rospy.loginfo("I heard %s", data.header.frame_id)
+        #rospy.loginfo("I heard %s", data.pose.position.y)
+        #rospy.loginfo("I heard %s", data.pose.orientation.w)
+        #rospy.loginfo("I heard %s", data.header.frame_id)
 
         self.GotoAngle(data.pose.position.x, data.pose.position.y)
