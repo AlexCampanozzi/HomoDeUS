@@ -25,7 +25,11 @@ class HeadActionClient:
         self.client = actionlib.SimpleActionClient(
             "/head_controller/point_head_action", control_msgs.msg.PointHeadAction)
 
+<<<<<<< HEAD:head_control/script/headActionClient.py
         rospy.Subscriber("tiago_head_controller", geometry_msgs.msg.PoseStamped, self.callback)
+=======
+        rospy.Subscriber("chatter", String, self.callback)
+>>>>>>> ab615ca0605e78b09dc289943efa3a63d51fc0c0:head_control/script/headActionClient.py
 
         # Disabling the pal_head_manager to prevent unwanted head motion while moving the head
         service_list = rosservice.get_service_list()
@@ -90,9 +94,14 @@ class HeadActionClient:
         self.GotoPosition(math.tan(Ytheta), math.tan(Xtheta))
 
     def callback(self, data):
+<<<<<<< HEAD:head_control/script/headActionClient.py
         rospy.loginfo("I heard %s", data.pose.position.x)
         rospy.loginfo("I heard %s", data.pose.position.y)
         rospy.loginfo("I heard %s", data.pose.orientation.w)
         rospy.loginfo("I heard %s", data.header.frame_id)
 
         self.GotoAngle(data.pose.position.x, data.pose.position.y)
+=======
+        rospy.loginfo("I heard %s", data.data)
+        self.GotoAngle(30, 0)
+>>>>>>> ab615ca0605e78b09dc289943efa3a63d51fc0c0:head_control/script/headActionClient.py
