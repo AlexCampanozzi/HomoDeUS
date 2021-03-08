@@ -28,6 +28,7 @@ def main():
     bertrand.add_state(State09())
     bertrand.add_state(State10())
     bertrand.add_state(State11())
+    bertrand.add_state(State12())
 
     # Printing the current state id
     rospy.loginfo("Switched to state: " + bertrand.get_current_state().get_id())

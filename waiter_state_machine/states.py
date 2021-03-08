@@ -135,13 +135,13 @@ def initialiseBehaviors():
 
 master_position = {
         "x" : "0",
-        "y" : "0",
-        "orientation" : "0"
+        "y" : "0.3",
+        "orientation" : "-0.74"
     }
 
 kitchen_position = {
-        "x" : "1",
-        "y" : "1",
+        "x" : "2",
+        "y" : "2",
         "orientation" : "1.57"
     }
 
@@ -286,7 +286,7 @@ class State02(StateBase):
        
         #print("execution")
         # greeting customer and asking for order
-        self.voice_params["speech"] = "Good day Human, what kind of food do you want, Please choose from the menu"
+        self.voice_params["speech"] = "Hello Human, what kind of food do you want, Please choose from the menu"
         
         voice.run(self.voice_params)
         rospy.sleep(2.)
@@ -328,8 +328,7 @@ class State03(StateBase):
             "May I suggest some delicious apples?",
             "Go on.",
             "Have you made up your mind human?",
-            "I am waiting for you order human.", 
-            "Please give your slave an order", 
+            "I am waiting for you order human.",  
             "Just choose already", 
             "You are so slow my battery will empty before you are ready",
             "Oh? , a wild choice appeared"
@@ -494,6 +493,13 @@ class State05(StateBase):
             "correct"
             ]
 
+        self.negative_answers = [
+            "no",
+            "nope",
+            "mistake",
+            "incorrect"
+            ]
+
     def _set_id(self):
         return 'state 05'
 
@@ -549,17 +555,25 @@ class State05(StateBase):
         if voice_recognition.speech == "":
             
             if self.run_count < 3:
+                print("if1")
                 return None
             
             else:
+                print("if2")
                 return 'state 04'
         
         voice_recognition_results = re.sub(r'[^\w\s]','', voice_recognition.speech).lower()
         is_affirmative_answer = bool(set(self.affirmative_answers) & set(voice_recognition_results.split()))
+        is_negative_answer = bool(set(self.negative_answers) & set(voice_recognition_results.split()))
 
         if is_affirmative_answer:
+            print("if3")
             return 'state 07'
-        
+        elif is_negative_answer:
+            print("if4")
+            return 'state 12'
+
+        print("last return")
         return 'state 04'
 
 
@@ -731,7 +745,7 @@ class State09(StateBase):
         voice_recognition.run(self.voice_recognition_params)
 
     def get_next_state(self):
-        if voice_recognition.speech == "OK":
+        if voice_recognition.speech == "okay":
             return 'state 10'
         elif voice_recognition.speech == "reset":
             return 'state 00'
@@ -772,8 +786,7 @@ class State11(StateBase):
 
         self.give_order = [
             "Here is your order, have a nice day.",
-            "Here's what you asked for, see you again", 
-            "Your slave have returned with your bounty"
+            "Here's what you asked for, see you again"
             ]
         
         self.voice_params = {
@@ -791,7 +804,7 @@ class State11(StateBase):
         locomotion.deactivate()
 
     def _execution(self):
-        #Donne la commande et attent 20 secondes avant de retourner au debut de la machine a etat
+        # Gives the order and waits 20 seconds before going back to state 0
         random_index = random.randint(0, len(self.give_order)-1)
         self.voice_params["speech"] = self.give_order[random_index]
 
@@ -803,3 +816,56 @@ class State11(StateBase):
 
     def get_next_state(self):
         return 'state 00'
+
+
+class State12(StateBase):
+    def __init__(self):
+        StateBase.__init__(self)
+
+        self.voice_params = {
+            "speech" : "",
+            "language" : "en_GB"
+            }
+
+        self.voice_recognition_params = {
+            "language": "en-us",
+            "skip_keyword": "True",
+            "tell_back": "False"
+           }
+
+    def _set_id(self):
+        return 'state 12'
+
+    def _pre_execution(self):
+        # Turning on and off the behaviors
+        face_tracking.activate()
+        voice_recognition.activate()
+        voice.activate()
+        locomotion.deactivate()
+
+    def _execution(self):
+        self.voice_params["speech"] = "Alright then, please repeat your order"
+        voice.run(self.voice_params)
+
+    def _post_execution(self):
+                       
+        voice_recognition.run(self.voice_recognition_params)
+
+        # Letting a clue that the robot isn't listening anymore
+        self.voice_params["speech"] = "Alright, let me process that..."
+        voice.run(self.voice_params)
+
+    def get_next_state(self):
+        global order
+        if voice_recognition.speech is not "":
+            
+            if check_if_any_word_in_menu(voice_recognition.speech):
+                order = extract_order(voice_recognition.speech)
+                return 'state 05'
+
+            else:
+                self.voice_params["speech"] = "Sorry, I didn't catch that. Make sure that you're asking for something on the menu."
+                voice.run(self.voice_params)
+                return None
+
+        return 'state 03'

@@ -17,7 +17,7 @@ class SpeechRecognizer:
     This class provides functionalities such as Speech-to-Text and Text-
     to-Speech for the robot.
     """
-    def __init__(self, keyword='legacy', threshold=1e-20, timeout=30):
+    def __init__(self, keyword='robot', threshold=1e-20, timeout=30):
         """
         This method initializes the submodules used for listening and talking.
             * Keyword (microphones) = PyAudio (PortAudio)

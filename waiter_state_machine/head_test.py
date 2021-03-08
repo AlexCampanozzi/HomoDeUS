@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import rospy
-from headActionClient import *
+from headActionJointClient import * 
 
 head_client = HeadActionClient()
 
