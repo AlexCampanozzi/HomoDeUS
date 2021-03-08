@@ -32,6 +32,11 @@ class StateMachine:
     def add_state(self, state):
         """
         Method to add a state to the states dictionary.
+
+        Arguments
+        ---------
+            state : child of StateBase
+                An input state
         """
         key = state.get_id()
 
@@ -55,24 +60,20 @@ class StateMachine:
     def check_transitions(self):
         """
         Method to check if a transition should occur and to perform
-        the switch of state if necessary.
+        the switch of state if necessary. The method returns True when
+        there's a switch.
         """
-        print("statemachine checkTransition")
         next_state = self.current_state.get_next_state()
 
         if (next_state is not None) and (next_state in self.states.keys()):
             self.current_state.reset()
             self.current_state = self.states.get(next_state)
-            self.current_state.run_pre_execution = True
-            self.current_state.run_execution = True
-            self.current_state.run_post_execution = True
-            rospy.sleep(0.5)
             return True
 
         return False
 
     def get_current_state(self):
         """
-        This method returns the current active state
+        This method returns the current active state.
         """
         return self.current_state
