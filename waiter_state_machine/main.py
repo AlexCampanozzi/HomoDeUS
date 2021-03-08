@@ -11,7 +11,7 @@ def main():
     rospy.init_node('waiter_state_machine')
 
     # Initializing the behaviors
-    initialiseBehaviors()
+    initializeBehaviors()
 
     # Creating the machine
     state_machine = StateMachine()

@@ -48,11 +48,6 @@ class StateBase:
         after the activation while self._post_execution() will be ran in a
         loop and can be used to idle while waiting for a transition.
         """
-        #print("")
-        #print("Should run pre execution: " + str(self.run_pre_execution))
-        #print("Should run execution: " + str(self.run_execution))
-        #print("Should run post execution: " + str(self.run_post_execution))
-        #print("")
         if self.run_pre_execution:
             self._pre_execution()
             self.run_pre_execution = False
@@ -109,29 +104,10 @@ class StateBase:
 |                Global Variables                 |
 +-------------------------------------------------+
 """
-# TODO: Maybe change them for static variables instead?
-# face_tracking = FaceTracking()
-# voice_recognition = VoiceRecognition()
-# voice = Voice()
-# locomotion = Locomotion()
 face_tracking = None
 voice_recognition = None
 voice = None
 locomotion = None
-def initialiseBehaviors(): 
-    global face_tracking
-    global voice_recognition
-    global voice
-    global locomotion
-    print("statesBeginInit")
-    face_tracking = FaceTracking()
-    print("statesFaceTrackingInitialised")
-    voice_recognition = VoiceRecognition()
-    print("statesVoiceRecognitionInitialised")
-    voice = Voice()
-    print("statesVoiceInitialised")
-    locomotion = Locomotion()
-    print("statesLocomotionInitialised")
 
 master_position = {
         "x" : "0",
@@ -147,6 +123,17 @@ kitchen_position = {
 
 order = []
 
+def initializeBehaviors(): 
+    global face_tracking
+    global voice_recognition
+    global voice
+    global locomotion
+
+    face_tracking = FaceTracking()
+    voice_recognition = VoiceRecognition()
+    voice = Voice()
+    locomotion = Locomotion()
+
 """
 +-------------------------------------------------+
 |                 States 0 to 5                   |
@@ -156,7 +143,6 @@ class State00(StateBase):
     """
     The robot is idling
     """
-# /!\ WARNING: This code wasn't tested! /!\
     def __init__(self):
         StateBase.__init__(self)
         
