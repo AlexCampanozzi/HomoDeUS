@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-# TODO: Include dependencies
 import time
 import math
 import threading
@@ -45,7 +44,7 @@ class BehaviorBase:
 
     def run(self, params=None):
         """
-        Execute the _run() method.
+        Executes the _run() method.
 
         Arguments
         ---------
@@ -169,86 +168,167 @@ class FaceTracking(BehaviorBase):
 
 class VoiceRecognition(BehaviorBase):
     def __init__(self):
-        BehaviorBase.__init__(self)
-        
-        # Setting up the client
-        self.stt_client = actionlib.SimpleActionClient("speech_recognition_action_server", SpeechRecognitionActivatedAction)
-        self.stt_client.wait_for_server()
-
-        self.speech = ""
-
-    def _run(self, params):
-        self.speech = ""
-        language = params["language"]
-        skip_keyword = (params["skip_keyword"] == "True")
-        tell_back = (params["tell_back"] == "True")
-
-        goal = SpeechRecognitionActivatedGoal()
-        goal.language = language
-        goal.skip_keyword = skip_keyword
-        goal.tell_back = tell_back
-
-        self.stt_client.send_goal_and_wait(goal)
-        self.stt_client.wait_for_result(timeout=rospy.Duration(30.))
-        result = self.stt_client.get_result()
-        if result == None:
-            self.speech = ""
-        else:
-            self.speech = result.recognition_results
-        if self.speech != None:
-            print("understood: " + self.speech)
-        # Wait for the server to finish
-        #self.stt_client.wait_for_result()
-
-class Voice(BehaviorBase):
-    def __init__(self):
         """
-        This method initializes the submodule used for text-to speech.
-        
+        This method creates a client used for the speech-to-text functionality.
+
         Arguments
         ---------
             None
         """
         BehaviorBase.__init__(self)
 
-        # Setting up Text-to-Speech
-        self.tts_client = actionlib.SimpleActionClient("tts", pal_interaction_msgs.msg.TtsAction)
-        self.tts_client.wait_for_server()
-        self.language = "en_GB"
+        # Setting up a speech-to-text client
+        self.stt_client = actionlib.SimpleActionClient(
+            "speech_recognition_action_server",
+            SpeechRecognitionActivatedAction
+        )
+
+        self.stt_client.wait_for_server()
+
+        self.speech = ""
+
+        rospy.loginfo("[Behaviors] Voice recognition is ready to run")
 
     def _run(self, params):
         """
-        Actions associated to the behavior.
+        This method converts speech to text. The result of the conversion
+        is stored in self.speech.
 
         Arguments
         ---------
         params : dict
-            A dictionary with the needed parameters.
+            A dict with the parameters. It must contains the following keys:
+            - language : string
+                The language in which the user speaks.
+            - skip_keyword : string
+                If set to True, the robot won't wait for its keyword and it'll
+                directly use the Google API to understand complex sentences.
+            - tell_back : string
+                If set to True, the robot tells back what it understood.
         """
-        self.speech = params["speech"]
-        self.language = params["language"]
-        
-        if not self.active:
-            return
-        elif self.speech == None:
-            return
-        else:
-            goal = pal_interaction_msgs.msg.TtsGoal()
-            goal.rawtext.lang_id = self.language
-            goal.rawtext.text = self.speech
 
-            self.tts_client.send_goal_and_wait(goal)
+        # Resetting the speech attribute each time
+        self.speech = ""
+
+        # Extracting the parameters
+        language = params["language"]
+        skip_keyword = (params["skip_keyword"] == "True")
+        tell_back = (params["tell_back"] == "True")
+
+        # Sending the goal to the server
+        goal = SpeechRecognitionActivatedGoal()
+        goal.language = language
+        goal.skip_keyword = skip_keyword
+        goal.tell_back = tell_back
+
+        self.stt_client.send_goal_and_wait(goal)
+
+        # TODO: Test if still needed
+        self.stt_client.wait_for_result(timeout=rospy.Duration(30.))
+
+        # Updating the speech attribute
+        result = self.stt_client.get_result()
+
+        if result is None:
+            self.speech = ""
+
+        else:
+            self.speech = result.recognition_results
+
+        rospy.loginfo("[Voice recognition] TIAGo understood: " + self.speech)
+
+
+class Voice(BehaviorBase):
+    def __init__(self):
+        """
+        This method creates a client used for the text-to-speech functionality.
+
+        Arguments
+        ---------
+            None
+        """
+        BehaviorBase.__init__(self)
+
+        # Setting up a text-to-speech client
+        self.tts_client = actionlib.SimpleActionClient(
+            "tts",
+            pal_interaction_msgs.msg.TtsAction
+        )
+
+        self.tts_client.wait_for_server()
+
+        rospy.loginfo("[Behaviors] Voice is ready to run")
+
+    def _run(self, params):
+        """
+        This method uses the voice of the robot say something.
+
+        Arguments
+        ---------
+        params : dict
+            A dict with the parameters. It must contains the following keys:
+            - speech : string
+                The text to convert to speech.
+            - language : string
+                The language of the speech.
+        """
+
+        # Extracting the parameters
+        speech = params["speech"]
+        language = params["language"]
+
+        # Saving time if speech is empty
+        if speech is None:
+            return
+
+        # Sending the goal to the server
+        goal = pal_interaction_msgs.msg.TtsGoal()
+        goal.rawtext.lang_id = language
+        goal.rawtext.text = speech
+
+        self.tts_client.send_goal_and_wait(goal)
+
 
 class Locomotion(BehaviorBase):
     def __init__(self):
+        """
+        This method initializes a client use for the locomotion functionality.
+
+        Arguments
+        ---------
+            None
+        """
         BehaviorBase.__init__(self)
-        # if we can't use the navigator, we need to init the client directly
+
+        # Creating a move_base client
         self.navigator = Navigator()
-        print("initLocomotion")
+
+        rospy.loginfo("[Behaviors] Locomotion is ready to run")
+
     def _run(self, params):
-	    # if we can't use the navigator, the client need to do the calls
+        """
+        This method moves the robot to a desired location. The method returns
+        True if the robot was able to reach the goal, False otherwise.
+
+        Arguments
+        ---------
+        params : dict
+            A dict with the parameters. It must contains the following keys:
+            - x : string
+                The x position for the robot to move to.
+
+            - y : string
+                The y position for the robot to move to.
+
+            - orientation : string
+                The orientation for the robot to move to.
+        """
+
+        # Extracting the parameters
         x = float(params["x"])
         y = float(params["y"])
         orientation = float(params["orientation"])
-        print("runLocomotion")
-        return(self.navigator.goto(x, y, orientation))
+
+        # Sending the goal through the client
+        success = self.navigator.goto(x, y, orientation)
+        return success
