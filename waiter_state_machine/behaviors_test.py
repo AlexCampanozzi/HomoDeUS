@@ -1,55 +1,77 @@
 #! /usr/bin/env python
 
+""" /!\ THIS FILE IS ONLY USED FOR TESTING PURPOSES /!\ """
+
 from behaviors import *
 
 test = "locomotion"
-print(test)
+print("Testing behavior: " + test)
+
 
 if test == "voice":
-    rospy.init_node('keyword_speech_multi_recognizer_server')
 
-    params = {"speech": "Yo I am TIAGo", "language": "en_GB"}
+    # Init the node
+    rospy.init_node('voice_test_node')
+
+    # Setting up the parameters
+    params = {
+        "speech": "Hello, I am TIAGo",
+        "language": "en_GB"
+    }
+
+    # Running the behavior
     voice = Voice()
     voice.activate()
     voice.run(params)
 
-    rospy.spin()
 
 elif test == 'face_tracking':
 
+    # Init the node
+    rospy.init_node('face_tracking_test_node')
+
+    # Running the behavior
     face_tracker = FaceTracking()
     face_tracker.activate()
-    
-    rospy.spin()
+
 
 elif test == "voice_recognition":
-    rospy.init_node('behaviors_test_node')
 
-    voice_recognition = VoiceRecognition()
-    voice_recognition.activate()
+    # Init the node
+    rospy.init_node('voice_recognition_test_node')
 
+    # Setting up the parameters
     params = {
         "language": "en-us",
         "skip_keyword": "False",
         "tell_back": "True"
     }
 
+    # Running the behavior
+    voice_recognition = VoiceRecognition()
+    voice_recognition.activate()
     voice_recognition.run(params)
+
+    # Print the results
     print(voice_recognition.speech)
 
-    rospy.spin()
 
 elif test == "locomotion":
-    rospy.init_node('base_cmds', anonymous=False)
-    locomotion = Locomotion()
-    locomotion.activate()
-    
+
+    # Init the node
+    rospy.init_node('locomotion_test_node')
+
+    # Setting up the parameters
     params = {
-        "x" : "0",
-        "y" : "0.3",
-        "orientation" : "-0.90"
+        "x": "0",
+        "y": "0.3",
+        "orientation": "-0.90"
     }
 
+    # Running the behavior
+    locomotion = Locomotion()
+    locomotion.activate()
     locomotion.run(params)
 
-    rospy.spin()
+
+rospy.spin()
