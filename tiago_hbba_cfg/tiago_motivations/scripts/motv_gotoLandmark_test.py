@@ -19,14 +19,14 @@ class GotoLandmarkManager:
         des.id          = "test_gotoLandmark"
         des.type        = "GoToLandmark"
         des.utility     = 2.0
-        des.intensity   = 2.0
+        des.intensity   = 1.0
         des.params      = "{name: 'origin'}"
 
         rospy.sleep(8)
         self.add_desires.call([des])
 
     def remove(self):
-        self.rem_desires.call(["test_goto"])
+        self.rem_desires.call(["test_gotoLandmark"])
 
     def removeOnEvent(self, event):
         if event.desire_type == "GoToLandmark" and event.type == Event.ACC_ON:

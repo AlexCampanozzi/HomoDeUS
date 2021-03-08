@@ -13,7 +13,7 @@ class Navigator:
         # rospy.init_node('base_cmds', anonymous=False)
         self.landmarks = {}
         
-        # define a client for to send goal requests to the move_base server through a SimpleActionClient
+        # define a client to send goal requests to the move_base server through a SimpleActionClient
         self.ac = actionlib.SimpleActionClient("move_base", MoveBaseAction)
 
         # wait for the action server to come up
@@ -51,7 +51,7 @@ class Navigator:
         #         return False
 
     def gotoDoneCB(self, state, result):
-        # We do a bit of witchcraft here and call a method from the child class
+        # We do a bit of witchcraft here and call a method from the child class (HBBA_nav_listener)
         print("result" + str(result))
         if(state == GoalStatus.SUCCEEDED):
                 rospy.loginfo("The robot reached the destination")

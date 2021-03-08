@@ -9,6 +9,7 @@ from tf.transformations import quaternion_from_euler, euler_from_quaternion
 
 class HBBA_nav_listener(Navigator):
     def __init__(self):
+        print "initing nav_listener"
         rospy.init_node('HBBA_nav_listener', anonymous=True)
         Navigator.__init__(self)
         self.registerLandmark("testPoint", 1, 0, 0)
@@ -56,4 +57,3 @@ if __name__ == '__main__':
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
-
