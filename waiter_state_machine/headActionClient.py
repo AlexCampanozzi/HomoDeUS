@@ -17,35 +17,32 @@ class HeadActionClient:
     This class provide control to the robot's head as an actionlib server
     """
     def __init__(self):
-        #os.system("export ROS_MASTER_URI=http://10.68.0.1:11311")
-        #os.system("export ROS_IP=10.68.0.127")
-        print("initHeadActionClient")
-        #rospy.init_node('headAction', anonymous=False)
-        self.client = actionlib.SimpleActionClient(
-            "/head_controller/point_head_action", control_msgs.msg.PointHeadAction)
 
-        #rospy.Subscriber("chatter", String, self.callback)
+        self.client = actionlib.SimpleActionClient(
+            "/head_controller/point_head_action",
+            control_msgs.msg.PointHeadAction
+        )
 
         # Disabling the pal_head_manager to prevent unwanted head motion while moving the head
         service_list = rosservice.get_service_list()
+        
         if '/pal_startup_control/stop' in service_list:
             try:
                 rospy.wait_for_service('/pal_startup_control/stop', 2)
             except rospy.ROSException or rospy.ServiceException as e:
-                rospy.logerr('Could not reach pal_startup_control/stop : %s', e.message)
+                rospy.logerr('[HeadActionClient] Could not reach pal_startup_control/stop : %s', e.message)
+            
             pal_stop = rospy.ServiceProxy('/pal_startup_control/stop', StartupStop)
+            
             try:
-                rospy.loginfo("disabling pal_head_manager.")
                 pal_stop("head_manager")
             except rospy.ROSException and rospy.ServiceException as e:
-                rospy.logerr('Could not stop head_manager: %s', e.message)
-
-        rospy.loginfo("initception")
+                rospy.logerr('[HeadActionClient] Could not stop head_manager: %s', e.message)
         
-        # wait for the action server to come up
+        # Wait for the action server to come up
         while(not self.client.wait_for_server(rospy.Duration.from_sec(5.0))):
-            rospy.loginfo("Waiting for the action server to come up")
-        print("HeadActionInitialised")
+            rospy.loginfo("[HeadActionClient] Waiting for the server to come up...")
+
     def GotoPosition(self, x, y):
         """
         This method sends a goal to the actionlib in order to move the robot's head
