@@ -1,24 +1,20 @@
 #! /usr/bin/env python
 
-import time
 import math
-import threading
 import rospy
+import threading
 import actionlib
+from navigator import *
+from headActionClient import *
+import pal_interaction_msgs.msg
+from std_msgs.msg import String
+from face_detection.msg import FacePosition
+from face_detection.msg import FacePositions
 from pal_detection_msgs.msg import FaceDetections
 from speech_recognition_server.msg import SpeechRecognitionActivatedAction
 from speech_recognition_server.msg import SpeechRecognitionActivatedGoal
 from speech_recognition_server.msg import SpeechRecognitionActivatedResult
-from headActionClient import *
 
-from face_detection.msg import FacePosition
-from face_detection.msg import FacePositions
-
-#section for Locomotion
-from navigator import *
-
-import pal_interaction_msgs.msg
-from std_msgs.msg import String
 
 class BehaviorBase:
     """
@@ -75,15 +71,22 @@ class BehaviorBase:
 
 class FaceTracking(BehaviorBase):
     def __init__(self):
+        """
+        This method subscribes to the face detection topic and instantiates a
+        head controller for the face tracking functionality.
+
+        Arguments
+        ---------
+            None
+        """
         BehaviorBase.__init__(self)
-        print("Face tracking constructing")
-        # Setting up a head action client and a subscriber to /faces
-        print("Face tracking constructing 2")
+
+        # Subscribing to the face detection topic
         rospy.Subscriber('/pal_face/faces', FacePositions, self._head_callback)
 
-        # Collecting image settings
-        self.img_width = 320 #rospy.get_param('processing_img_width')
-        self.img_height = 240 #rospy.get_param('processing_img_height')
+        # Extracting image settings
+        self.img_width = 320
+        self.img_height = 240
 
         self.img_center_x = self.img_width // 2
         self.img_center_y = self.img_height // 2
@@ -91,18 +94,32 @@ class FaceTracking(BehaviorBase):
         self.threshold = 1
 
         # Timestamp updated each time a face is detected
-        self.timestamp = time.time()
+        self.timestamp = rospy.get_time()
 
-        self.head_controller = self.HeadController(self.img_center_x, self.img_center_y)
+        # The head controller that will be running in another thread
+        self.head_controller = self.HeadController(
+            self.img_center_x,
+            self.img_center_y
+        )
+
+        rospy.loginfo("[Behaviors] Face tracking is ready to run")
 
     def _run(self, params):
         # This method is not necessary for this behavior.
         pass
 
     def _head_callback(self, detections):
-        print("HeadCallBack")
-        # TODO: Maybe this should go after the activation check?
-        self.timestamp = time.time()
+        """
+        This method is called every time a face is detected. If the behavior is
+        active, it will update the controller goal to move the head toward the
+        most centered face.
+
+        Arguments
+        ---------
+            detections : FaceDetections
+                The positions and sizes of the faces that were detected
+        """
+        self.timestamp = rospy.get_time()
 
         if not self.active:
             return
@@ -121,18 +138,37 @@ class FaceTracking(BehaviorBase):
                 main_face_y = face_y
                 main_face_dist = face_dist
 
-        # If the main face is inside the limit, don't move the head
+        # If the main face is already centered, we can stop right here
         if main_face_dist < self.threshold:
             return
 
-        # Simple proportional controller
+        # Updating the controller goal
         self.head_controller.goal_x = float(main_face_x)
         self.head_controller.goal_y = float(main_face_y)
 
     def _distance_from_img_center(self, x, y):
-        return math.sqrt((self.img_center_x - x)**2 + (self.img_center_y)**2)
+        """
+        Computes the distance of a point from the image center and returns
+        the result.
+
+        Arguments
+        ---------
+            x : int
+                The x position
+            y : int
+                The y position
+        """
+        return math.sqrt((self.img_center_x - x)**2 + (self.img_center_y - y)**2)
 
     def _get_face_center_position(self, face):
+        """
+        Returns a face center position (instead of the top left corner).
+
+        Arguments
+        ---------
+            face : Face
+                The face to get the center position from
+        """
         x = face.x + (face.width // 2)
         y = face.y + (face.height // 2)
 
@@ -140,27 +176,49 @@ class FaceTracking(BehaviorBase):
 
     class HeadController:
         def __init__(self, center_x, center_y):
+            """
+            This method initializes the head controller by setting up its
+            attributes and by starting its separate thread.
+
+            Arguments
+            ---------
+                center_x : int or float
+                    The x position of the image center
+
+                center_y : int or float
+                    The y position of the image center
+            """
+            # Setting up the attributes
             self.goal_x = float(center_x)
             self.goal_y = float(center_y)
             self.center_x = float(center_x)
             self.center_y = float(center_y)
-            
+
+            # The controller gain
             self.K = 0.1
 
-            self.head_client = HeadActionClient() # <------ WARNING: init_node is used in this class!!
+            # Instantiating a client to move the head
+            self.head_client = HeadActionClient()
 
+            # Creating a thread running self.control_loop
             thread = threading.Thread(target=self.control_loop)
             thread.start()
 
         def control_loop(self):
+            """
+            This method moves the head toward a goal.
+
+            Arguments
+            ---------
+                None
+            """
             while not rospy.is_shutdown():
                 error_x = (self.goal_x - self.center_x) / self.center_x
                 error_y = (self.goal_y - self.center_y) / self.center_y
 
                 cmd_x = self.K * error_x
                 cmd_y = self.K * error_y
-                #print(cmd_x)
-                #print(cmd_y)
+
                 self.head_client.GotoPosition(cmd_x, cmd_y)
 
                 rospy.sleep(0.01)
