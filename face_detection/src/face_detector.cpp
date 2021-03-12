@@ -12,6 +12,7 @@ Outputs:        None
 FaceDetector::FaceDetector(ros::NodeHandle& nh):
   _nh(nh)
 {
+  ROS_INFO("face detector constructed");
   image_transport::ImageTransport imageTransport(nh);
 
   std::string pathToFrontClassifier = ros::package::getPath("face_detection") +
@@ -25,10 +26,10 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
 
   image_transport::TransportHints transportHint("raw");
 
-  _imageSub = imageTransport.subscribe("image", 1, &FaceDetector::imageCallback, this, transportHint);
+  _imageSub = imageTransport.subscribe("/usb_cam/image_raw", 1, &FaceDetector::imageCallback, this, transportHint);
 
 
-  _pub = _nh.advertise<face_detection::FacePositions>("faces", 1);
+  _pub = _nh.advertise<face_detection::FacePositions>("/pal_face/faces", 1);
   _imDebugPub = imageTransport.advertise("debug", 1);
 
   _nh.param<int>("processing_img_width", _imgProcessingSize.width, _imgProcessingSize.height);
@@ -124,6 +125,7 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
   if ( _pub.getNumSubscribers() > 0 || _imDebugPub.getNumSubscribers() > 0 )
   {
+    ROS_INFO("face detector callback");
     cv::Mat img;
     cv::Rect r;
 

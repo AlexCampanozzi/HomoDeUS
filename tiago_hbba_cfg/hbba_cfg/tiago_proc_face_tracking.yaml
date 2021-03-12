@@ -4,16 +4,9 @@ hbba_conf:
     name: face_tracking
     launch: {pkg: 'tiago_hbba_cfg', path: "launch/tiago_proc_face_tracking.launch"}
     input: 
-        - base_scan: {type: GenericDivider}
-        - image_rgb_sd: {type: GenericDividerAD}
-        - image_depth: {type: GenericDividerAD}
-        - camera_info_depth: {type: GenericDividerAD}
-
+        - pal_face/faces
     output:
         - tiago_head_controller
-        
-- resources:
-    PeopleTracker: 1
 
 - strat:
     name: FaceTracking

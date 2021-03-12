@@ -11,6 +11,7 @@ hbba_conf:
 
 # Perceptions
 - include: {pkg: 'tiago_hbba_cfg', file: 'tiago_proc_face_tracking.yaml'}
+- include: {pkg: 'tiago_hbba_cfg', file: 'tiago_proc_face_detection.yaml'}
 
 # Available resources:
 - resources:

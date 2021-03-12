@@ -1,0 +1,17 @@
+hbba_conf:
+
+- procmodule:
+    name: face_detection
+    launch: {pkg: 'tiago_hbba_cfg', path: "launch/tiago_proc_face_detection.launch"}
+    input: 
+        - usb_cam/image_raw
+    output:
+        - pal_face/faces
+        
+- strat:
+    name: FaceDetection
+    class: GoTo
+    utility: 10
+    modules:
+        - face_detection
+

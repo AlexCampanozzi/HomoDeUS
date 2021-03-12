@@ -41,7 +41,7 @@ class HeadActionClient:
             except rospy.ROSException and rospy.ServiceException as e:
                 rospy.logerr('Could not stop head_manager: %s', e.message)
 
-        rospy.loginfo("init")
+        rospy.loginfo("head_controller init")
         
         # wait for the action server to come up
         while(not self.client.wait_for_server(rospy.Duration.from_sec(5.0))):
@@ -92,4 +92,4 @@ class HeadActionClient:
     def callback(self, data):
         rospy.loginfo("I heard %s", data.pose.position.x)
 
-        self.GotoAngle(data.pose.position.x, data.pose.position.y)
+        self.Goto(data.pose.position.x, data.pose.position.y)
