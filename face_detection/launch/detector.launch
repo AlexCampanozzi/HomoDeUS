@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="image_topic" default="/usb_cam/image_raw"/>
-
   <node name="pal_face" pkg="face_detection" type="face_detection_node" output="screen">
-    <remap from="/pal_face/image" to="$(arg image_topic)"/>
     <rosparam>
       processing_img_width:  320
       processing_img_height: 240

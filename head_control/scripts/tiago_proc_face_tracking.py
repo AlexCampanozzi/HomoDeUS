@@ -11,23 +11,6 @@ import math
 from face_detection.msg import FacePosition
 from face_detection.msg import FacePositions
 
-# class FaceTracking2:
-
-#     def __init__(self):
-#         rospy.init_node('faceTracking', anonymous=False)
-
-#         pub = rospy.Publisher('tiago_head_controller', geometry_msgs.msg.PoseStamped, queue_size=5)
-#         rate = rospy.Rate(1) # 1hz
-
-#         while not rospy.is_shutdown():
-#             poseStamped = geometry_msgs.msg.PoseStamped()
-
-#             poseStamped.pose.position.x = 30.0
-
-#             rospy.loginfo("sent pose")
-#             pub.publish(poseStamped)
-#             rate.sleep()
-
 class FaceTracking:
     def __init__(self):
         rospy.loginfo("Face tracking constructing")
