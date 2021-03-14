@@ -5,12 +5,12 @@ hbba_conf:
     launch: {pkg: 'tiago_hbba_cfg', path: 'launch/tiago_bhvr_nav_actionLib.launch'}
     priority: 10
     input:
-        - hbba_nav_goal: {src: hbba_nav_goal, filtered: false}
-        - hbba_landmark_nav_goal: {src: hbba_landmark_nav_goal, filtered: false}
+        - bhvr_input_goal_nav_goal: {src: hbba_nav_goal, filtered: false}
+        - bhvr_input_goal_landmark_nav_goal: {src: hbba_landmark_nav_goal, filtered: false}
         - move_base: {src: move_base, filtered: false}
     output:
         - cmd_vel
-        - nav_result
+        - bhvr_output_res_nav_result
             
 - strat:
     name: TIAGoTo

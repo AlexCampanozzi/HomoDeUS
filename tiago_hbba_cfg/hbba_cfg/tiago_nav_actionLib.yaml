@@ -32,6 +32,6 @@ hbba_conf:
     name: goto_results_observer
     launch: {pkg: "tiago_hbba_cfg", path: "launch/motv_goto_results_observer.launch"}
     input:
-        - nav_result
+        - bhvr_output_res_nav_result
     output:
         - events

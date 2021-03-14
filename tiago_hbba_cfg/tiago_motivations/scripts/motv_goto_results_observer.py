@@ -26,7 +26,7 @@ class GoToResultObserver:
         self.curDesireSet = desireSet
 
     def listenGoToResult(self):
-        self.goToResultSubscriber = rospy.Subscriber("nav_result", GoToResult, self.listenGoToResultCB)
+        self.goToResultSubscriber = rospy.Subscriber("bhvr_output_res_nav_result", GoToResult, self.listenGoToResultCB)
 
     def listenGoToResultCB(self, result):
         succes = result.result
