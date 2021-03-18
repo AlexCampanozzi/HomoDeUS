@@ -1,0 +1,9 @@
+hbba_conf:
+
+# scenario selector wrapper
+- motivation:
+    name: scenario_selector
+    launch: {pkg: "tiago_hbba_cfg", path: "launch/homodeus_motv_scenario_selector.launch"}
+    input:
+        - keyword_detection
+        - speech_recognition

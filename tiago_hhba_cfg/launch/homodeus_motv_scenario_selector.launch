@@ -1,0 +1,3 @@
+<launch>
+    <node name="motv_scenario_selector" pkg="tiago_hbba_cfg" type="motv_scenario_selector.py" output="screen"/>
+</launch>
