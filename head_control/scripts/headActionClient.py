@@ -18,10 +18,9 @@ class HeadActionClient:
     This class provide control to the robot's head as an actionlib server
     """
     def __init__(self):
-        os.system("export ROS_MASTER_URI=http://10.68.0.1:11311")
-        os.system("export ROS_IP=10.68.0.127")
+        #os.system("export ROS_MASTER_URI=http://10.68.0.1:11311")
+        #os.system("export ROS_IP=10.68.0.127")
 
-        rospy.init_node('headAction', anonymous=False)
         self.client = actionlib.SimpleActionClient(
             "/head_controller/point_head_action", control_msgs.msg.PointHeadAction)
 
@@ -47,7 +46,6 @@ class HeadActionClient:
         while(not self.client.wait_for_server(rospy.Duration.from_sec(5.0))):
             rospy.loginfo("Waiting for the action server to come up")
 
-        rospy.spin()
 
     def GotoPosition(self, x, y):
         """
@@ -76,7 +74,6 @@ class HeadActionClient:
         goal.target = pointStamped
         
         self.client.send_goal(goal)
-        rospy.sleep(0.5)
 
     def GotoAngle(self, Ytheta, Xtheta):
         """
@@ -92,4 +89,10 @@ class HeadActionClient:
     def callback(self, data):
         rospy.loginfo("I heard %s", data.pose.position.x)
 
-        self.Goto(data.pose.position.x, data.pose.position.y)
+        self.GotoPosition(data.pose.position.x, data.pose.position.y)
+
+if __name__ == '__main__':
+
+    rospy.init_node('headAction', anonymous=False)
+    client = HeadActionClient()
+    rospy.spin()

@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<launch>
-  <node name="pal_face" pkg="face_detection" type="face_detection_node" output="screen">
-    <rosparam>
-      processing_img_width:  320
-      processing_img_height: 240
-    </rosparam>
-  </node>
-</launch>

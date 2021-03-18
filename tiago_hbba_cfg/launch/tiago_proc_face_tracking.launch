@@ -1,3 +1,0 @@
-<launch>
-    <node name="faceTracking" pkg="head_control" type="tiago_proc_face_tracking.py" output="screen"/>
-</launch>

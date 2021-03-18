@@ -1,0 +1,3 @@
+<launch>
+	<node name="headAction" pkg="head_control" type="headActionClient.py" output="screen"/>
+</launch>

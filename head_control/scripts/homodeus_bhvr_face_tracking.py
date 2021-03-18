@@ -7,9 +7,13 @@ import actionlib
 from geometry_msgs.msg import PoseStamped
 import geometry_msgs
 import math
+from sensor_msgs.msg import CameraInfo
+import numpy as np
 
 from face_detection.msg import FacePosition
 from face_detection.msg import FacePositions
+
+from Utility import PID
 
 class FaceTracking:
     def __init__(self):
@@ -18,8 +22,6 @@ class FaceTracking:
         rospy.Subscriber('/pal_face/faces', FacePositions, self._head_callback, queue_size=5)
         self.pub = rospy.Publisher('tiago_head_controller', geometry_msgs.msg.PoseStamped, queue_size=5)
 
-
-        # Collecting image settings
         self.img_width = 320 #rospy.get_param('processing_img_width')
         self.img_height = 240 #rospy.get_param('processing_img_height')
 
@@ -28,13 +30,10 @@ class FaceTracking:
 
         self.threshold = 1
 
-        # Timestamp updated each time a face is detected
-        self.timestamp = time.time()
+        self.pid = PID(self.img_center_x, self.img_center_y, K_P=0.1, K_I=0.1, K_D=0.1)
 
     def _head_callback(self, detections):
-        # TODO: Maybe this should go after the activation check?
-        self.timestamp = time.time()
-        rospy.loginfo("recieved face")
+        rospy.loginfo("received face")
         main_face_x = 0
         main_face_y = 0
         main_face_dist = 1000000
@@ -53,12 +52,15 @@ class FaceTracking:
         if main_face_dist < self.threshold:
             return
 
+        x, y = self.pid.get_next_command(main_face_x, main_face_y)
+
         poseStamped = geometry_msgs.msg.PoseStamped()
 
-        poseStamped.pose.position.x = main_face_x
-        poseStamped.pose.position.x = main_face_y
+        poseStamped.pose.position.x = x
+        poseStamped.pose.position.y = y
 
         rospy.loginfo("sent pose")
+
         self.pub.publish(poseStamped)
 
     def _distance_from_img_center(self, x, y):

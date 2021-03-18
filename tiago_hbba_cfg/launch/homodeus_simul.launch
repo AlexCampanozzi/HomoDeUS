@@ -5,5 +5,4 @@
 		<arg name="robot" value="titanium"/>
 		<arg name="world" value="look_to_point"/>
 	</include>
-
 </launch>

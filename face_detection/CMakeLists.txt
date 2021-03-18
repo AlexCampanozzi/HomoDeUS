@@ -41,8 +41,7 @@ include_directories(include ${catkin_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 ## Declare a cpp executable
 
  add_executable(${PROJECT_NAME}_node
-   src/face_detector.cpp
-   src/face_detection_node.cpp
+   src/homodeus_proc_face_detection.cpp
  )
 ###
 target_link_libraries(${PROJECT_NAME}_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
