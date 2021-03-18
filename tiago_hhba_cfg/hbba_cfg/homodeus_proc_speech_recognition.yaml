@@ -13,4 +13,3 @@ hbba_conf:
     costs: {microphone: 1}
     modules:
         - homodeus_proc_speech_recognition
-

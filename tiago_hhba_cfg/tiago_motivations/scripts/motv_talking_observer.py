@@ -23,9 +23,26 @@ class Talking_observer:
         self.desires_set_subscriber = rospy.Subscriber("desires_set", DesiresSet, self.listen_desires_set_Cb)
 
     def listen_desires_set_Cb(self,desireSet):
+        """
+        This method updated the desireSet used in the desire_event_change method.
+
+        Arguments
+        ---------
+        desireSet: DesiresSet
+            The most recent desireSet
+        """
         self.curDesireSet = desireSet
 
     def desire_event_change(self, talkingDone):
+        """
+        This method is the callback of the output of the module it observes, it then send an event depending the result
+        get from the topic.
+
+        Arguments
+        ---------
+        talkingDone: Bool
+            The result of the output of the module it is connected to. In this case it is a confirmation the robot talked
+        """
         # S'il y a beaucoup de désirs du même type... il me semble que ca ne fonctionnera pas
         event = Event()
         for desire in self.curDesireSet.desires:
@@ -44,9 +61,16 @@ class Talking_observer:
 
 
     def accomplish_criterion(self, talkingDone):
+        """
+        This method look the result of the module and return True if it accomplished the criterion the motivation is looking for
+        """
         return talkingDone
 
     def cancel_criterion(self):
+        """
+        This method follows up the environment of the robot and return True if
+         it is now impossible to accomplish the purpose of the desire.
+        """
         #should look for the ambiant noise and if it is too high for a certain time, consider it is impossible
         return False
         

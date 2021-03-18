@@ -31,11 +31,21 @@ class Keyword_detection:
         self.keyword_recognizer = kr.KeywordRecognizer(keyword=keyword, timeout=timeout)
 
     def transform(self):
+        """
+        This method transform the input which is sound into a boolean representing the detection or not of the keyword
+        and send this boolean to the output topic
+        """
+        #Could also be interesting to have an input topic listening for a new keyword
+        #TODO: Could be interesting use a callback using wait_for_keyword() 
+        # instead so it does not continually analyse for the keyword
         while not rospy.is_shutdown():
             detection = self.keyword_recognizer.wait_for_keyword()
             self.output_perc.publish(detection)
 
     def node_shutdown(self):
+        """
+        This method informs the developper about the shutdown of this node
+        """
         common.loginfo(self, "is shutting down")
     
 

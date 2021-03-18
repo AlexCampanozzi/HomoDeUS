@@ -8,6 +8,3 @@ hbba_conf:
         - proc_output_listenText
     output:
         - events
-
-
-

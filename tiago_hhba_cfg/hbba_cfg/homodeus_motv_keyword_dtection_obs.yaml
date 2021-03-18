@@ -8,6 +8,3 @@ hbba_conf:
         - proc_output_keywordDetect
     output:
         - events
-
-
-

@@ -13,10 +13,10 @@ hbba_conf:
         - bhvr_output_res_talking
             
 - strat:
-    name: palActionLib
+    name: palActionLibTts
     class: Talking
     utility: 8
     costs: {speaker: 1}
     modules:
         - homodeus_bhvr_talking
-
+    custom_bringup: "pubString('/bhvr_input_goal_talking',params.TtsText);"

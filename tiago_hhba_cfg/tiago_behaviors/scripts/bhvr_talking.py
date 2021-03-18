@@ -10,11 +10,21 @@ class Talking_module:
     This class provide control to the robot's head as an actionlib server
     """
     def __init__(self, language = "en_GB", text="Welcome my friends"):
+        """
+        This method initializes Talking_module by connecting to the relevant input and output
+        It can than receives a goal, sending a command and publishes when its goal is achievec
 
+        Arguments
+        ---------
+        language : String
+            Which language should the robot use when talking
+        text: String
+            What the robot should say 
+        """
         self.language = language
         self.talking_text = text
         # Goal input
-        self.input_bhvr_goal = rospy.Subscriber("/bhvr_input_goal_talking",data_class=pal_interaction_msgs.msg.TtsText,callback=self.action_Cb,queue_size=10)
+        self.input_bhvr_goal = rospy.Subscriber("/bhvr_input_goal_talking",data_class=String,callback=self.action_Cb,queue_size=10)
         
         # Output
         self.output_bhvr_result = rospy.Publisher("/bhvr_output_res_talking", Bool, queue_size=10)
@@ -34,19 +44,28 @@ class Talking_module:
 
         Arguments
         ---------
-        TtsText : string
-            The text the robot has to say.
+        TtsText : String
+            String mentionning what to say by the robot
         """
         goal = pal_interaction_msgs.msg.TtsGoal()
-        goal.rawtext.lang_id = TtsText.lang_id
-        goal.rawtext.text = TtsText.text
+        goal.rawtext.lang_id = self.language
+        if TtsText == "":
+            goal.rawtext.text= self.talking_text
+        else:
+            goal.rawtext.text = TtsText.data
 
         self.output_bhvr_command.send_goal(goal=goal,done_cb=self.goal_achieve_Cb)
 
     def goal_achieve_Cb(self):
+        """
+        This method publishes a confirmation the goal received was achieved
+        """
         self.output_bhvr_result.publish(True)
 
     def node_shutdown(self):
+        """
+        This method cancel goal if their is a sudden shutdown. It also informs by a log that the node was shutdown
+        """
         self.output_bhvr_command.cancel_goal()
         common.loginfo(self,"have been shutdown")
 
@@ -63,4 +82,3 @@ if __name__ == "__main__":
 
     except Exception:
         common.logerr(__file__,traceback.format_exc())
-

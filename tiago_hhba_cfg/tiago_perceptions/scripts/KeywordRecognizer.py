@@ -122,3 +122,4 @@ class KeywordRecognizer:
         self.config.set_float('-kws_threshold', threshold)
 
         self.decoder = Decoder(self.config)
+        
