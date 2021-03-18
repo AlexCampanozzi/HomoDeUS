@@ -2,6 +2,7 @@
 import rospy
 import actionlib
 import traceback
+import xml.etree.ElementTree as ET
 
 from std_msgs.msg import String, Bool
 from hbba_msgs.msg import Desire, DesiresSet, Event
@@ -21,6 +22,11 @@ class Speech_recognition_observer:
 
         # following DesireSet
         self.desires_set_subscriber = rospy.Subscriber("desires_set", DesiresSet, self.listen_desires_set_Cb)
+
+        #parse the xml containing the contexts
+        speech_context_xml_path = "./others/speech_context.xml"
+        self.speech_context = ET.parse(speech_context_xml_path)
+        
 
     def listen_desires_set_Cb(self,desireSet):
         self.curDesireSet = desireSet
@@ -59,7 +65,6 @@ class Speech_recognition_observer:
         """
         common.loginfo(self,"have been shutdown")
 
-    
 
 if __name__ == '__main__':
     """

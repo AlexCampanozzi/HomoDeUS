@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<context>
+    <scenario1>
+        <answer>scenario one</answer>
+        <answer>first scenario</answer>
+        <answer>take order</answer>
+    </scenario1>
+    <scenario2>
+        <answer>scenario two</answer>
+        <answer>second scenario</answer>
+        <answer>bring order</answer>
+    </scenario2>
+    <scenario3>
+        <answer>scenario three</answer>
+        <answer>third scenario</answer>
+        <answer>collect dishes</answer>
+    </scenario3>
+    <scenario4>
+        <answer>scenario four</answer>
+        <answer>fourth scenario</answer>
+        <answer>fill dishwasher</answer>
+    </scenario4>
+    <affirmative>
+        <answer>yes</answer>
+        <answer>affirmative</answer>
+        <answer>shure</answer>
+        <answer>all right</answer>
+    </affirmative>
+    <negative>
+        <answer>no</answer>
+        <answer>negative</answer>
+    </negative>
+    <menu>
+        <answer>apple</answer>
+        <answer>apples</answer>
+        <answer>banana</answer>
+        <answer>bananas</answer>
+        <answer>orange</answer>
+        <answer>oranges</answer>
+    </menu>
+</context>
