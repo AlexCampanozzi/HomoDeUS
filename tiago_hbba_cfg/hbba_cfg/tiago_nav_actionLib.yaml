@@ -35,3 +35,11 @@ hbba_conf:
         - bhvr_output_res_nav_result
     output:
         - events
+
+- motivation:
+    name: gotoLandmark_results_observer
+    launch: {pkg: "tiago_hbba_cfg", path: "launch/motv_gotoLandmark_results_observer.launch"}
+    input:
+        - bhvr_output_res_nav_result
+    output:
+        - events

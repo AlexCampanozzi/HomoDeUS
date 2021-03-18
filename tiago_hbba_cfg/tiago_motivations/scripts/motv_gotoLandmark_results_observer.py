@@ -13,7 +13,7 @@ from base_navigation.msg import GoToResult
 def equalWithinTolerance(a, b, tol):
     return abs(a-b) <= tol
 
-class GoToResultObserver:
+class GoToLandmarkResultObserver:
 
     def __init__(self):
         self.eventPublisher = rospy.Publisher("events", Event)
@@ -32,17 +32,18 @@ class GoToResultObserver:
         succes = result.result
         if result.result == True:
             for desire in self.curDesireSet.desires:
-                if desire.type == "GoTo":
+                if desire.type == "GoToLandmark":
+                    print "looking at a GoToLandmark"
                     paramsDict = safe_load(desire.params)
-                    if equalWithinTolerance(result.x, paramsDict["x"], 0.1) and equalWithinTolerance(result.y, paramsDict["y"], 0.1) and equalWithinTolerance(result.t, paramsDict["t"], 0.1):
-                        print "Position found within tolerance of a goal position"
+                    if result.landmark == paramsDict["name"]:
+                        print "Attained Landmark found in gotoLandmark desires"
                         event = Event()
                         event.desire = desire.id
                         event.desire_type = desire.type
                         event.type = Event.ACC_ON
                         self.eventPublisher.publish(event)
                     else:
-                        print "Position found outside tolerance of a goal position"
+                        print "name did not match"
                         
         else:
             # What do we do when GoTo fails?
@@ -52,7 +53,7 @@ if __name__ == "__main__":
     try:
         rospy.init_node("motv_goto_results_observer")
 
-        node = GoToResultObserver()
+        node = GoToLandmarkResultObserver()
         node.listenDesiresSet()
         node.listenGoToResult()
 
