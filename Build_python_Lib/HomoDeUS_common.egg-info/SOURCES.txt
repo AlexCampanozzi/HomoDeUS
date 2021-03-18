@@ -1,8 +1,0 @@
-README.md
-setup.py
-HomoDeUS_common/HomoDeUS_common.py
-HomoDeUS_common/__init__.py
-HomoDeUS_common.egg-info/PKG-INFO
-HomoDeUS_common.egg-info/SOURCES.txt
-HomoDeUS_common.egg-info/dependency_links.txt
-HomoDeUS_common.egg-info/top_level.txt

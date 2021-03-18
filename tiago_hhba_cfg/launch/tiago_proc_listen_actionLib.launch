@@ -1,3 +1,0 @@
-<launch>
-  <node name="proc_listen_test" pkg="tiago_hbba_cfg" type="proc_listen_test.py" output="screen"/>
-</launch>

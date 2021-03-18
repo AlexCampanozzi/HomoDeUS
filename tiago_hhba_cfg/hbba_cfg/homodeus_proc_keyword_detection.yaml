@@ -1,0 +1,16 @@
+hbba_conf:
+
+- procmodule:
+    name: homodeus_proc_keyword_detection
+    launch: {pkg: 'tiago_hbba_cfg', path: 'launch/homodeus_proc_keyword_detection.launch'}
+    output:
+        - proc_output_keywordDetect
+
+- strat:
+    name: pocketSphynx
+    class: Keyword_detection
+    utility: 10
+    costs: {microphone: 1}
+    modules:
+        - homodeus_proc_keyword_detection
+

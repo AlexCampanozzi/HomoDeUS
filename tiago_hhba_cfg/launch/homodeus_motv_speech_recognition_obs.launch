@@ -1,0 +1,3 @@
+<launch>
+    <node name="motv_speech_recognition_observer" pkg="tiago_hbba_cfg" type="motv_speech_recognition_observer.py" output="screen"/>
+</launch>
