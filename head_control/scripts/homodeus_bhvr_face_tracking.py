@@ -30,7 +30,8 @@ class FaceTracking:
 
         self.threshold = 1
 
-        self.pid = PID(self.img_center_x, self.img_center_y, K_P=0.1, K_I=0.1, K_D=0.1)
+        self.pid_x = PID(self.img_center_x, K_P=0.003, K_I=0.0, K_D=0.0)
+        self.pid_y = PID(self.img_center_y, K_P=0.003, K_I=0.0, K_D=0.0)
 
     def _head_callback(self, detections):
         rospy.loginfo("received face")
@@ -52,7 +53,8 @@ class FaceTracking:
         if main_face_dist < self.threshold:
             return
 
-        x, y = self.pid.get_next_command(main_face_x, main_face_y)
+        x = self.pid_x.get_next_command(main_face_x)
+        y = self.pid_y.get_next_command(main_face_y)
 
         poseStamped = geometry_msgs.msg.PoseStamped()
 

@@ -87,9 +87,11 @@ class HeadActionClient:
         self.GotoPosition(math.tan(Ytheta), math.tan(Xtheta))
 
     def callback(self, data):
-        rospy.loginfo("I heard %s", data.pose.position.x)
+        rospy.loginfo("I heard %s", data.pose.position.y)
 
-        self.GotoPosition(data.pose.position.x, data.pose.position.y)
+        self.GotoPosition(data.pose.position.x, 0)
+        #self.GotoPosition(0, data.pose.position.y)
+        #self.GotoPosition(data.pose.position.x, data.pose.position.y)
 
 if __name__ == '__main__':
 
