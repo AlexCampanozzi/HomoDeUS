@@ -47,7 +47,6 @@ if __name__ == '__main__':
     try:
         rospy.init_node(common.get_file_name(__file__))
         node = Keyword_detection()
-        common.logerr(__file__,traceback.format_exc())
         node.transform()
         rospy.on_shutdown(node.node_shutdown)
         rospy.spin()
