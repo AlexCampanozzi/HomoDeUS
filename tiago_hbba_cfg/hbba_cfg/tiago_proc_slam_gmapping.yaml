@@ -29,4 +29,3 @@ hbba_conf:
     modules:
         - slam_gmapping:
             - scan: 2
-
