@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>tiago_hbba_cfg</name>
+  <name>homodeus_hbba_cfg</name>
   <version>0.0.0</version>
-  <description>The tiago_hbba_cfg package - a modified set of HBBA config files.</description>
+  <description>The homodeus_hbba_cfg package - a modified set of HBBA config files.</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->

@@ -2,7 +2,7 @@ hbba_conf:
 
 - behavior:
     name: tiago_head_controller
-    launch: {pkg: "tiago_hbba_cfg", path: "launch/tiago_head_action_client.launch"}
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/tiago_head_action_client.launch"}
     priority: 10
     input:
         - tiago_head_controller

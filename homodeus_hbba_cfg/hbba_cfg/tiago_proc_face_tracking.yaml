@@ -2,7 +2,7 @@ hbba_conf:
 
 - procmodule:
     name: face_tracking
-    launch: {pkg: 'tiago_hbba_cfg', path: "launch/tiago_proc_face_tracking.launch"}
+    launch: {pkg: 'homodeus_hbba_cfg', path: "launch/tiago_proc_face_tracking.launch"}
     input: 
         - base_scan: {type: GenericDivider}
         - image_rgb_sd: {type: GenericDividerAD}

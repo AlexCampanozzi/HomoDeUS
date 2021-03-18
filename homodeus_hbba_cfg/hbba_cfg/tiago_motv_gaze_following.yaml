@@ -2,7 +2,7 @@ hbba_conf:
 
 - motivation:
     name: motv_gaze_following
-    launch: {pkg: "tiago_hbba_cfg", path: "launch/tiago_motv_gaze_following.launch"}
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/tiago_motv_gaze_following.launch"}
     input:
         - faces
         - people_tracker/people

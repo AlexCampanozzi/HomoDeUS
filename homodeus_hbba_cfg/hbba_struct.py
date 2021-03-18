@@ -11,7 +11,7 @@ import sys
 
 if ("-c" in sys.argv):
     if (os.fork() == 0):
-        os.system("roslaunch /root/tiago_ws/src/HomoDeUS/tiago_hbba_cfg/./hbba_struct.launch")
+        os.system("roslaunch /root/tiago_ws/src/HomoDeUS/homodeus_hbba_cfg/./hbba_struct.launch")
         sys.exit(0)
 
 rospy.init_node("hbba_struct", anonymous=True)
