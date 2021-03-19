@@ -1,9 +1,0 @@
-#goal definition
-string language
-bool skip_keyword #Start recognizing immediately, without waiting for keyword
----
-string[] recognition_results
----
-#Each time a keyword is detected and speech is recognized, a new vector is sent
-#with the recognitions
-string[] feedback_on_goal

@@ -166,3 +166,4 @@ def logfatal(origin, text=""):
             rospy.logfatal(get_file_name(str(origin)) + ": " + text)
     except Exception:
         rospy.logfatal("There was a problem in the common library")
+        
