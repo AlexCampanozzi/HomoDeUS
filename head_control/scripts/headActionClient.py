@@ -9,6 +9,7 @@ from geometry_msgs.msg import PoseStamped
 import geometry_msgs
 import math
 from pal_startup_msgs.srv import StartupStart, StartupStop
+from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 import rosservice
 
 from std_msgs.msg import String
@@ -18,13 +19,11 @@ class HeadActionClient:
     This class provide control to the robot's head as an actionlib server
     """
     def __init__(self):
-        #os.system("export ROS_MASTER_URI=http://10.68.0.1:11311")
-        #os.system("export ROS_IP=10.68.0.127")
-
         self.client = actionlib.SimpleActionClient(
             "/head_controller/point_head_action", control_msgs.msg.PointHeadAction)
 
         rospy.Subscriber("tiago_head_controller", geometry_msgs.msg.PoseStamped, self.callback)
+        self.pub_abs = rospy.Publisher("head_controller/command", JointTrajectory)
 
         # Disabling the pal_head_manager to prevent unwanted head motion while moving the head
         service_list = rosservice.get_service_list()
@@ -46,6 +45,20 @@ class HeadActionClient:
         while(not self.client.wait_for_server(rospy.Duration.from_sec(5.0))):
             rospy.loginfo("Waiting for the action server to come up")
 
+    def GotoPositionAbsolute(self, x, y):
+        """
+        This method publishes a command to move the robot head in absolute
+        x (float): The x position in the absolute frame that the robot must reach
+        y (float): The y position in the absolute frame that the robot must reach
+        """
+        cmd = JointTrajectory()
+        cmd.joint_names = ["head_1_joint", "head_2_joint"]
+
+        points = JointTrajectoryPoint()
+        points.positions = [x,y]
+        points.time_from_start = rospy.Duration(1)
+        cmd.points.append(points)
+        self.pub_abs.publish(cmd)
 
     def GotoPosition(self, x, y):
         """
