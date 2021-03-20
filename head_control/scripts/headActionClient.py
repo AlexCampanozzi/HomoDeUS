@@ -45,7 +45,7 @@ class HeadActionClient:
         while(not self.client.wait_for_server(rospy.Duration.from_sec(5.0))):
             rospy.loginfo("Waiting for the action server to come up")
 
-    def GotoPositionAbsolute(self, x, y):
+    def GotoPositionAbsolute(self, x, y, duration=1.):
         """
         This method publishes a command to move the robot head in absolute
         x (float): The x position in the absolute frame that the robot must reach
@@ -56,7 +56,7 @@ class HeadActionClient:
 
         points = JointTrajectoryPoint()
         points.positions = [x,y]
-        points.time_from_start = rospy.Duration(1)
+        points.time_from_start = rospy.Duration(duration)
         cmd.points.append(points)
         self.pub_abs.publish(cmd)
 
