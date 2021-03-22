@@ -1,3 +1,0 @@
-<launch>
-  <node name="proc_speech_recognition" pkg="tiago_hbba_cfg" type="proc_speech_recognition.py" output="screen"/>
-</launch>
