@@ -6,7 +6,6 @@ import roslib
 import actionlib
 import control_msgs.msg
 from geometry_msgs.msg import PoseStamped
-import geometry_msgs
 import math
 from pal_startup_msgs.srv import StartupStart, StartupStop
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
@@ -19,7 +18,7 @@ class HeadActionClient:
     This class provide control to the robot's head as an actionlib server
     """
     def __init__(self):
-        rospy.Subscriber("tiago_head_controller", geometry_msgs.msg.PoseStamped, self.callback)
+        rospy.Subscriber("tiago_head_controller", PoseStamped, self.callback)
         self.pub_abs = rospy.Publisher("head_controller/command", JointTrajectory, queue_size=5)
 
         # Disabling the pal_head_manager to prevent unwanted head motion while moving the head
