@@ -1,0 +1,8 @@
+#goal definition
+bool start_scenario #start the goal of starting scenario
+---
+#result definition
+bool scenario_done # telling us that the scenario is done
+---
+#feedback
+int32[] sequence #will need to check what kind of feedback we want??

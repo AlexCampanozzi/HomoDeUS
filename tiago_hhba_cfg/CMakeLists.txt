@@ -6,6 +6,12 @@ project(tiago_hbba_cfg)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   hbba_synth
+  actionlib
+  actionlib_msgs
+  message_generation
+  roscpp
+  rospy
+  std_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -56,17 +62,16 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
+ add_action_files(
+   DIRECTORY action
+   FILES scenario_selector.action
+ )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+ generate_messages(
+   DEPENDENCIES
+   actionlib_msgs std_msgs  # Or other packages containing msgs
+ )
 
 ###################################
 ## catkin specific configuration ##
@@ -80,7 +85,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES tiago_hbba_cfg
-#  CATKIN_DEPENDS hbba_synth
+  CATKIN_DEPENDS hbba_synth actionlib actionlib_msgs message_generation roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
 
@@ -92,6 +97,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+# include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -128,6 +134,15 @@ install(PROGRAMS
   tiago_motivations/scripts/motv_listenTalk_results_observer.py
   tiago_perceptions/scripts/proc_listen_test.py
   tiago_behaviors/scripts/bhvr_talk_test.py
+  tiago_behaviors/scripts/bhvr_talking.py
+  tiago_motivations/scripts/motv_scenario_selector.py
+  tiago_motivations/scripts/motv_keyword_detection_observer.py
+  tiago_motivations/scripts/motv_speech_recognition_observer.py
+  tiago_motivations/scripts/motv_talking_observer.py
+  tiago_motivations/scripts/test_parser.py
+  tiago_perceptions/scripts/KeywordRecognizer.py
+  tiago_perceptions/scripts/proc_keyword_detection.py
+  tiago_perceptions/scripts/proc_speech_recognition.py
 
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
