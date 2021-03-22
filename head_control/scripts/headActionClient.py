@@ -20,7 +20,7 @@ class HeadActionClient:
     """
     def __init__(self):
         rospy.Subscriber("tiago_head_controller", geometry_msgs.msg.PoseStamped, self.callback)
-        self.pub_abs = rospy.Publisher("head_controller/command", JointTrajectory)
+        self.pub_abs = rospy.Publisher("head_controller/command", JointTrajectory, queue_size=5)
 
         # Disabling the pal_head_manager to prevent unwanted head motion while moving the head
         service_list = rosservice.get_service_list()

@@ -13,9 +13,8 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
   _nh(nh)
 {
   // Image topics (Uncomment the appropriate one)
-  //std::string imageTopic = "/usb_cam/image_raw"; // For testing on the laptop
-  std::string imageTopic = "/proc_input_camera_feed"; // For testing on the laptop
-  //std::string imageTopic = "/xtion/rgb/image_raw"; // For testing on the robot
+  //std::string imageTopic = "/proc_input_camera_feed"; // For testing on the laptop
+  std::string imageTopic = "/homodeus_proc_face_detection/proc_input_camera_feed"; // For testing on the robot
 
   image_transport::ImageTransport imageTransport(nh);
 
@@ -34,7 +33,7 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
 
   _imageSub = imageTransport.subscribe(imageTopic, 1, &FaceDetector::imageCallback, this, transportHint);
 
-  _pub = _nh.advertise<face_detection::FacePositions>("/pal_face/faces", 1);
+  _pub = _nh.advertise<face_detection::FacePositions>("/proc_output_face_positions", 1);
   _imDebugPub = imageTransport.advertise("debug", 1);
 
   //Dimensions of the image

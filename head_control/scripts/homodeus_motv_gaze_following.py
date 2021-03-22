@@ -16,7 +16,7 @@ class GotoManager:
 
     def add(self):
         des = Desire()
-        des.id          = "test_goto"
+        des.id          = "face_detection"
         des.type        = "GoTo"
         des.utility     = 1.0
         des.intensity   = 1.0

@@ -19,7 +19,7 @@ class FaceTracking:
     def __init__(self):
         rospy.loginfo("Face tracking constructing")
 
-        rospy.Subscriber('/pal_face/faces', FacePositions, self._head_callback, queue_size=5)
+        rospy.Subscriber('/proc_output_face_positions', FacePositions, self._head_callback, queue_size=5)
         self.pub = rospy.Publisher('tiago_head_controller', geometry_msgs.msg.PoseStamped, queue_size=5)
 
         self.img_width = 320 #rospy.get_param('processing_img_width')

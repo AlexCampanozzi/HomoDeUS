@@ -5,7 +5,7 @@ hbba_conf:
     launch: {pkg: "tiago_hbba_cfg", path: "launch/homodeus_bhvr_face_tracking.launch"}
     priority: 10
     input:
-        - pal_face/faces
+        - /proc_output_face_positions
     output:
         - tiago_head_controller
             
