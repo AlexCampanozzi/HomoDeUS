@@ -2,6 +2,7 @@
 import rospy
 import actionlib
 import traceback
+import os
 import xml.etree.ElementTree as ET
 
 from std_msgs.msg import String, Bool
@@ -24,8 +25,9 @@ class Speech_recognition_observer:
         self.desires_set_subscriber = rospy.Subscriber("desires_set", DesiresSet, self.listen_desires_set_Cb)
 
         #parse the xml containing the contexts
-        speech_context_xml_path = "./others/speech_context.xml"
-        self.speech_context = ET.parse(speech_context_xml_path)
+        #doublecheck the path
+        speech_context_xml_path = "src/HomoDeUS/tiago_hhba_cfg/tiago_motivations/others/speech_context.xml"
+        self.speech_context = ET.parse(speech_context_xml_path).getroot()
         
 
     def listen_desires_set_Cb(self,desireSet):
@@ -46,7 +48,20 @@ class Speech_recognition_observer:
                     event.type = Event.IMP_ON
                     self.event_publisher.publish(event)
                 
+    def check_speech_context(self, SpeechText, submited_context):
+        # prend en entree le speech reconnu et verifie son contenu en le comparant au bon contexte
+        selected_context = self.speech_context.find(submited_context)
+        for answer in submited_context.findall('answer'):
+            if answer in SpeechText:
+                return True
+        return False 
 
+    def get_speech_context(self, SpeechText):
+        #retourne dans quel contexte le speech est si possible
+        for element in self.speech_context.findall('*'):
+            if check_speech_context(SpeechText, element.tag):
+                return element.tag
+        return ''
 
     def accomplish_criterion(self, SpeechText):
         # Pourrait etre un xml avec les mots à retrouvés selon le contexte et le désir donne le contexte
