@@ -112,7 +112,7 @@ include_directories(
 #   ${catkin_LIBRARIES}
 # )
 
-add_hbba_cfg(tiago_listen_talk      hbba_cfg/tiago_listen_talk.yaml)
+add_hbba_cfg(tiago_general      hbba_cfg/tiago_general.yaml)
 
 #############
 ## Install ##
