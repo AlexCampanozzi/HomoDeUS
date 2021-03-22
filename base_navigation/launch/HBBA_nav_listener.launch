@@ -5,5 +5,4 @@
 		<arg name="gzclient" value="false"/>
 		<arg name="lost" value="false"/>
 	</include>
-	<!-- <node name="HBBA_nav_listener" pkg="base_navigation" type="HBBA_nav_listener.py"/> -->
 </launch>

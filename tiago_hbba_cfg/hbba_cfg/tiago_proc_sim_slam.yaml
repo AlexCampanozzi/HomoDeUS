@@ -10,12 +10,6 @@ hbba_conf:
     launch: {pkg: 'tiago_hbba_cfg', path: 'launch/tiago_proc_sim_slam.launch'}
     input: 
         - scan: {type: GenericDivider}
-        # - odom
-        # - initialpose: {filtered: false}
-
-    # output:
-    #     - map
-    #     - amcl_pose
 
 - resources:
     GMapping: 1

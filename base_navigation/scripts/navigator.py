@@ -10,7 +10,6 @@ from tf.transformations import quaternion_from_euler, euler_from_quaternion
 
 class Navigator:
     def __init__(self):
-        # rospy.init_node('base_cmds', anonymous=False)
         self.landmarks = {}
         
         # define a client to send goal requests to the move_base server through a SimpleActionClient
@@ -42,13 +41,6 @@ class Navigator:
 
         # Old way of doing it, we non-blocking now
         # self.ac.wait_for_result(rospy.Duration(60))
-
-        # if(self.ac.get_state() == GoalStatus.SUCCEEDED):
-        #         rospy.loginfo("The robot reached the destination")
-        #         return True
-        # else:
-        #         rospy.loginfo("The robot failed to reach the destination")
-        #         return False
 
     def gotoDoneCB(self, state, result):
         # We do a bit of witchcraft here and call a method from the child class (HBBA_nav_listener)
