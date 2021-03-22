@@ -11,7 +11,7 @@ hbba_conf:
             
 - strat:
     name: face_tracking
-    class: GoTo
+    class: move_head
     utility: 8
     modules:
         - homodeus_bhvr_face_tracking
