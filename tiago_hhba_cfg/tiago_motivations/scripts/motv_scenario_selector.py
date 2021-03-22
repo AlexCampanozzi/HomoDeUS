@@ -16,10 +16,10 @@ class Scenario_Selector:
     def __init__(self):
         #TODO
         #parse_xml_context_speech
-        scenario_1 = actionlib.SimpleActionServer("scenario1",scenario_selector,auto_start=False)
-        scenario_2 = actionlib.SimpleActionServer("scenario2",scenario_selector,auto_start=False)
-        scenario_3 = actionlib.SimpleActionServer("scenario3",scenario_selector,auto_start=False)
-        scenario_4 = actionlib.SimpleActionServer("scenario4",scenario_selector,auto_start=False)
+        scenario_1.actionServer = actionlib.SimpleActionServer("scenario1",scenario_selector,auto_start=False)
+        scenario_2.actionServer = actionlib.SimpleActionServer("scenario2",scenario_selector,auto_start=False)
+        scenario_3.actionServer = actionlib.SimpleActionServer("scenario3",scenario_selector,auto_start=False)
+        scenario_4.actionServer = actionlib.SimpleActionServer("scenario4",scenario_selector,auto_start=False)
     
     def listen_desires_set_Cb(self,desireSet):
         self.curDesireSet = desireSet

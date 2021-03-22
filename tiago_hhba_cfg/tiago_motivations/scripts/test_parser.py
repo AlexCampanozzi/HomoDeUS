@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 import os
     
 #parse the xml containing the contexts
-speech_context_xml_path = "src/HomoDeUS/tiago_hhba_cfg/tiago_motivations/others/speech_context.xml"
+speech_context_xml_path = "/home/pal/homodeus_ws/src/HomoDeUS/tiago_hhba_cfg/tiago_motivations/others/speech_context.xml"
 speech_context = ET.parse(speech_context_xml_path).getroot()
 for element in speech_context.findall('*'):
     print(element.tag)
@@ -17,3 +17,5 @@ for element in speech_context.findall('*'):
 # if 'bob' in teststring:
 #     print('bobfound')
 # print('bobend')
+#"src/HomoDeUS/tiago_hhba_cfg/tiago_motivations/others/speech_context.xml"
+#/home/pal/homodeus_ws/src/HomoDeUS/tiago_hhba_cfg/tiago_motivations/others/speech_context.xml
