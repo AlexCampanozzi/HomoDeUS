@@ -5,6 +5,7 @@ import rospy
 import roslib
 import actionlib
 import control_msgs.msg
+from geometry_msgs.msg import PoseStamped
 import geometry_msgs
 import math
 from pal_startup_msgs.srv import StartupStart, StartupStop
@@ -24,7 +25,7 @@ class HeadActionClient:
         self.client = actionlib.SimpleActionClient(
             "/head_controller/point_head_action", control_msgs.msg.PointHeadAction)
 
-        rospy.Subscriber("chatter", String, self.callback)
+        rospy.Subscriber("tiago_head_controller", geometry_msgs.msg.PoseStamped, self.callback)
 
         # Disabling the pal_head_manager to prevent unwanted head motion while moving the head
         service_list = rosservice.get_service_list()
@@ -80,8 +81,8 @@ class HeadActionClient:
     def GotoAngle(self, Ytheta, Xtheta):
         """
         This method converts angles value into position before using the GotoPosition function
-        Ytheta (float): The x position in the optical frame that the robot must reach
-        xTheta (float): The y position in the optical frame that the robot must reach
+        Ytheta (float): The x angle in the optical frame that the robot must reach
+        xTheta (float): The y angle in the optical frame that the robot must reach
         """
         Ytheta = Ytheta*math.pi/180
         Xtheta = Xtheta*math.pi/180
@@ -89,5 +90,6 @@ class HeadActionClient:
         self.GotoPosition(math.tan(Ytheta), math.tan(Xtheta))
 
     def callback(self, data):
-        rospy.loginfo("I heard %s", data.data)
-        self.GotoAngle(30, 0)
+        rospy.loginfo("I heard %s", data.pose.position.x)
+
+        self.GotoAngle(data.pose.position.x, data.pose.position.y)
