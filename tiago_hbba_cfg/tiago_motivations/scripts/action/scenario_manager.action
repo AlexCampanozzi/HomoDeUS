@@ -1,0 +1,10 @@
+#goal definition
+bool execute
+---
+#result definition
+bool result
+---
+#feedback
+int32 state
+
+# NOTE: package and cmake are not changed yet since this will be going to common or extern anyways
