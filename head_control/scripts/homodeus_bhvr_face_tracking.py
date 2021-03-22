@@ -5,7 +5,6 @@ import rospy
 import roslib
 import actionlib
 from geometry_msgs.msg import PoseStamped
-import geometry_msgs
 import math
 from sensor_msgs.msg import CameraInfo
 import numpy as np
@@ -20,7 +19,7 @@ class FaceTracking:
         rospy.loginfo("Face tracking constructing")
 
         rospy.Subscriber('/proc_output_face_positions', FacePositions, self._head_callback, queue_size=5)
-        self.pub = rospy.Publisher('tiago_head_controller', geometry_msgs.msg.PoseStamped, queue_size=5)
+        self.pub = rospy.Publisher('tiago_head_controller', PoseStamped, queue_size=5)
 
         self.img_width = 320 #rospy.get_param('processing_img_width')
         self.img_height = 240 #rospy.get_param('processing_img_height')
@@ -56,7 +55,7 @@ class FaceTracking:
         x = self.pid_x.get_next_command(main_face_x)
         y = self.pid_y.get_next_command(main_face_y)
 
-        poseStamped = geometry_msgs.msg.PoseStamped()
+        poseStamped = PoseStamped()
 
         poseStamped.pose.position.x = x
         poseStamped.pose.position.y = y

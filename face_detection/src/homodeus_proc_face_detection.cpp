@@ -13,18 +13,7 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
   _nh(nh)
 {
   // Image topics (Uncomment the appropriate one)
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-  //std::string imageTopic = "/proc_input_camera_feed"; // For testing on the laptop
   std::string imageTopic = "/homodeus_proc_face_detection/proc_input_camera_feed"; // For testing on the robot
-=======
-  std::string imageTopic = "/usb_cam/image_raw"; // For testing on the laptop
-  //std::string imageTopic = "/xtion/rgb/image_raw"; // For testing on the robot
->>>>>>> eb974631031dac9be9e1aedd2608932da1341782
-=======
-  //std::string imageTopic = "/proc_input_camera_feed"; // For testing on the laptop
-  std::string imageTopic = "/proc_input_camera_feed"; // For testing on the robot
->>>>>>> Stashed changes
 
   image_transport::ImageTransport imageTransport(nh);
 
