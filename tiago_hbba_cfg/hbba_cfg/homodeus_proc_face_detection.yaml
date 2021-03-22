@@ -4,15 +4,14 @@ hbba_conf:
     name: homodeus_proc_face_detection
     launch: {pkg: 'tiago_hbba_cfg', path: "launch/homodeus_proc_face_detection.launch"}
     input: 
-        #- usb_cam/image_raw
+        - usb_cam/image_raw
         #- xtion/rgb/image_raw
-        - /proc_input_camera_feed: {src: /usb_cam/image_raw}
     output:
         - pal_face/faces
         
 - strat:
     name: face_detection
-    class: GoTo
+    class: face_detection
     utility: 10
     modules:
         - face_detection

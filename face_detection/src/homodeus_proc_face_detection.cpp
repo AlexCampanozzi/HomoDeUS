@@ -13,8 +13,7 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
   _nh(nh)
 {
   // Image topics (Uncomment the appropriate one)
-  //std::string imageTopic = "/usb_cam/image_raw"; // For testing on the laptop
-  std::string imageTopic = "/proc_input_camera_feed"; // For testing on the laptop
+  std::string imageTopic = "/usb_cam/image_raw"; // For testing on the laptop
   //std::string imageTopic = "/xtion/rgb/image_raw"; // For testing on the robot
 
   image_transport::ImageTransport imageTransport(nh);
