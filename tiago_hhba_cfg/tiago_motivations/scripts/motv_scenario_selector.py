@@ -2,6 +2,7 @@
 import rospy
 import actionlib
 import traceback
+import test_parser
 
 from std_msgs.msg import String, Bool
 from hbba_msgs.msg import Desire, DesiresSet, Event
