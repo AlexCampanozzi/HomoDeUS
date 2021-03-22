@@ -12,6 +12,9 @@ Outputs:        None
 FaceDetector::FaceDetector(ros::NodeHandle& nh):
   _nh(nh)
 {
+  // Image topics (Uncomment the appropriate one)
+  std::string imageTopic = "/homodeus_proc_face_detection/proc_input_camera_feed"; // For testing on the robot
+
   image_transport::ImageTransport imageTransport(nh);
 
   std::string pathToFrontClassifier = ros::package::getPath("face_detection") +
@@ -19,18 +22,20 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
   std::string pathToProfileClassifier = ros::package::getPath("face_detection") +
                                  "/config/haarcascade_profileface.xml";
 
+  // Checks if the classifier files are there
   if ( !_frontClassifier.load(pathToFrontClassifier.c_str())  or 
       ! _profileClassifier.load(pathToProfileClassifier.c_str()) )
     throw std::runtime_error("Error loading classifier");
 
+  //Initializing subscribers and publishers
   image_transport::TransportHints transportHint("raw");
 
-  _imageSub = imageTransport.subscribe("image", 1, &FaceDetector::imageCallback, this, transportHint);
+  _imageSub = imageTransport.subscribe(imageTopic, 1, &FaceDetector::imageCallback, this, transportHint);
 
-
-  _pub = _nh.advertise<face_detection::FacePositions>("faces", 1);
+  _pub = _nh.advertise<face_detection::FacePositions>("/proc_output_face_positions", 1);
   _imDebugPub = imageTransport.advertise("debug", 1);
 
+  //Dimensions of the image
   _nh.param<int>("processing_img_width", _imgProcessingSize.width, _imgProcessingSize.height);
   _nh.param<int>("processing_img_height", _imgProcessingSize.height, _imgProcessingSize.height);
 }
@@ -65,7 +70,7 @@ void FaceDetector::publishDetections(const std::vector<cv::Rect>& faces)
 
   BOOST_FOREACH(const cv::Rect& face, faces)
   {
-    //publish the detection
+    //Information to publish
     detection.x           = static_cast<int>(face.x);
     detection.y           = static_cast<int>(face.y);
     detection.width       = static_cast<int>(face.width);
@@ -138,6 +143,7 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     cvImgPtr = cv_bridge::toCvShare(msg);
     cvImgPtr->image.copyTo(img);
   
+    // Minimum and maximum sizes of the faces that can be detected
     _minFaceSize.width = static_cast<int>(MIN_FACE_SIZE_RATIO * _imgProcessingSize.width);
     _maxFaceSize.width = static_cast<int>(_imgProcessingSize.width);
     cv::resize(img, imgScaled, _imgProcessingSize);
@@ -200,4 +206,27 @@ std::vector<cv::Rect> FaceDetector::detectFaces(const cv::Mat& img,
                                    _minFaceSize,
                                    _maxFaceSize);
   return detections;
+}
+
+int main(int argc, char **argv)
+{
+  ros::init(argc,argv,"face_detection_node");
+  ros::NodeHandle nh("~");
+
+  double frequency = 5;
+
+  ROS_INFO("Creating face detector");
+
+  FaceDetector detector(nh);
+
+  ROS_INFO("Spinning to serve callbacks ...");
+
+  ros::Rate rate(frequency);
+  while ( ros::ok() )
+  {
+    ros::spinOnce();
+    rate.sleep();
+  }
+
+  return 0;
 }

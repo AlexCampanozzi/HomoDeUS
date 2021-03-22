@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>HomoDeUS</name>
+  <name>head_control</name>
   <version>0.0.0</version>
-  <description>The HomoDeUS package</description>
+  <description>The head_control package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
