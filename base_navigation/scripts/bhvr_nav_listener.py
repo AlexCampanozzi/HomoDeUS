@@ -41,10 +41,10 @@ class HBBA_nav_listener(Navigator):
         self.result_pub.publish(result)
 
     def listenGoto(self):
-        rospy.Subscriber('/bhvr_input_goal_nav_goal', PoseStamped, self.gotoCallback)
+        rospy.Subscriber('bhvr_input_goal_nav_goal', PoseStamped, self.gotoCallback)
 
     def listenGotoLandmark(self):
-        rospy.Subscriber('/bhvr_input_goal_landmark_nav_goal', String, self.gotoLandmarkCallback)
+        rospy.Subscriber('bhvr_input_goal_landmark_nav_goal', String, self.gotoLandmarkCallback)
 
 if __name__ == '__main__':
     try:

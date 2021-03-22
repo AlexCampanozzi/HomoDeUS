@@ -115,7 +115,6 @@ include_directories(
 add_hbba_cfg(tiago_nav      hbba_cfg/tiago_nav.yaml)
 add_hbba_cfg(tiago_nav_slam hbba_cfg/tiago_nav_slam.yaml)
 add_hbba_cfg(tiago_nav_actionLib hbba_cfg/tiago_nav_actionLib.yaml)
-add_hbba_cfg(tiago_general      hbba_cfg/tiago_general.yaml)
 
 #############
 ## Install ##
