@@ -15,13 +15,6 @@ class GazeFollowingManager:
         rospy.wait_for_service("add_desires")
 
     def add(self):
-<<<<<<< HEAD
-        des = Desire()
-        des.id          = "face_detection"
-        des.type        = "GoTo"
-        des.utility     = 1.0
-        des.intensity   = 1.0
-=======
         faceDetectionDesire = Desire()
         faceDetectionDesire.id          = "test_face_detection"
         faceDetectionDesire.type        = "face_detection"
@@ -33,7 +26,6 @@ class GazeFollowingManager:
         moveHeadDesire.type        = "move_head"
         moveHeadDesire.utility     = 1.0
         moveHeadDesire.intensity   = 1.0
->>>>>>> eb974631031dac9be9e1aedd2608932da1341782
         #des.params      = "{frame_id: '/xtion_rgb_optical_frame', x: 30.0, y: 0.0, t: 0.0}"
 
         self.add_desires.call([faceDetectionDesire, moveHeadDesire])
