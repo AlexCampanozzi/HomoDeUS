@@ -1,0 +1,3 @@
+<launch>
+    <node name="goto_results_observer" pkg="tiago_hbba_cfg" type="motv_goto_results_observer.py" output="screen"/>
+</launch>
