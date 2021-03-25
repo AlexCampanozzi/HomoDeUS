@@ -6,7 +6,10 @@ hbba_conf:
     input: 
         - proc_input_camera_feed: {src: usb_cam/image_raw}
         #- proc_input_camera_feed: {src: xtion/rgb/image_raw}
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     output:
         - /proc_output_face_positions
         
