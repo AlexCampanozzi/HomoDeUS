@@ -13,8 +13,9 @@ class StateBase:
         4. _post_execution()
         5. _get_next_state()
     """
-    def __init__(self):
+    def __init__(self, stateDict):
         self.id = self._set_id()
+        self.stateDict = stateDict
 
         self.add_desires    = rospy.ServiceProxy('add_desires', AddDesires)
         self.rem_desires    = rospy.ServiceProxy('remove_desires', RemoveDesires)
@@ -45,7 +46,7 @@ class StateBase:
         """
         raise NotImplementedError()
 
-    def get_next_state(self, stateDict):
+    def react_to_event(self):
         """
         This method should return the next state's id (string) if an event allows
         a transition. If there is no transition, it should return None.
@@ -58,7 +59,7 @@ class StateBase:
         """
         raise NotImplementedError()
 
-    def cleanup(self, nextState):
+    def cleanup(self):
         """
         This method removes the state's desires not present in the next state
         """
