@@ -11,33 +11,67 @@ import HomoDeUS_common_py.HomoDeUS_common_py as common
 
 class Scenario_Selector:
     """
-    This class select the scenario that we will choose
+    This class select the scenario that we will do
     """
     def __init__(self):
         #TODO
         #parse_xml_context_speech
-        scenario_1.actionServer = actionlib.SimpleActionServer("scenario1",scenario_selector,auto_start=False)
-        scenario_2.actionServer = actionlib.SimpleActionServer("scenario2",scenario_selector,auto_start=False)
-        scenario_3.actionServer = actionlib.SimpleActionServer("scenario3",scenario_selector,auto_start=False)
-        scenario_4.actionServer = actionlib.SimpleActionServer("scenario4",scenario_selector,auto_start=False)
-    
-    def listen_desires_set_Cb(self,desireSet):
-        self.curDesireSet = desireSet
+        self.actionServer1 = actionlib.SimpleActionClient("scenario1",scenario_selector)#actionclient
+        self.actionServer2 = actionlib.SimpleActionClient("scenario2",scenario_selector)
+        self.actionServer3 = actionlib.SimpleActionClient("scenario3",scenario_selector)
+        self.actionServer3 = actionlib.SimpleActionClient("scenario4",scenario_selector)
 
-    def desire_event_change(self, context):
-        #TODO
-        #pas avec un event 
+        # The input of the module
+        self.input_motv = rospy.Subscriber("/proc_output_keywordDetect", Bool, self.listen_Keyword_cb, queue_size=10)
+
+        # the output of the module
+        self.event_SUbcriber = rospy.Subscriber("events",Event, self.listen_event_cb , queue_size = 10)
+
+
+        #ajout de desire
+        self.add_keyword_desire()
+
+        self.pause_all = False
+        self.desire_type_dict = dict()
     
-    def scenario_selection(self,context);
+ 
+    def add_keyword_desire(self):
+        des = Desire()
+        des.id          = "Scenario_selector_keyword"
+        des.type        = "Keyword_detection"
+        des.utility     = 5.0
+        des.intensity   = 100.0
+        des.params      = "robot"
+
+        self.add_desires.call([des])
+
+    #def desire_event_change(self, context):
+       
+        #pas avec un event quil est controler
+    def listen_Keyword_cb(self, detection):
+        if detection:
+        #pause all desire
+
+    def listen_event_cb(self,event):
+        if event.type = Event.DES_ON
+             Dict[event.type]
+
+
+    def scenario_selection(self,context):
         scenario = context
-        scenario.actionServer.start()
-        scenario.wait_for_server()
+        
+        self.scenario.wait_for_server()
         
         #voir avec les scenario comment on les start pour choisir le bon goal
         goal = start()#TBC
 
-        scenario.send_goal(goal)
-        scenario.wait_for_result()
+        self.scenario.send_goal(self, goal)#send_goal(self, goal, done_cb=None, active_cb=None, feedback_cb=None)
+        self.scenario.wait_for_result()
+    def cb_speech ();
+
+    def cb_desire();
+
+    def cb_event();
 
     def accomplish_criterion(self, context):
         #TODO
