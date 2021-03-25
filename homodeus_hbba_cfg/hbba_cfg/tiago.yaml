@@ -15,3 +15,8 @@ hbba_conf:
 # Available resources:
 - resources:
     CPU: 100
+
+- remap: {from: 'base_scan', to: 'scan'}
+- remap: {from: 'events', to: 'hbba/events'}
+# No mux on TB3, straight cmd_vel input (at least in Gazebo):
+# - remap: {from: 'cmd_vel',   to: '/cmd_vel_mux/input/navi'}
