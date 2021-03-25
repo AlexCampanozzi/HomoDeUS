@@ -3,10 +3,10 @@
 hbba_conf:
 
 - include: {pkg: 'hbba_synth',         file: 'common.yaml'}
-- include: {pkg: 'tiago_hbba_cfg', file: 'tiago.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'tiago.yaml'}
 
 # Behaviors:
-- include: {pkg: 'tiago_hbba_cfg', file: 'tiago_bhvr_nav_actionLib.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'tiago_bhvr_nav_actionLib.yaml'}
 
 # Combined priorities:
 - behavior_priority: {name: 'tiago_nav',     value: 90}
@@ -18,19 +18,19 @@ hbba_conf:
 
 - motivation:
     name: goto_tester
-    launch: {pkg: "tiago_hbba_cfg", path: "launch/motv_goto_test.launch"}
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/motv_goto_test.launch"}
     input:
         - events
 
 - motivation:
     name: gotoLandmark_tester
-    launch: {pkg: "tiago_hbba_cfg", path: "launch/motv_gotoLandmark_test.launch"}
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/motv_gotoLandmark_test.launch"}
     input:
         - events
 
 - motivation:
     name: goto_results_observer
-    launch: {pkg: "tiago_hbba_cfg", path: "launch/motv_goto_results_observer.launch"}
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/motv_goto_results_observer.launch"}
     input:
         - bhvr_output_res_nav_result
     output:
@@ -38,7 +38,7 @@ hbba_conf:
 
 - motivation:
     name: gotoLandmark_results_observer
-    launch: {pkg: "tiago_hbba_cfg", path: "launch/motv_gotoLandmark_results_observer.launch"}
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/motv_gotoLandmark_results_observer.launch"}
     input:
         - bhvr_output_res_nav_result
     output:

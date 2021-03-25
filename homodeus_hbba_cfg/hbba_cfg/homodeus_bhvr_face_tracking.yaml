@@ -2,7 +2,7 @@ hbba_conf:
 
 - behavior:
     name: homodeus_bhvr_face_tracking
-    launch: {pkg: "tiago_hbba_cfg", path: "launch/homodeus_bhvr_face_tracking.launch"}
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/homodeus_bhvr_face_tracking.launch"}
     priority: 10
     input:
         - /proc_output_face_positions

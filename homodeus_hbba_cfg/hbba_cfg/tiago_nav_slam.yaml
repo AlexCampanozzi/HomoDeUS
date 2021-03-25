@@ -3,13 +3,13 @@
 hbba_conf:
 
 - include: {pkg: 'hbba_synth',         file: 'common.yaml'}
-- include: {pkg: 'tiago_hbba_cfg', file: 'tiago.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'tiago.yaml'}
 
 # Proc modules:
-# - include: {pkg: 'tiago_hbba_cfg', file: 'tiago_proc_slam_gmapping.yaml'}
+# - include: {pkg: 'homodeus_hbba_cfg', file: 'tiago_proc_slam_gmapping.yaml'}
 
 # Behaviors:
-- include: {pkg: 'tiago_hbba_cfg', file: 'tiago_bhvr_slam_planner.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'tiago_bhvr_slam_planner.yaml'}
 
 # Combined priorities:
 - behavior_priority: {name: 'tiago_slam_planner',     value: 90}
@@ -37,6 +37,6 @@ hbba_conf:
 # Goto Generator:
 - motivation:
     name: goto_generator
-    launch: {pkg: "tiago_hbba_cfg", path: "launch/motv_goto_generator.launch"}
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/motv_goto_generator.launch"}
     input:
      - goto_goal

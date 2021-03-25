@@ -7,7 +7,7 @@ hbba_conf:
 
 - procmodule:
     name: tiago_sim_slam
-    launch: {pkg: 'tiago_hbba_cfg', path: 'launch/tiago_proc_sim_slam.launch'}
+    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/tiago_proc_sim_slam.launch'}
     input: 
         - scan: {type: GenericDivider}
 

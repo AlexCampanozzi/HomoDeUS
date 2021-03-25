@@ -4,7 +4,7 @@ hbba_conf:
 
 - behavior:
     name: homodeus_bhvr_talking
-    launch: {pkg: 'tiago_hbba_cfg', path: 'launch/homodeus_bhvr_talking.launch'}
+    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/homodeus_bhvr_talking.launch'}
     priority: 10
     input:
         - bhvr_input_goal_talking
