@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
   std_msgs
   move_base_msgs
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -51,11 +52,10 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+  FILES
+  GoToResult.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -72,10 +72,11 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   geometry_msgs#   std_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  geometry_msgs
+  std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -109,7 +110,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES base_navigation
-#  CATKIN_DEPENDS geometry_msgs roscpp rospy actionlib std_msgs move_base_msgs actionlib_msgs
+  CATKIN_DEPENDS geometry_msgs roscpp rospy actionlib std_msgs move_base_msgs actionlib_msgs message_runtime
 #  DEPENDS system_lib
 )
 
@@ -166,6 +167,7 @@ include_directories(
  catkin_install_python(PROGRAMS
    scripts/navigator.py
    scripts/navigator_tester.py
+   scripts/goal_setter.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
  )
 
@@ -193,6 +195,7 @@ include_directories(
 ## Mark other files for installation (e.g. launch and bag files, etc.)
  install(FILES
    launch/navtest.launch
+   launch/bhvr_nav_listener.launch
    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
  )
 
