@@ -2,7 +2,7 @@
 import os
 import rospy
 import traceback
-import KeywordRecognizer as kr
+from keyword_detector.KeywordRecognizer import KeywordRecognizer as kr
 from std_msgs.msg import Bool
 import HomoDeUS_common_py.HomoDeUS_common_py as common
 

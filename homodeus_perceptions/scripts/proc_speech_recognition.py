@@ -2,7 +2,7 @@
 import os
 import rospy
 import traceback
-import KeywordRecognizer as kr
+from keyword_detector.KeywordRecognizer import KeywordRecognizer as kr
 import speech_recognition as sr
 
 from std_msgs.msg import String
