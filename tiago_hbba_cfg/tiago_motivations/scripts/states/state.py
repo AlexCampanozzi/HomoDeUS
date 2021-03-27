@@ -4,14 +4,13 @@ from hbba_msgs.srv import AddDesires, RemoveDesiresc
 
 class StateBase:
     """
-    Base class from which every state inherits from. Each child has
+    Base class from which every state inherits. Each child has
     to provide an implementation for the following methods:
         0. __init__()
         1. _set_id()
-        2. _pre_execution()
-        3. _execution()
-        4. _post_execution()
-        5. _get_next_state()
+        2. _get_next_state()
+        3. add_state_desires()
+        4. cleanup()
     """
     def __init__(self, stateDict):
         self.id = self._set_id()

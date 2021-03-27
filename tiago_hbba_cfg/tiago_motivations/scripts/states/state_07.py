@@ -3,9 +3,6 @@ from state import StateBase
 class State07(StateBase):
     def __int__(self, stateDict):
         StateBase.__init__(self, stateDict)
-        self.fail_count = 0
-        self.max_fail_count = 3
-        # TODO CB to update order form observer
 
     def _set_id(self):
         return "state_07"
@@ -21,6 +18,7 @@ class State07(StateBase):
 
             if desire == "move_to_kitchen_07":
                 if self.stateDict[desire] == Event.ACC_ON:
+                    # TODO register current pos as "customer" Landmark somewhere around here
                     self.remove("move_to_kitchen_07")
                     self.stateDict.pop("move_to_kitchen_07")
                     return "state_09"
