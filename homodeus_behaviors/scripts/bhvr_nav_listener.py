@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 import rospy
 
-from scripts.navigator import Navigator
+from base_navigation.scripts.navigator import Navigator
 from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import String
 from base_navigation.msg import GoToResult
