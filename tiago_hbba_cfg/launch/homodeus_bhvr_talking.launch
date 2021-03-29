@@ -1,3 +1,0 @@
-<launch>
-  <node name="bhvr_talking" pkg="tiago_hbba_cfg" type="bhvr_talking.py" output="screen"/>
-</launch>

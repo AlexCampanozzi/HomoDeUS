@@ -1,5 +1,0 @@
-hbba_conf:
-
-- motivation:
-    name: motv_gaze_following
-    launch: {pkg: "tiago_hbba_cfg", path: "launch/homodeus_motv_gaze_following.launch"}
