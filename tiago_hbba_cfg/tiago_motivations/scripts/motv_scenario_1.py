@@ -7,11 +7,11 @@ import states
 class Scenario1Manager(ScenarioManagerAction):
 
     def __init__(self):
-        states.state_00.State00
+        ScenarioManagerAction.__init__(self, name="scenario_1_manager")
         self.desires = {}
         self.states = {}
         self.current_state = None
-        self.reaction_events = [Event.ACC_ON, Event.ACC_OFF, Event.IMP_ON, Event.INT_OFF]
+        self.reaction_events = [Event.ACC_ON, Event.ACC_OFF, Event.IMP_ON, Event.IMP_OFF]
         # Get and add all states
         self.add_state(states.state_00.State00(self.desires))
         self.add_state(states.state_01.State01(self.desires))
@@ -60,8 +60,10 @@ class Scenario1Manager(ScenarioManagerAction):
                         self._as.set_succeeded(self._result)
 
                         self.current_state = "state_00"
+                        # TODO opposite of self.observe()
                         
                     else:
+                        self._feedback.prev_state = self.current_state
                         self.current_state = react_result
 
                         self._feedback.state = react_result
@@ -84,6 +86,7 @@ class Scenario1Manager(ScenarioManagerAction):
         self.desires.clear()
         self.current_state = "state_00"
         self._as.set_preempted()
+        # TODO opposite of self.observe()
 
 
 if __name__ == "__main__":
