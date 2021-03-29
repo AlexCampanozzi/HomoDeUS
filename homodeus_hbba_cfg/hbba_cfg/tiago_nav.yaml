@@ -4,7 +4,7 @@
 hbba_conf:
 
 - include: {pkg: 'hbba_synth',         file: 'common.yaml'}
-- include: {pkg: 'homodeus_hbba_cfg', file: 'tiago.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'tiago_general.yaml'}
 
 # Proc modules:
 # - include: {pkg: 'homodeus_hbba_cfg', file: 'tiago_proc_sim_slam.yaml'}
