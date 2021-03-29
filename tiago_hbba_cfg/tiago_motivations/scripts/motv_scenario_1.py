@@ -1,24 +1,77 @@
 import rospy
 from hbba_msgs.msg import Desire, Event
 from hbba_msgs.srv import AddDesires, RemoveDesires
-from action import ScenarioManagerAction
+from action.scenario_manager_action_server import ScenarioManagerAction
+import states
 
 class Scenario1Manager(ScenarioManagerAction):
 
     def __init__(self):
+        states.state_00.State00
         self.desires = {}
+        self.states = {}
+        self.current_state = None
+        self.reaction_events = [Event.ACC_ON, Event.ACC_OFF, Event.IMP_ON, Event.INT_OFF]
+        # Get and add all states
+        self.add_state(states.state_00.State00(self.desires))
+        self.add_state(states.state_01.State01(self.desires))
+        self.add_state(states.state_02.State02(self.desires))
+        self.add_state(states.state_03.State03(self.desires))
+        self.add_state(states.state_04.State04(self.desires))
+        self.add_state(states.state_05.State05(self.desires))
+        self.add_state(states.state_06.State06(self.desires))
+        self.add_state(states.state_07.State07(self.desires))
+        self.add_state(states.state_08.State08(self.desires))
+        self.add_state(states.state_09.State09(self.desires))
+        self.add_state(states.state_10.State10(self.desires))
+        self.add_state(states.state_11.State11(self.desires))
+        self.add_state(states.state_12.State12(self.desires))
+
+    def add_state(self, state):
+        key = state.get_id()
+
+        if key not in self.states.keys():
+            self.states[key] = state
+
+            if self.current_state is None:
+                self.current_state = self.states.get(key)
 
     def observe(self):
-        sub_desires = rospy.Subscriber("events", Event, self.removeOnEvent, queue_size=5)
+        sub_desires = rospy.Subscriber("events", Event, self.eventCB, queue_size=5)
 
     def eventCB(self, event):
+        # Update own desire states w/ events seen
         if event.desire in self.desires:
-            self.desires[event.desire] = event.type
+            if event.type in self.reaction_events:
+                self.desires[event.desire] = event.type
+
+                react_result = self.states[self.current_state].react_to_event()
+
+                if react_result is not None:
+                    self.states[self.current_state].cleanup()
+
+                    if react_result == "Done":
+                        self._result.result = True
+                        self._as.set_succeeded(self._result)
+
+                        self.current_state = "state_00"
+                        
+                    else:
+                        self.current_state = react_result
+
+                        self._feedback.state = react_result
+                        self._as.publish_feedback(self._feedback)
+
+                        self.states[self.current_state].add_desires()
+                    
     
     def execute_cb(self, goal):
         if goal is True:
-            # stuff
+            self.observe()
+            # initial desire addition
+            self.states[self.current_state].add_desires()
         else:
+            pass
             # no stuff
 
 
@@ -26,9 +79,7 @@ if __name__ == "__main__":
     try:
         rospy.init_node("scenario_1_manager)
 
-        node = GoToResultObserver()
-        node.listenDesiresSet()
-        node.listenGoToResult()
+        node = Scenario1Manager()
 
         rospy.spin()
 

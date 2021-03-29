@@ -19,7 +19,6 @@ class State10(StateBase):
                 if self.stateDict[desire] == Event.ACC_ON:
                     self.remove("thank_cook_10")
                     self.stateDict.pop("thank_cook_10")
-                    # Keep tracking as we continue sequence: no remove here
                     self.add(self, "move_to_customer_10", "GoToLandmark",  params = "{name: 'customer'}")
                     self.stateDict["move_to_customer_10"] = Event.DES_ON
                     return None

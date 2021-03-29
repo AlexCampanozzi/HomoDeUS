@@ -5,6 +5,6 @@ bool execute
 bool result
 ---
 #feedback
-int32 state
+string state
 
 # NOTE: package and cmake are not changed yet since this will be going to common or extern anyways
