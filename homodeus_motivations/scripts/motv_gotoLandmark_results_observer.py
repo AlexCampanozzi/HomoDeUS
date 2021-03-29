@@ -8,7 +8,7 @@ from yaml import safe_load
 # from json import loads
 # from ast import literal_eval
 from hbba_msgs.msg import Desire, DesiresSet, Event
-from base_navigation.msg import GoToResult
+from custom_msgs.msg import GoToResult
 
 def equalWithinTolerance(a, b, tol):
     return abs(a-b) <= tol

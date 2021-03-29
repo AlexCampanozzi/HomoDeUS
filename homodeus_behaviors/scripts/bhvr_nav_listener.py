@@ -4,7 +4,7 @@ import rospy
 from base_navigation.scripts.navigator import Navigator
 from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import String
-from base_navigation.msg import GoToResult
+from custom_msgs.msg import GoToResult
 from tf.transformations import quaternion_from_euler, euler_from_quaternion
 
 class HBBA_nav_listener(Navigator):
