@@ -19,10 +19,13 @@ class FaceTracking:
         rospy.loginfo("Face tracking constructing")
 
         rospy.Subscriber('/proc_output_face_positions', FacePositions, self._head_callback, queue_size=5)
-        self.pub = rospy.Publisher('tiago_head_controller', PoseStamped, queue_size=5)
 
-        self.img_width = 320 #rospy.get_param('processing_img_width')
-        self.img_height = 240 #rospy.get_param('processing_img_height')
+        #camera_info = rospy.wait_for_message("/usb_cam/camera_info", CameraInfo)
+        camera_info = rospy.wait_for_message("/xtion/rgb/camera_info", CameraInfo)
+
+        self.img_height = camera_info.height
+        self.img_width = camera_info.width
+        self.pub = rospy.Publisher('tiago_head_controller', PoseStamped, queue_size=5)
 
         self.img_center_x = self.img_width // 2
         self.img_center_y = self.img_height // 2
