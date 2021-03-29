@@ -13,7 +13,7 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
   _nh(nh)
 {
   // Image topics (Uncomment the appropriate one)
-  std::string imageTopic = "/homodeus_proc_face_detection/proc_input_camera_feed"; // For testing on the robot
+  std::string imageTopic = "/homodeus_proc_face_detection/proc_input_camera_feed";
 
   image_transport::ImageTransport imageTransport(nh);
 
