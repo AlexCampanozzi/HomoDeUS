@@ -1,0 +1,10 @@
+hbba_conf:
+
+# keyword detection observer wrapper 
+- motivation:
+    name: keyword_detection_obs
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/homodeus_motv_keyword_detection_obs.launch"}
+    input:
+        - proc_output_keywordDetect
+    output:
+        - events

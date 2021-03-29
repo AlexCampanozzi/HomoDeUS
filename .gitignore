@@ -1,5 +1,5 @@
 *.pyc
 *~
 *.swp
-.vscode/
-*.pyc
+*.vscode/*
+.vscode/*

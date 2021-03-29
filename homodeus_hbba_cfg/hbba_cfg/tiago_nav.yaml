@@ -1,0 +1,28 @@
+# Basic tiago navigation demo (with a static map) in HBBA.
+# WARNING: Not up to date with Melodic / TB3 config (2019/09)
+
+hbba_conf:
+
+- include: {pkg: 'hbba_synth',         file: 'common.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'tiago_general.yaml'}
+
+# Proc modules:
+# - include: {pkg: 'homodeus_hbba_cfg', file: 'tiago_proc_sim_slam.yaml'}
+
+# Behaviors:
+- include: {pkg: 'homodeus_hbba_cfg', file: 'tiago_bhvr_slam_planner.yaml'}
+
+# Combined priorities:
+- behavior_priority: {name: 'tiago_slam_planner',     value: 90}
+
+# Available resources:
+- resources:
+    CPU: 100
+    move_stack: 1
+
+# Goto Generator:
+- motivation:
+    name: goto_generator
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/motv_goto_generator.launch"}
+    input:
+     - goto_goal
