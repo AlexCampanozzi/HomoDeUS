@@ -17,7 +17,7 @@ class Scenario_Selector:
     def __init__(self):
         #TODO
         #parse_xml_context_speech
-        self.actionServer1 = actionlib.SimpleActionClient("scenario1",scenario_selector)#actionclient
+        self.actionServer1 = actionlib.SimpleActionClient("scenario1",scenario_selector)
         self.actionServer2 = actionlib.SimpleActionClient("scenario2",scenario_selector)
         self.actionServer3 = actionlib.SimpleActionClient("scenario3",scenario_selector)
         self.actionServer3 = actionlib.SimpleActionClient("scenario4",scenario_selector)
@@ -26,46 +26,39 @@ class Scenario_Selector:
         self.input_motv = rospy.Subscriber("/proc_output_keywordDetect", Bool, self.listen_Keyword_cb, queue_size=10)
 
         # the output of the module
-        self.event_SUbcriber = rospy.Subscriber("events",Event, self.listen_event_cb , queue_size = 10)
+        self.event_Subcriber = rospy.Subscriber("events",Event, self.listen_event_cb , queue_size = 10)
 
+        self.add_desires_service = rospy.ServiceProxy('add_desires', AddDesires)
+        self.rem_desires_service = rospy.ServiceProxy('remove_desires', RemoveDesires)
 
         #ajout de desire
-        self.add_keyword_desire()
+        self.add_desire(desire_id="Scenario_selector_keyword",desire_type="Keyword_detection",desire_utility=8,desire_intensity=50,desire_params="robot")
+        #TODO: test the use of params with the proc_keyword_detector"
 
         self.pause_all = False
         self.desire_type_dict = dict()
-    
- 
-    def add_keyword_desire(self):
-        des = Desire()
-        des.id          = "Scenario_selector_keyword"
-        des.type        = "Keyword_detection"
-        des.utility     = 5.0
-        des.intensity   = 100.0
-        des.params      = "robot"
 
-        self.add_desires.call([des])
 
-    #def desire_event_change(self, context):
-       
-        #pas avec un event quil est controler
     def listen_Keyword_cb(self, detection):
         if detection:
             self.pause_all = True
             for key in self.desire_type_dict:
                 if key is not "speech_recognition":
-                    self.add_pause_desire(key)
-              
-        
-        #pause all desire
-    def add_pause_desire(self, desire_type):
+                    self.add_desire(desire_id= "Pause_"+key, desire_type=key, desire_utility=0,desire_intensity=100)      
+                #pause all desire
+            # Adding the desire of recognizing what client want
+            self.add_desire(desire_id="scenario_selector_speech_recognition", desire_type= "Speech_recognition", desire_utility=5.0,desire_intensity=100.0, d)
+
+    def add_desire(self,desire_id, desire_type,desire_utility,desire_intensity, desire_params=None):
         des = Desire()
-        des.id          = "Pause_"+desire_type
+        des.id          = desire_id
         des.type        = desire_type
-        des.utility     = 0.0
-        des.intensity   = 1000.0
+        des.utility     = desire_utility
+        des.intensity   = desire_intensity
+        if desire_param is not None:
+            des.params = desire_params
         
-        self.add_desires.call([des])
+        self.add_desires_service.call([des])
 
     def listen_event_cb(self,event):
         if event.type = Event.DES_ON:
@@ -74,12 +67,6 @@ class Scenario_Selector:
                 if self.pause_all is True:
                     self.add_pause_desire(event.desire_type)
                 
-        #todo
-        #si pause, envoyer tout les desire avec utility 0
-        #pause = "Pause_"
-        #ajouter desire_id dans dict
-        # if pause in self.desire_type_dict:
-        #   
 
 
     def scenario_selection(self,context):
