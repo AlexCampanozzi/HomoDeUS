@@ -9,10 +9,10 @@ import math
 from sensor_msgs.msg import CameraInfo
 import numpy as np
 
-from face_detection.msg import FacePosition
-from face_detection.msg import FacePositions
+from custom_msgs.msg import FacePosition
+from custom_msgs.msg import FacePositions
 
-from Utility import PID
+from head_control.scripts.Utility import PID
 
 class FaceTracking:
     def __init__(self):

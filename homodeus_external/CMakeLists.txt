@@ -6,7 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
 )
-##catkin_python_setup()
+catkin_python_setup()
 catkin_package()
 
 ## Specify additional locations of header files
