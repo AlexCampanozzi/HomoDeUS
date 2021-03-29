@@ -30,6 +30,8 @@ class Scenario1Manager(ScenarioManagerAction):
         self.rem_desires    = rospy.ServiceProxy('remove_desires', RemoveDesires)
         rospy.wait_for_service("remove_desires")
 
+        self.register_preempt_callback(self.canceled_cb)
+
     def add_state(self, state):
         key = state.get_id()
 
@@ -81,6 +83,7 @@ class Scenario1Manager(ScenarioManagerAction):
             self.rem_desires.call(desire)
         self.desires.clear()
         self.current_state = "state_00"
+        self._as.set_preempted()
 
 
 if __name__ == "__main__":
