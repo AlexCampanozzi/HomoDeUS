@@ -1,0 +1,17 @@
+
+hbba_conf:
+
+- include: {pkg: 'hbba_synth',         file: 'common.yaml'}
+
+# Behaviors:
+- include: {pkg: 'homodeus_hbba_cfg', file: 'head_controller_behavior.yaml'}
+
+# Motivations
+- include: {pkg: 'homodeus_hbba_cfg', file: 'tiago_motv_gaze_following.yaml'}
+
+# Perceptions
+- include: {pkg: 'homodeus_hbba_cfg', file: 'tiago_proc_face_tracking.yaml'}
+
+# Available resources:
+- resources:
+    CPU: 100

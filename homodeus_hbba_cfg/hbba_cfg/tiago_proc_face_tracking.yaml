@@ -1,0 +1,24 @@
+hbba_conf:
+
+- procmodule:
+    name: face_tracking
+    launch: {pkg: 'homodeus_hbba_cfg', path: "launch/tiago_proc_face_tracking.launch"}
+    input: 
+        - base_scan: {type: GenericDivider}
+        - image_rgb_sd: {type: GenericDividerAD}
+        - image_depth: {type: GenericDividerAD}
+        - camera_info_depth: {type: GenericDividerAD}
+
+    output:
+        - tiago_head_controller
+        
+- resources:
+    PeopleTracker: 1
+
+- strat:
+    name: FaceTracking
+    class: GoTo
+    utility: 10
+    modules:
+        - face_tracking
+

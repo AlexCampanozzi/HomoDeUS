@@ -1,3 +1,0 @@
-<launch>
-    <test test-name="test_head" pkg="HomoDeUS" type="test_head.py"/>
-</launch>

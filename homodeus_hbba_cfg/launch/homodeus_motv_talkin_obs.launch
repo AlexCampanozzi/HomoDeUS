@@ -1,0 +1,3 @@
+<launch>
+    <node name="motv_talking_observer" pkg="homodeus_hbba_cfg" type="motv_talking_observer.py" output="screen"/>
+</launch>
