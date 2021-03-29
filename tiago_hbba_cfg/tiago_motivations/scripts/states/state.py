@@ -1,6 +1,6 @@
 import rospy
 from hbba_msgs.msg import Desire, Event
-from hbba_msgs.srv import AddDesires, RemoveDesiresc
+from hbba_msgs.srv import AddDesires, RemoveDesires
 
 class StateBase:
     """

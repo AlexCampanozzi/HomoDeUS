@@ -27,6 +27,9 @@ class Scenario1Manager(ScenarioManagerAction):
         self.add_state(states.state_11.State11(self.desires))
         self.add_state(states.state_12.State12(self.desires))
 
+        self.rem_desires    = rospy.ServiceProxy('remove_desires', RemoveDesires)
+        rospy.wait_for_service("remove_desires")
+
     def add_state(self, state):
         key = state.get_id()
 
@@ -63,16 +66,21 @@ class Scenario1Manager(ScenarioManagerAction):
                         self._as.publish_feedback(self._feedback)
 
                         self.states[self.current_state].add_desires()
-                    
     
     def execute_cb(self, goal):
-        if goal is True:
+        if goal.execute is True:
             self.observe()
             # initial desire addition
             self.states[self.current_state].add_desires()
         else:
             pass
             # no stuff
+
+    def canceled_cb(self):
+        for desire in self.desires:
+            self.rem_desires.call(desire)
+        self.desires.clear()
+        self.current_state = "state_00"
 
 
 if __name__ == "__main__":
