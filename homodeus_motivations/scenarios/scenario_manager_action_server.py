@@ -15,11 +15,3 @@ class ScenarioManagerAction(object):
         self._action_name = name
         self._as = actionlib.SimpleActionServer(self._action_name, tiago_hbba_cfg.msg._scenario_managerAction, execute_cb=self.execute_cb, auto_start = False)
         self._as.start()
-    
-    def execute_cb(self, goal):
-        # redefine in child scenarios with actual execution
-        if goal is True:
-            # do stuff
-            pass
-        else:
-            # handle 

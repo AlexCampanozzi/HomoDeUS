@@ -1,7 +1,7 @@
 import rospy
 from hbba_msgs.msg import Desire, Event
 from hbba_msgs.srv import AddDesires, RemoveDesires
-from action.scenario_manager_action_server import ScenarioManagerAction
+from scenario_manager_action_server import ScenarioManagerAction
 import states
 
 class Scenario1Manager(ScenarioManagerAction):
@@ -91,7 +91,7 @@ class Scenario1Manager(ScenarioManagerAction):
 
 if __name__ == "__main__":
     try:
-        rospy.init_node("scenario_1_manager)
+        rospy.init_node("scenario_1_manager")
 
         node = Scenario1Manager()
 

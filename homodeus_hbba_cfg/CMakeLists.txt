@@ -6,7 +6,6 @@ project(homodeus_hbba_cfg)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   hbba_synth
-  actionlib_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -57,19 +56,19 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate actions in the 'action' folder
-add_action_files(
-  DIRECTORY
-  tiago_motivations/scripts/action
-  FILES
-  scenario_manager.action
-)
+# add_action_files(
+#   DIRECTORY
+#   tiago_motivations/scripts/action
+#   FILES
+#   scenario_manager.action
+# )
 
 ## Generate added messages and services with any dependencies listed here
-generate_messages(
-  DEPENDENCIES
-  actionlib_msgs
-  std_msgs
-)
+# generate_messages(
+#   DEPENDENCIES
+#   actionlib_msgs
+#   std_msgs
+# )
 
 ###################################
 ## catkin specific configuration ##
@@ -115,8 +114,8 @@ include_directories(
 #   ${catkin_LIBRARIES}
 # )
 
-add_hbba_cfg(tiago_nav      hbba_cfg/tiago_nav.yaml)
-add_hbba_cfg(tiago_nav_slam hbba_cfg/tiago_nav_slam.yaml)
+# add_hbba_cfg(tiago_nav      hbba_cfg/tiago_nav.yaml)
+# add_hbba_cfg(tiago_nav_slam hbba_cfg/tiago_nav_slam.yaml)
 add_hbba_cfg(tiago_nav_actionLib hbba_cfg/tiago_nav_actionLib.yaml)
 add_hbba_cfg(tiago_general hbba_cfg/tiago_general.yaml)
 
