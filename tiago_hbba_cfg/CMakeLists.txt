@@ -118,6 +118,7 @@ include_directories(
 add_hbba_cfg(tiago_nav      hbba_cfg/tiago_nav.yaml)
 add_hbba_cfg(tiago_nav_slam hbba_cfg/tiago_nav_slam.yaml)
 add_hbba_cfg(tiago_nav_actionLib hbba_cfg/tiago_nav_actionLib.yaml)
+add_hbba_cfg(tiago_general hbba_cfg/tiago_general.yaml)
 
 #############
 ## Install ##
@@ -131,6 +132,10 @@ add_hbba_cfg(tiago_nav_actionLib hbba_cfg/tiago_nav_actionLib.yaml)
 install(PROGRAMS
   tiago_motivations/scripts/motv_goto_test.py
   tiago_motivations/scripts/motv_goto_results_observer.py
+  tiago_motivations/scripts/motv_talk_actionLib.py
+  tiago_motivations/scripts/motv_listenTalk_results_observer.py
+  tiago_perceptions/scripts/proc_listen_test.py
+  tiago_behaviors/scripts/bhvr_talk_test.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

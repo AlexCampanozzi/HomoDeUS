@@ -13,7 +13,6 @@ hbba_conf:
 - include: {pkg: 'tiago_hbba_cfg', file: 'tiago_bhvr_slam_planner.yaml'}
 
 # Combined priorities:
-#- behavior_priority: {name: 'tiago_teleop',            value: 100}
 - behavior_priority: {name: 'tiago_slam_planner',     value: 90}
 
 # Available resources:

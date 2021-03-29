@@ -26,4 +26,3 @@ hbba_conf:
         - static_map:
             - scan: 1
             - odom: 1
-

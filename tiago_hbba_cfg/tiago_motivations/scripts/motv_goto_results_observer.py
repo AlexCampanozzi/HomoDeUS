@@ -41,22 +41,8 @@ class GoToResultObserver:
                         event.desire_type = desire.type
                         event.type = Event.ACC_ON
                         self.eventPublisher.publish(event)
-                        break
                     else:
                         print "Position found outside tolerance of a goal position"
-                elif desire.type == "GoToLandmark":
-                    print "looking at a GoToLandmark"
-                    paramsDict = safe_load(desire.params)
-                    if result.landmark == paramsDict["name"]:
-                        print "Attained Landmark found in gotoLandmark desires"
-                        event = Event()
-                        event.desire = desire.id
-                        event.desire_type = desire.type
-                        event.type = Event.ACC_ON
-                        self.eventPublisher.publish(event)
-                        break
-                    else:
-                        print "name did not match"
                         
         else:
             # What do we do when GoTo fails?
