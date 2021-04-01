@@ -11,7 +11,7 @@ class State09(StateBase):
 
     def add_state_desires(self):
         # Add a search before tracking? Or maybe have search be part of tracking?
-        self.add(self, "track_cook_09", "Face_tracking",  params="")
+        self.add(self, "track_cook_09", "face_tracking",  params="")
         self.stateDict["track_cook_09"] = Event.DES_ON
 
     def react_to_event(self):
@@ -20,7 +20,7 @@ class State09(StateBase):
             if desire == "track_cook_09":
                 if self.stateDict[desire] == Event.ACC_ON:
                     # Keep tracking as we continue sequence: no remove here
-                    self.add(self, "inform_cook_09", "Talk",  params = self.order) # TODO Fix class and params
+                    self.add(self, "inform_cook_09", "Talking",  params = self.order) # TODO Fix class and params
                     self.stateDict["inform_cook_09"] = Event.DES_ON
                     return None
 

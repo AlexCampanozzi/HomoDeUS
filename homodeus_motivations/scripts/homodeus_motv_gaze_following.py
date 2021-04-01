@@ -22,8 +22,8 @@ class GazeFollowingManager:
         faceDetectionDesire.intensity   = 1.0
 
         moveHeadDesire = Desire()
-        moveHeadDesire.id          = "test_move_head"
-        moveHeadDesire.type        = "move_head"
+        moveHeadDesire.id          = "test_face_tracking"
+        moveHeadDesire.type        = "face_tracking"
         moveHeadDesire.utility     = 1.0
         moveHeadDesire.intensity   = 1.0
         #des.params      = "{frame_id: '/xtion_rgb_optical_frame', x: 30.0, y: 0.0, t: 0.0}"
@@ -32,12 +32,12 @@ class GazeFollowingManager:
 
     def remove(self):
         self.rem_desires.call(["test_face_detection"])
-        self.rem_desires.call(["test_move_head"])
+        self.rem_desires.call(["test_face_tracking"])
 
     def removeOnEvent(self, event):
         if event.desire_type == "face_detection" and event.type == Event.ACC_ON:
             self.rem_desires.call([event.desire])
-        elif event.desire_type == "move_head" and event.type == Event.ACC_ON:
+        elif event.desire_type == "face_tracking" and event.type == Event.ACC_ON:
             self.rem_desires.call([event.desire])
         else:
             pass

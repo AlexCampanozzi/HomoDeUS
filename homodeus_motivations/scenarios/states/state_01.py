@@ -8,7 +8,7 @@ class State01(StateBase):
         return "state_01"
 
     def add_state_desires(self):
-        self.add(self, "say_goodbye_01", "Talk",  params="cya") # TODO Fix class and params
+        self.add(self, "say_goodbye_01", "Talking",  params="{TtsText: 'Goodbye, come again Human!'}")
         self.stateDict["say_goodbye_01"] = Event.DES_ON
 
     def react_to_event(self):

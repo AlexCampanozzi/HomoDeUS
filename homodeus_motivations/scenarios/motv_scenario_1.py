@@ -48,7 +48,10 @@ class Scenario1Manager(ScenarioManagerAction):
                 self.current_state = self.states.get(key)
 
     def observe(self):
-        sub_desires = rospy.Subscriber("events", Event, self.eventCB, queue_size=5)
+        self.sub_desires = rospy.Subscriber("events", Event, self.eventCB, queue_size=5)
+
+    def stopObserving(self):
+        self.sub_desires.unregister()
 
     def eventCB(self, event):
         # Update own desire states w/ events seen
@@ -66,7 +69,7 @@ class Scenario1Manager(ScenarioManagerAction):
                         self._as.set_succeeded(self._result)
 
                         self.current_state = "state_00"
-                        # TODO opposite of self.observe()
+                        self.stopObserving()
                         
                     else:
                         self._feedback.prev_state = self.current_state
@@ -92,7 +95,7 @@ class Scenario1Manager(ScenarioManagerAction):
         self.desires.clear()
         self.current_state = "state_00"
         self._as.set_preempted()
-        # TODO opposite of self.observe()
+        self.stopObserving()
 
 
 if __name__ == "__main__":

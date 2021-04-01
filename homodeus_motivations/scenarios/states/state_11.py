@@ -8,7 +8,7 @@ class State11(StateBase):
         return "state_11"
 
     def add_state_desires(self):
-        self.add(self, "ask_for_help_11", "Talk",  params = "what do?") # TODO Fix class and params
+        self.add(self, "ask_for_help_11", "Talking",  params = "what do?") # TODO Fix class and params
         self.stateDict["ask_for_help_11"] = Event.DES_ON
 
     def react_to_event(self):

@@ -12,9 +12,9 @@ class State06(StateBase):
         return "state_06"
 
     def add_state_desires(self):
-        self.add(self, "track_customer_06", "Face_tracking",  params="")
+        self.add(self, "track_customer_06", "face_tracking",  params="")
         self.stateDict["track_customer_06"] = Event.DES_ON
-        self.add(self, "repeat_order_06", "Talk",  params = self.order) # TODO Fix class and params
+        self.add(self, "repeat_order_06", "Talking",  params = self.order) # TODO Fix class and params
         self.stateDict["repeat_order_06"] = Event.DES_ON
 
     def react_to_event(self):
@@ -44,7 +44,7 @@ class State06(StateBase):
                 if self.stateDict[desire] == Event.IMP_ON and self.fail_count < self.max_fail_count:
                     self.remove("listen_for_answer_06")
                     self.stateDict.pop("listen_for_answer_06")
-                    self.add(self, "repeat_order_06", "Talk",  params = self.order) # TODO Fix class and params
+                    self.add(self, "repeat_order_06", "Talking",  params = self.order) # TODO Fix class and params
                     self.stateDict["repeat_order_06"] = Event.DES_ON
                     self.fail_count += 1
                     return None
