@@ -1,0 +1,17 @@
+hbba_conf:
+
+- procmodule:
+    name: homodeus_proc_battery_level
+    launch: {pkg: 'homodeus_hbba_cfg', path: "launch/homodeus_proc_battery_level.launch"}
+    input: 
+        - /power_status/charge
+    output:
+        - /proc_output_batterie_level
+
+- strat:
+    name: 
+    class: Recharge
+    utility: 10
+    costs: 
+    modules:
+        - homodeus_proc_battery_level

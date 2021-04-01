@@ -1,0 +1,3 @@
+<launch>
+  <node name="proc_battery_level" pkg="homodeus_hbba_cfg" type="proc_battery_level.py" output="screen"/>
+</launch>
