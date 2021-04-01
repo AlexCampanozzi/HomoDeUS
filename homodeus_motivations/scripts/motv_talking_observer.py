@@ -43,7 +43,7 @@ class Talking_observer:
         talkingDone: Bool
             The result of the output of the module it is connected to. In this case it is a confirmation the robot talked
         """
-        # S'il y a beaucoup de désirs du même type... il me semble que ca ne fonctionnera pas
+        # S'il y a beaucoup de desirs du meme type... il me semble que ca ne fonctionnera pas
         event = Event()
         for desire in self.curDesireSet.desires:
             if desire.type == "Talking":
@@ -53,7 +53,7 @@ class Talking_observer:
                     event.type = Event.ACC_ON
                     self.event_publisher.publish(event)
                 elif self.cancel_criterion():
-                #Problème actuel est que si le désir n'est pas activé il peut tout de même changer d'état!
+                #Probleme actuel est que si le desir n'est pas active il peut tout de meme changer d'etat!
                     event.type = Event.IMP_ON
                     self.event_publisher.publish(event)
                 

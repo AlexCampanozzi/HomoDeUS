@@ -1,4 +1,4 @@
-#include <face_detection/face_detector.h>
+#include <../include/face_detector.h>
 
 #define MIN_FACE_SIZE_RATIO 0.00001
 /* FaceDetector: Constructor
