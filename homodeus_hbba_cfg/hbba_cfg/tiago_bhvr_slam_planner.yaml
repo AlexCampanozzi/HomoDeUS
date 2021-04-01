@@ -4,7 +4,7 @@ hbba_conf:
 
 - behavior:
     name: tiago_slam_planner
-    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/tiago_bhvr_slam_planner.launch'}
+    launch: {pkg: 'homodeus_behaviors', path: 'launch/tiago_bhvr_slam_planner.launch'}
     priority: 10
     input:
         - move_base_simple/goal: {src: move_base_simple/goal, filtered: false}

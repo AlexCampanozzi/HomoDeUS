@@ -7,7 +7,7 @@ hbba_conf:
 
 - procmodule:
     name: static_map
-    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/tiago_proc_static_map.launch'}
+    launch: {pkg: 'homodeus_perceptions', path: 'launch/tiago_proc_static_map.launch'}
     input: 
         - scan: {type: GenericDivider}
         - odom
