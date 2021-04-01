@@ -5,13 +5,13 @@
 import rospy
 import actionlib
 from yaml import safe_load
-from std_msgs import Bool
+from std_msgs.msg import Bool
 from hbba_msgs.msg import Desire, DesiresSet, Event
 
 class FaceTrackingResultObserver:
 
     def __init__(self):
-        self.eventPublisher = rospy.Publisher("events", Event)
+        self.eventPublisher = rospy.Publisher("events", Event, queue_size = 10)
         self.curDesireSet = DesiresSet()
 
     def listenDesiresSet(self):
@@ -24,7 +24,7 @@ class FaceTrackingResultObserver:
         self.faceTrackingETASubscriber = rospy.Subscriber("FaceTrackingETA", Bool, self.listenFaceTrackingCB)
 
     def listenFaceTrackingCB(self, success):
-        if success == True:
+        if success.data == True:
             for desire in self.curDesireSet.desires:
                 if desire.type == "FaceTracking":
                     rospy.log("looking at a FaceTracking")
