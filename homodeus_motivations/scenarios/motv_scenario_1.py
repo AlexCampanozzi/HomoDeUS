@@ -1,8 +1,9 @@
+#!/usr/bin/env python
 import rospy
 from hbba_msgs.msg import Desire, Event
 from hbba_msgs.srv import AddDesires, RemoveDesires
 from scenario_manager_action_server import ScenarioManagerAction
-import states
+from states import state_00, state_01, state_02, state_03, state_04, state_05, state_06, state_07, state_08, state_09, state_10, state_11, state_12
 
 class Scenario1Manager(ScenarioManagerAction):
 
@@ -13,32 +14,37 @@ class Scenario1Manager(ScenarioManagerAction):
         self.current_state = None
         self.reaction_events = [Event.ACC_ON, Event.ACC_OFF, Event.IMP_ON, Event.IMP_OFF]
         # Get and add all states
-        self.add_state(states.state_00.State00(self.desires))
-        self.add_state(states.state_01.State01(self.desires))
-        self.add_state(states.state_02.State02(self.desires))
-        self.add_state(states.state_03.State03(self.desires))
-        self.add_state(states.state_04.State04(self.desires))
-        self.add_state(states.state_05.State05(self.desires))
-        self.add_state(states.state_06.State06(self.desires))
-        self.add_state(states.state_07.State07(self.desires))
-        self.add_state(states.state_08.State08(self.desires))
-        self.add_state(states.state_09.State09(self.desires))
-        self.add_state(states.state_10.State10(self.desires))
-        self.add_state(states.state_11.State11(self.desires))
-        self.add_state(states.state_12.State12(self.desires))
-
-        self.rem_desires    = rospy.ServiceProxy('remove_desires', RemoveDesires)
+        self.add_state(state_00.State00(self.desires))
+        self.add_state(state_01.State01(self.desires))
+        self.add_state(state_02.State02(self.desires))
+        self.add_state(state_03.State03(self.desires))
+        self.add_state(state_04.State04(self.desires))
+        self.add_state(state_05.State05(self.desires))
+        self.add_state(state_06.State06(self.desires))
+        self.add_state(state_07.State07(self.desires))
+        self.add_state(state_08.State08(self.desires))
+        self.add_state(state_09.State09(self.desires))
+        self.add_state(state_10.State10(self.desires))
+        self.add_state(state_11.State11(self.desires))
+        self.add_state(state_12.State12(self.desires))
+        self.register_preempt_callback(self.canceled_cb)
+        self.rem_desires = rospy.ServiceProxy('remove_desires', RemoveDesires)
         rospy.wait_for_service("remove_desires")
 
-        self.register_preempt_callback(self.canceled_cb)
-
     def add_state(self, state):
+        print("keys")
+
         key = state.get_id()
 
+        print("key")
+
         if key not in self.states.keys():
+            print("keys")
             self.states[key] = state
+            print("state")
 
             if self.current_state is None:
+                print("none")
                 self.current_state = self.states.get(key)
 
     def observe(self):
@@ -94,6 +100,7 @@ if __name__ == "__main__":
         rospy.init_node("scenario_1_manager")
 
         node = Scenario1Manager()
+        print("jfjfj")
 
         rospy.spin()
 

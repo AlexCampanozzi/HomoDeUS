@@ -13,7 +13,9 @@ class StateBase:
         4. cleanup()
     """
     def __init__(self, stateDict):
+        print("in state base init")
         self.id = self._set_id()
+        print("id set")
         self.stateDict = stateDict
 
         self.add_desires    = rospy.ServiceProxy('add_desires', AddDesires)

@@ -4,14 +4,17 @@ import rospy
 
 import actionlib
 
-import tiago_hbba_cfg.msg
+import custom_msgs.msg
 
 class ScenarioManagerAction(object):
     # TODO: get messages for feedback and result once they're built
-    _feedback = tiago_hbba_cfg.msg._scenario_managerFeedback # Feedback indicating current state when transitions happen
-    _result = tiago_hbba_cfg.msg._scenario_managerResult # Result given when execution terminates
+    _feedback = custom_msgs.msg._scenario_managerFeedback # Feedback indicating current state when transitions happen
+    _result = custom_msgs.msg._scenario_managerResult # Result given when execution terminates
+
+    custom_msgs.msg.scenario_managerAction
 
     def __init__(self, name):
         self._action_name = name
-        self._as = actionlib.SimpleActionServer(self._action_name, tiago_hbba_cfg.msg._scenario_managerAction, execute_cb=self.execute_cb, auto_start = False)
+        self._as = actionlib.SimpleActionServer(self._action_name, custom_msgs.msg.scenario_managerAction, execute_cb=self.execute_cb, auto_start = False)
+        print("komdkomngdf komngdkmp nd ")
         self._as.start()

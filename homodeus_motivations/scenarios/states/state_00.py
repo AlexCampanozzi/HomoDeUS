@@ -2,6 +2,7 @@ from state import StateBase
 
 class State00(StateBase):
     def __init__(self, stateDict):
+        print("in 00 init")
         StateBase.__init__(self, stateDict)
 
     def _set_id(self):
