@@ -8,9 +8,6 @@ from yaml import safe_load
 from std_msgs import Bool
 from hbba_msgs.msg import Desire, DesiresSet, Event
 
-def equalWithinTolerance(a, b, tol):
-    return abs(a-b) <= tol
-
 class FaceTrackingResultObserver:
 
     def __init__(self):
@@ -26,24 +23,18 @@ class FaceTrackingResultObserver:
     def listenFaceTracking(self):
         self.faceTrackingETASubscriber = rospy.Subscriber("FaceTrackingETA", Bool, self.listenFaceTrackingCB)
 
-    def listenFaceTrackingCB(self, result):
-        succes = result.result
-        ## to do
-        if result.result == True:
+    def listenFaceTrackingCB(self, success):
+        if success == True:
             for desire in self.curDesireSet.desires:
-                if desire.type == "GoToLandmark":
-                    print "looking at a GoToLandmark"
+                if desire.type == "FaceTracking":
+                    rospy.log("looking at a FaceTracking")
                     paramsDict = safe_load(desire.params)
-                    if result.landmark == paramsDict["name"]:
-                        print "Attained Landmark found in gotoLandmark desires"
-                        event = Event()
-                        event.desire = desire.id
-                        event.desire_type = desire.type
-                        event.type = Event.ACC_ON
-                        self.eventPublisher.publish(event)
-                    else:
-                        print "name did not match"
-                        
+                    
+                    event = Event()
+                    event.desire = desire.id
+                    event.desire_type = desire.type
+                    event.type = Event.ACC_ON
+                    self.eventPublisher.publish(event)                  
         else:
             # here things to do if we have a false too often
             pass
