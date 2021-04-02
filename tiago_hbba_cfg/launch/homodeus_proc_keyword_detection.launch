@@ -1,3 +1,0 @@
-<launch>
-  <node name="proc_keyword_detection" pkg="tiago_hbba_cfg" type="proc_keyword_detection.py" output="screen"/>
-</launch>
