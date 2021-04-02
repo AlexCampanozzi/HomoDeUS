@@ -1,4 +1,4 @@
-#include <../include/face_detector.h>
+#include <face_detection/homodeus_proc_face_detection.h>
 
 #define MIN_FACE_SIZE_RATIO 0.00001
 /* FaceDetector: Constructor
@@ -12,7 +12,7 @@ Outputs:        None
 FaceDetector::FaceDetector(ros::NodeHandle& nh):
   _nh(nh)
 {
-  // Image topics (Uncomment the appropriate one)
+  // Image topics
   std::string imageTopic = "/homodeus_proc_face_detection/proc_input_camera_feed";
 
   image_transport::ImageTransport imageTransport(nh);
@@ -29,10 +29,9 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
 
   //Initializing subscribers and publishers
   image_transport::TransportHints transportHint("raw");
-
   _imageSub = imageTransport.subscribe(imageTopic, 1, &FaceDetector::imageCallback, this, transportHint);
 
-  _pub = _nh.advertise<face_detection::FacePositions>("/proc_output_face_positions", 1);
+  _pub = _nh.advertise<custom_msgs::FacePositions>("/proc_output_face_positions", 1);
   _imDebugPub = imageTransport.advertise("debug", 1);
 
   //Dimensions of the image
@@ -65,8 +64,8 @@ Outputs:        None (publishes on /pal_face/faces)
 */
 void FaceDetector::publishDetections(const std::vector<cv::Rect>& faces)
 {
-  face_detection::FacePositions msg;
-  face_detection::FacePosition  detection;
+  custom_msgs::FacePositions msg;
+  custom_msgs::FacePosition  detection;
 
   BOOST_FOREACH(const cv::Rect& face, faces)
   {
@@ -210,7 +209,7 @@ std::vector<cv::Rect> FaceDetector::detectFaces(const cv::Mat& img,
 
 int main(int argc, char **argv)
 {
-  ros::init(argc,argv,"face_detection_node");
+  ros::init(argc,argv,"homodeus_proc_face_detection_node");
   ros::NodeHandle nh("~");
 
   double frequency = 5;
