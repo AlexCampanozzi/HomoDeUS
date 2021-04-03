@@ -17,10 +17,10 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
 
   image_transport::ImageTransport imageTransport(nh);
 
-  std::string pathToFrontClassifier = ros::package::getPath("face_detection") +
-                                 "/config/haarcascade_frontalface_alt.xml";
-  std::string pathToProfileClassifier = ros::package::getPath("face_detection") +
-                                 "/config/haarcascade_profileface.xml";
+  std::string pathToFrontClassifier = ros::package::getPath("homodeus_external") +
+                                 "/face_detection/config/haarcascade_frontalface_alt.xml";
+  std::string pathToProfileClassifier = ros::package::getPath("homodeus_external") +
+                                 "/face_detection/config/haarcascade_profileface.xml";
 
   // Checks if the classifier files are there
   if ( !_frontClassifier.load(pathToFrontClassifier.c_str())  or 
