@@ -39,7 +39,7 @@ class KeywordRecognizer:
         self.timeout = timeout
 
         # Setting up Pocket Sphinx        
-        model_dir = os.path.join(os.path.dirname(__file__), '../include/pocketsphinx-5prealpha/model')
+        model_dir = os.path.join(os.path.dirname(__file__), './include/pocketsphinx-5prealpha/model')
         
         self.config = Decoder.default_config()
         self.config.set_string(
@@ -59,7 +59,7 @@ class KeywordRecognizer:
             channels=1,
             rate=16000,
             input=True,
-            frames_per_buffer=1024)
+            frames_per_buffer=512)
 
     def wait_for_keyword(self):
         """

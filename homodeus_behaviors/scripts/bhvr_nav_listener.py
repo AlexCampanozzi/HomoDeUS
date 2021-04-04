@@ -14,6 +14,7 @@ class HBBA_nav_listener(Navigator):
         self.registerLandmark("testPoint", 1, 0, 0)
         self.registerLandmark("origin")
         self.result_pub = rospy.Publisher("bhvr_output_res_nav_result", GoToResult, queue_size=5)
+        self.add_landmark_result_pub = rospy.Publisher("bhvr_output_nav_added_landmark", String, queue_size=5)
         self.curLandmark = ""
 
     def gotoCallback(self, data):
@@ -40,11 +41,19 @@ class HBBA_nav_listener(Navigator):
         rospy.loginfo(result)
         self.result_pub.publish(result)
 
+    def addLandmarkCB(self, landmark_name):
+        # For the moment we are only going to be adding landmarks at the current pos
+        self.registerLandmark(landmark_name.data)
+        self.add_landmark_result_pub.publish(landmark_name.data)
+
     def listenGoto(self):
         rospy.Subscriber('bhvr_input_goal_nav_goal', PoseStamped, self.gotoCallback)
 
     def listenGotoLandmark(self):
         rospy.Subscriber('bhvr_input_goal_landmark_nav_goal', String, self.gotoLandmarkCallback)
+
+    def listenAddLandmark(self):
+        rospy.Subscriber('bhvr_input_goal_add_landmark', String, self.addLandmarkCB)
 
 if __name__ == '__main__':
     try:
