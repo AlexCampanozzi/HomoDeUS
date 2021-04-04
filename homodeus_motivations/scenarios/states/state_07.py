@@ -18,10 +18,17 @@ class State07(StateBase):
 
             if desire == "move_to_kitchen_07":
                 if self.stateDict[desire] == Event.ACC_ON:
-                    # TODO register current pos as "customer" Landmark somewhere around here
+                    self.add(self, "register_customer_location_07", "AddLandmark",  params = "{name: 'customer'}")
+                    self.stateDict["register_customer_location_07"] = Event.DES_ON
                     self.remove("move_to_kitchen_07")
                     self.stateDict.pop("move_to_kitchen_07")
                     return "state_09"
+
+            if desire == "register_customer_location_07":
+                if self.stateDict[desire] == Event.ACC_ON:
+                    self.remove("register_customer_location_07")
+                    self.stateDict.pop("register_customer_location_07")
+                    return None
 
             if desire == "move_to_kitchen_07":
                 if self.stateDict[desire] == Event.ACC_OFF:
