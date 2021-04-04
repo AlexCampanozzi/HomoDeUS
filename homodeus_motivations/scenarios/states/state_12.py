@@ -10,7 +10,7 @@ class State12(StateBase):
     def add_state_desires(self):
         self.add(self, "track_customer_12", "face_tracking",  params="")
         self.stateDict["track_customer_12"] = Event.DES_ON
-        self.add(self, "inform_customer_12", "Talking",  params = "Got yo food") # TODO Fix class and params
+        self.add(self, "inform_customer_12", "Talking",  params = "{TtsText: 'I have brought your order, please take it.'}")
         self.stateDict["inform_customer_12"] = Event.DES_ON
 
     def react_to_event(self):

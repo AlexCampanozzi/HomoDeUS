@@ -4,14 +4,18 @@ class State09(StateBase):
     def __int__(self, stateDict):
         StateBase.__init__(self, stateDict)
         self.order = ""
-        # TODO CB to update order form observer
+        # TODO set topic to correct name
+        rospy.Subscriber("client_order", String, self.order_cb, queue_size=5)
+
+    def order_cb(self, order_string):
+        self.order = "{TtsText: 'A client ordered: " + order_string.data + "'}"
 
     def _set_id(self):
         return "state_09"
 
     def add_state_desires(self):
         # Add a search before tracking? Or maybe have search be part of tracking?
-        self.add(self, "track_cook_09", "face_tracking",  params="")
+        self.add(self, "track_cook_09", "face_tracking")
         self.stateDict["track_cook_09"] = Event.DES_ON
 
     def react_to_event(self):
@@ -20,7 +24,7 @@ class State09(StateBase):
             if desire == "track_cook_09":
                 if self.stateDict[desire] == Event.ACC_ON:
                     # Keep tracking as we continue sequence: no remove here
-                    self.add(self, "inform_cook_09", "Talking",  params = self.order) # TODO Fix class and params
+                    self.add(self, "inform_cook_09", "Talking",  params = self.order)
                     self.stateDict["inform_cook_09"] = Event.DES_ON
                     return None
 
@@ -28,7 +32,7 @@ class State09(StateBase):
                 if self.stateDict[desire] == Event.ACC_ON:
                     self.remove("inform_cook_09")
                     self.stateDict.pop("inform_cook_09")
-                    self.add(self, "listen_cook_09", "Listen",  params="order up") # TODO Fix class and params
+                    self.add(self, "listen_cook_09", "Listen",  params="{context: 'order_ready'}") # TODO Fix params
                     self.stateDict["listen_cook_09"] = Event.DES_ON   
                     return None
 

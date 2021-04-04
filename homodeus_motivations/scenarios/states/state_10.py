@@ -9,7 +9,7 @@ class State10(StateBase):
 
     def add_state_desires(self):
         # Add a search before tracking? Or maybe have search be part of tracking?
-        self.add(self, "thank_cook_10", "Talking",  params = "thanks dude") # TODO Fix class and params
+        self.add(self, "thank_cook_10", "Talking",  params = "{TtsText: 'Thank you for preparing the order, I'm going now.'}")
         self.stateDict["thank_cook_10"] = Event.DES_ON
 
     def react_to_event(self):

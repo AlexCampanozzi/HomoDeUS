@@ -8,9 +8,9 @@ class State04(StateBase):
         return "state_04"
 
     def add_state_desires(self):
-        self.add(self, "track_customer_04", "face_tracking",  params="")
+        self.add(self, "track_customer_04", "face_tracking")
         self.stateDict["track_customer_04"] = Event.DES_ON
-        self.add(self, "incite_customer_04", "Talking",  params="hey") # TODO Fix class and params
+        self.add(self, "incite_customer_04", "Talking",  params="{TtsText: 'Could you repeat your order please?'}")
         self.stateDict["incite_customer_04"] = Event.DES_ON
 
     def react_to_event(self):
@@ -20,7 +20,7 @@ class State04(StateBase):
                 if self.stateDict[desire] == Event.ACC_ON:
                     self.remove("incite_customer_04")
                     self.stateDict.pop("incite_customer_04")
-                    self.add(self, "listen_for_order_04", "Listen",  params="menu") # TODO Fix class and params
+                    self.add(self, "listen_for_order_04", "Listen",  params="{context: 'menu'}") # TODO Fix params
                     self.stateDict["listen_for_order_04"] = Event.DES_ON
                     return None
 

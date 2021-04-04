@@ -9,7 +9,7 @@ class State03(StateBase):
 
     def add_state_desires(self):
         self.add(self, "track_customer_03", "face_tracking")
-        self.add(self, "greet_customer_03", "Talking",  params="hello") # TODO Fix class and params
+        self.add(self, "greet_customer_03", "Talking",  params="{TtsText: 'Hello human, thank you for coming.'}")
         self.stateDict["ask_for_order_03"] = Event.DES_ON
         self.stateDict["greet_customer_03"] = Event.DES_ON
 
@@ -20,7 +20,7 @@ class State03(StateBase):
                 if self.stateDict[desire] == Event.ACC_ON:
                     self.remove("greet_customer_03")
                     self.stateDict.pop("greet_customer_03")
-                    self.add(self, "ask_for_order_03", "Talking",  params="gib orders") # TODO Fix class and params
+                    self.add(self, "ask_for_order_03", "Talking",  params="{TtsText: 'Please order something from our menu so I may be of service.'}")
                     self.stateDict["ask_for_order_03"] = Event.DES_ON
                     return None
 
@@ -28,7 +28,7 @@ class State03(StateBase):
                 if self.stateDict[desire] == Event.ACC_ON:
                     self.remove("ask_for_order_03")
                     self.stateDict.pop("ask_for_order_03")
-                    self.add(self, "listen_for_order_03", "Listen",  params="menu") # TODO Fix class and params
+                    self.add(self, "listen_for_order_03", "Listen",  params="{context: 'menu'}") # TODO Fix params
                     self.stateDict["listen_for_order_03"] = Event.DES_ON
                     return None
 
@@ -38,11 +38,13 @@ class State03(StateBase):
                     self.stateDict.pop("listen_for_order_03")
                     return "state_06"
 
+                # heard stuff not on menu
                 elif self.stateDict[desire] == Event.ACC_OFF:
                     self.remove("listen_for_order_03")
                     self.stateDict.pop("listen_for_order_03")
                     return "state_02"
 
+                # timeout
                 elif self.stateDict[desire] == Event.IMP_ON:
                     self.remove("listen_for_order_03")
                     self.stateDict.pop("listen_for_order_03")

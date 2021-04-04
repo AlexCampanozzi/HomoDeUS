@@ -8,7 +8,7 @@ class State08(StateBase):
         return "state_08"
 
     def add_state_desires(self):
-        self.add(self, "ask_for_help_08", "Talking",  params = "what do?") # TODO Fix class and params
+        self.add(self, "ask_for_help_08", "Talking",  params = "{TtsText: 'I appear not to be getting where I want to be, I require help. What should I do?'}")
         self.stateDict["ask_for_help_08"] = Event.DES_ON
 
     def react_to_event(self):
@@ -18,7 +18,7 @@ class State08(StateBase):
                 if self.stateDict[desire] == Event.ACC_ON:
                     self.remove("ask_for_help_08")
                     self.stateDict.pop("ask_for_help_08")
-                    self.add(self, "listen_for_answer_08", "Listen",  params="ok or reset") # TODO Fix class and params
+                    self.add(self, "listen_for_answer_08", "Listen",  params="{context: 'continue_or_reset'}")
                     self.stateDict["listen_for_answer_08"] = Event.DES_ON
                     return None
 

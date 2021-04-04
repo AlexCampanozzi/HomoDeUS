@@ -22,7 +22,7 @@ class State02(StateBase):
                 if self.stateDict[desire] == Event.ACC_ON:
                     self.remove("apology_02")
                     self.stateDict.pop("apology_02")
-                    self.add(self, "ask_for_order_02", "Talking",  params="{TtsText: 'Hello Human, what kind of food do you want, Please choose from the menu.'}")
+                    self.add(self, "ask_for_order_02", "Talking",  params="{TtsText: 'Hello Human, what kind of food do you want? Please choose from the menu.'}")
                     self.stateDict["ask_for_order_02"] = Event.DES_ON
                     return None
 
@@ -44,7 +44,7 @@ class State02(StateBase):
                 if self.stateDict[desire] == Event.ACC_OFF and self.fail_count < self.max_fail_count:
                     self.remove("listen_for_order_02")
                     self.stateDict.pop("listen_for_order_02")
-                    self.add(self, "apology_02", "Talking",  params="{TtsText: 'Sorry, I didn\'t catch that. Make sure that you\'re asking for something on the menu.'}") # TODO Fix class and params
+                    self.add(self, "apology_02", "Talking",  params="{TtsText: 'Sorry, I didn\'t catch that. Make sure that you\'re asking for something on the menu.'}") # TODO Fix  params?
                     self.stateDict["apology_02"] = Event.DES_ON
                     self.fail_count += 1
                     return None
