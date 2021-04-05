@@ -6,8 +6,6 @@ import traceback
 from std_msgs.msg import String, Bool
 from hbba_msgs.msg import Desire, DesiresSet, Event
 
-from HomoDeUS_common_py.HomoDeUS_common_py as common
-
 class Speech_recognition_observer:
     """
     This class follows the state of the keyword_detection desire
@@ -43,7 +41,7 @@ class Speech_recognition_observer:
         SpeechText: String
             The result of the output of the module it is connected to. In this case it is the speech recognized
         """
-        # S'il y a beaucoup de désirs du même type... il me semble que ca ne fonctionnera pas
+        # S'il y a beaucoup de desirs du meme type... il me semble que ca ne fonctionnera pas
         event = Event()
         for desire in self.curDesireSet.desires:
             if desire.type == "Speech_recognition":
@@ -53,7 +51,7 @@ class Speech_recognition_observer:
                     event.type = Event.ACC_ON
                     self.event_publisher.publish(event)
                 elif self.cancel_criterion():
-                    #Problème actuel est que si le désir n'est pas activé il peut tout de même changer d'état!
+                    #Probleme actuel est que si le desir n'est pas active il peut tout de meme changer d'etat!
                     event.type = Event.IMP_ON
                     self.event_publisher.publish(event)
                 
@@ -69,7 +67,7 @@ class Speech_recognition_observer:
             The text recognizes by the robot, it will be analyzed to know if something 
             relevant have been said and considerer if the desire is now accomplished
         """
-        # Pourrait etre un xml avec les mots à retrouvés selon le contexte et le désir donne le contexte
+        # Pourrait etre un xml avec les mots a retrouves selon le contexte et le desir donne le contexte
         if 'scenario' in str(SpeechText):
             return True
         else:
@@ -87,7 +85,7 @@ class Speech_recognition_observer:
         """
         This method informs the developper about the shutdown of this node
         """
-        common.loginfo(self,"have been shutdown")
+        rospy.loginfo(self,"have been shutdown")
 
     
 
@@ -97,10 +95,10 @@ if __name__ == '__main__':
     the transform function. It only shutdown if an extern event ask for it
     """
     try:
-        rospy.init_node(common.get_file_name(__file__))
+        rospy.init_node('motv_speech_recognition_observer')
         node = Speech_recognition_observer()
         rospy.on_shutdown(node.node_shutdown)
         rospy.spin()
 
     except Exception:
-        common.logerr(traceback.format_exc())
+        pass
