@@ -1,0 +1,3 @@
+<launch>
+    <node name="DialogBhvr_node" pkg="dialog_pkg" type="homodeus_bhvr_dialog.py" output="screen"/>
+</launch>

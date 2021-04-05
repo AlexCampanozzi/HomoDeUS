@@ -1,0 +1,18 @@
+hbba_conf:
+
+- behavior:
+    name: homodeus_bhvr_dialog
+    #is it not supposed to have a class/type here?
+    launch: {pkg: "tiago_hbba_cfg", path: "launch/homodeus_bhvr_dialog.launch"}
+    priority: 7
+    input:
+        - #sound_understood
+    output:
+        - #talk.py behavior
+            
+- strat:
+    name: dialog_bhvr
+    class: GoTo #not supposed to be goto i think
+    utility: 2
+    modules:
+        - #talk.py behaviors

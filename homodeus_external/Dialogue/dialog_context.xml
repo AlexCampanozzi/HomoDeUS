@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<context>
+    <Hi>
+        <inanswer>hi </inanswer>
+        <inanswer>hello </inanswer>
+        <outanswer>hello to you, i hope you are having a good day</outanswer>
+        <outanswer>hi to you too good human</outanswer>
+    </Hi>
+    <children>
+        <inanswer>son </inanswer>
+        <inanswer>daughter </inanswer>
+        <outanswer>You should be proud of your child</outanswer>
+    </children>
+    <weather>
+        <inanswer>weather </inanswer>
+        <outanswer>I'm sorry, I don't really care abouth the weather as i can't go outside</outanswer>
+    </weather>
+    <no_data>
+        <outanswer>I am sadly not programmed to answer to this statement</outanswer>
+    </no_data>
+</context>
