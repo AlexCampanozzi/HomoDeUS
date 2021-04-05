@@ -1,6 +1,7 @@
 #ifndef FACEDETECTION_H
 #define FACEDETECTION_H
 
+
 // ROS headers
 #include <ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
