@@ -15,8 +15,8 @@
 #include <opencv2/highgui/highgui.hpp>
 
 // Custom headers
-#include <face_detection/FacePosition.h>
-#include <face_detection/FacePositions.h>
+#include <custom_msgs/FacePosition.h>
+#include <custom_msgs/FacePositions.h>
 
 // Boost headers
 #include <boost/foreach.hpp>
