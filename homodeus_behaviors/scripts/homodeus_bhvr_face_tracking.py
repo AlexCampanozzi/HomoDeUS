@@ -20,8 +20,8 @@ class FaceTracking:
 
         rospy.Subscriber('/proc_output_face_positions', FacePositions, self._head_callback, queue_size=5)
 
-        #camera_info = rospy.wait_for_message("/usb_cam/camera_info", CameraInfo)
-        camera_info = rospy.wait_for_message("/xtion/rgb/camera_info", CameraInfo)
+        camera_info = rospy.wait_for_message("/usb_cam/camera_info", CameraInfo)
+        #camera_info = rospy.wait_for_message("/xtion/rgb/camera_info", CameraInfo)
 
         self.img_height = camera_info.height
         self.img_width = camera_info.width
