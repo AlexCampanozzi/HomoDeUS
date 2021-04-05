@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-  <node name="homodeus_proc_face_detection_node" pkg="homodeus_perceptions" type="homodeus_proc_face_detection" output="screen">
-  </node>
+  <node name="homodeus_proc_face_detection_node" pkg="homodeus_perceptions" type="homodeus_proc_face_detection" output="screen"></node>
+  <param name="camera_mode" value="remote" />
 </launch>

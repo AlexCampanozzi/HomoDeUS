@@ -15,14 +15,16 @@ from custom_msgs.msg import FacePositions
 import HomoDeUS_common_py.HomoDeUS_common_py as common  
 
 class FaceTracking:
-    def __init__(self):
+    def __init__(self, mode):
         rospy.loginfo("Face tracking constructing")
 
         rospy.Subscriber('/proc_output_face_positions', FacePositions, self._head_callback, queue_size=5)
 
-        camera_info = rospy.wait_for_message("/usb_cam/camera_info", CameraInfo)
-        #camera_info = rospy.wait_for_message("/xtion/rgb/camera_info", CameraInfo)
-
+        if mode == "remote":
+            camera_info = rospy.wait_for_message("/usb_cam/camera_info", CameraInfo)
+        else:
+            camera_info = rospy.wait_for_message("/xtion/rgb/camera_info", CameraInfo)
+    
         self.img_height = camera_info.height
         self.img_width = camera_info.width
         self.pub = rospy.Publisher('tiago_head_controller', PoseStamped, queue_size=5)
@@ -80,7 +82,9 @@ if __name__ == "__main__":
 
     try:
         rospy.init_node('faceTracking', anonymous=False)
-        faceTracking = FaceTracking()
+        mode = rospy.get_param('camera_mode')
+        print(mode)
+        faceTracking = FaceTracking(mode)
         rospy.spin()
 
     except rospy.ROSInterruptException:

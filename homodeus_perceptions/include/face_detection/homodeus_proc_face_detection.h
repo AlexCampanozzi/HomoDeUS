@@ -58,7 +58,7 @@ class FaceDetector
 {
 public:
 
-  FaceDetector(ros::NodeHandle& nh);
+  FaceDetector(ros::NodeHandle& nh, std::string mode);
   virtual ~FaceDetector();
 
 protected:

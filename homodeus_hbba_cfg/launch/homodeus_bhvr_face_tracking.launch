@@ -1,3 +1,4 @@
 <launch>
     <node name="faceTracking" pkg="homodeus_behaviors" type="homodeus_bhvr_face_tracking.py" output="screen"/>
+    <param name="camera_mode" value="remote" />
 </launch>

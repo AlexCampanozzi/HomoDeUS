@@ -9,7 +9,7 @@ Inputs:         _nh (type, ros::NodeHandle): Manages things related to the node
           
 Outputs:        None
 */
-FaceDetector::FaceDetector(ros::NodeHandle& nh):
+FaceDetector::FaceDetector(ros::NodeHandle& nh, std::string mode):
   _nh(nh)
 {
   // Image topics
@@ -22,6 +22,7 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
   std::string pathToProfileClassifier = ros::package::getPath("homodeus_external") +
                                  "/face_detection/config/haarcascade_profileface.xml";
 
+  std::string camera_mode = mode;
   // Checks if the classifier files are there
   if ( !_frontClassifier.load(pathToFrontClassifier.c_str())  or 
       ! _profileClassifier.load(pathToProfileClassifier.c_str()) )
@@ -35,9 +36,16 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
   _imDebugPub = imageTransport.advertise("debug", 1);
 
   sensor_msgs::CameraInfo camera_info;
+
   //Dimensions of the image
-  //camera_info = *(ros::topic::waitForMessage<sensor_msgs::CameraInfo>("/usb_cam/camera_info"));
-  camera_info = *(ros::topic::waitForMessage<sensor_msgs::CameraInfo>("/xtion/rgb/camera_info"));
+  if (camera_mode == "remote")
+  {
+    camera_info = *(ros::topic::waitForMessage<sensor_msgs::CameraInfo>("/usb_cam/camera_info"));
+  }
+  else
+  {
+    camera_info = *(ros::topic::waitForMessage<sensor_msgs::CameraInfo>("/xtion/rgb/camera_info"));
+  }
   _imgProcessingSize.height = camera_info.height;
   _imgProcessingSize.width = camera_info.width;
 }
@@ -218,8 +226,9 @@ int main(int argc, char **argv)
   double frequency = 5;
 
   ROS_INFO("Creating face detector");
-
-  FaceDetector detector(nh);
+  std::string mode;
+  nh.getParam("/homodeus_proc_face_detection_node/camera_mode", mode);
+  FaceDetector detector(nh, mode);
 
   ROS_INFO("Spinning to serve callbacks ...");
 
