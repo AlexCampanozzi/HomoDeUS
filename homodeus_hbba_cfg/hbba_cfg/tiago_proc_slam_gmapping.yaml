@@ -2,7 +2,7 @@ hbba_conf:
 
 - procmodule:
     name: slam_gmapping
-    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/tiago_proc_slam_gmapping.launch'}
+    launch: {pkg: 'homodeus_perceptions', path: 'launch/tiago_proc_slam_gmapping.launch'}
     input: 
         - scan: {type: GenericDivider}
 
