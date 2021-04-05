@@ -34,9 +34,12 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
   _pub = _nh.advertise<custom_msgs::FacePositions>("/proc_output_face_positions", 1);
   _imDebugPub = imageTransport.advertise("debug", 1);
 
+  sensor_msgs::CameraInfo camera_info;
   //Dimensions of the image
-  _nh.param<int>("processing_img_width", _imgProcessingSize.width, _imgProcessingSize.height);
-  _nh.param<int>("processing_img_height", _imgProcessingSize.height, _imgProcessingSize.height);
+  //camera_info = *(ros::topic::waitForMessage<sensor_msgs::CameraInfo>("/usb_cam/camera_info"));
+  camera_info = *(ros::topic::waitForMessage<sensor_msgs::CameraInfo>("/xtion/rgb/camera_info"));
+  _imgProcessingSize.height = camera_info.height;
+  _imgProcessingSize.width = camera_info.width;
 }
 
 

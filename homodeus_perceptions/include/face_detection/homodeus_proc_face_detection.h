@@ -1,10 +1,12 @@
 #ifndef FACEDETECTION_H
 #define FACEDETECTION_H
 
+
 // ROS headers
 #include <ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/Image.h>
+#include <sensor_msgs/CameraInfo.h>
 #include <image_transport/image_transport.h>
 #include <sensor_msgs/image_encodings.h>
 #include <ros/package.h>
