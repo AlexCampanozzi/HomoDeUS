@@ -37,6 +37,8 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
   //Dimensions of the image
   _nh.param<int>("processing_img_width", _imgProcessingSize.width, _imgProcessingSize.height);
   _nh.param<int>("processing_img_height", _imgProcessingSize.height, _imgProcessingSize.height);
+
+  observer_pub = _nh.advertise<std_msgs::Bool>("/face_detection_observer", 5);
 }
 
 
@@ -141,6 +143,9 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     cv_bridge::CvImageConstPtr cvImgPtr;
     cvImgPtr = cv_bridge::toCvShare(msg);
     cvImgPtr->image.copyTo(img);
+
+    std_msgs::Bool observerMsg;
+
   
     // Minimum and maximum sizes of the faces that can be detected
     _minFaceSize.width = static_cast<int>(MIN_FACE_SIZE_RATIO * _imgProcessingSize.width);
@@ -173,7 +178,15 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                         );
 
     if ( _pub.getNumSubscribers() > 0 && !faces.empty())
+    {
       publishDetections(faces);
+      observerMsg.data = true;
+    }
+    else
+    {
+      observerMsg.data = false;
+    }
+    observer_pub.publish(observerMsg);
 
     if ( _imDebugPub.getNumSubscribers() > 0 )
       publishDebugImage(imgScaled, faces);
@@ -211,6 +224,7 @@ int main(int argc, char **argv)
 {
   ros::init(argc,argv,"homodeus_proc_face_detection_node");
   ros::NodeHandle nh("~");
+  ros::Publisher chatter_pub = nh.advertise<std_msgs::String>("chatter", 1000);
 
   double frequency = 5;
 

@@ -1,0 +1,3 @@
+<launch>
+  <node name="face_detection_observer" pkg="homodeus_motivations" type="face_detection_observer.py" output="screen"/>
+</launch>
