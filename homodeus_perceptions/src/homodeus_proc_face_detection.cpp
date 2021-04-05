@@ -37,7 +37,7 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
   sensor_msgs::CameraInfo camera_info;
   //Dimensions of the image
   //camera_info = *(ros::topic::waitForMessage<sensor_msgs::CameraInfo>("/usb_cam/camera_info"));
-  camera_info = ros::topic::waitForMessage<sensor_msgs::CameraInfo>("/xtion/rgb/camera_info");
+  camera_info = *(ros::topic::waitForMessage<sensor_msgs::CameraInfo>("/xtion/rgb/camera_info"));
   _imgProcessingSize.height = camera_info.height;
   _imgProcessingSize.width = camera_info.width;
 }
