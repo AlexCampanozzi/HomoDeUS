@@ -221,15 +221,18 @@ std::vector<cv::Rect> FaceDetector::detectFaces(const cv::Mat& img,
 int main(int argc, char **argv)
 {
   ros::init(argc,argv,"homodeus_proc_face_detection_node");
+  std::string mode;
+
+  ros::param::get("~camera_mode", mode);
   ros::NodeHandle nh("~");
 
   double frequency = 5;
 
   ROS_INFO("Creating face detector");
-  std::string mode;
-  nh.getParam("/homodeus_proc_face_detection_node/camera_mode", mode);
-  FaceDetector detector(nh, mode);
+  nh.getParam("camera_mode", mode);
 
+  ROS_INFO("Face detection camera mode: %s", mode.c_str());
+  FaceDetector detector(nh, mode);
   ROS_INFO("Spinning to serve callbacks ...");
 
   ros::Rate rate(frequency);
