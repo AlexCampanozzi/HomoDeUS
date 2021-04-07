@@ -1,0 +1,31 @@
+hbba_conf:
+
+- behavior:
+    name: docking
+    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/bhvr_docking.launch'}
+    priority: 10
+    input:
+        - bhvr_input_goal_nav_goal: {src: hbba_nav_goal, filtered: false}
+        - bhvr_input_goal_landmark_nav_goal: {src: hbba_landmark_nav_goal, filtered: false}
+        - move_base: {src: move_base, filtered: false}
+    output:
+        - cmd_vel
+        - bhvr_output_res_nav_result
+            
+- strat:
+    name: TIAGoTo
+    class: GoTo
+    utility: 8
+    costs: {move_stack: 1}
+    modules:
+        - tiago_nav
+    custom_bringup: "pubNavGoal('/hbba_nav_goal', params.frame_id, params.x, params.y, params.t);"
+    
+- strat:
+    name: TIAGoToLandmark
+    class: GoToLandmark
+    utility: 8
+    costs: {move_stack: 1}
+    modules:
+        - tiago_nav
+    custom_bringup: "pubString('/hbba_landmark_nav_goal', params.name);"
