@@ -47,13 +47,13 @@ if __name__ == '__main__':
         docking = Docking()
 
         if mode == "dock":
-            #nav = Navigator()
+            nav = Navigator()
             # Going to the docking station
-            #nav.registerLandmark("dock") # Will be done at the start of the scenario
-            #nav.goto(0,0,0) # Moving the robot for testing purposes
+            nav.registerLandmark("dock") # Will be done at the start of the scenario
+            nav.goto(0,0,0) # Moving the robot for testing purposes
 
-            #docking.nav = nav
-            #docking.go_to_dock()
+            docking.nav = nav
+            docking.go_to_dock()
             
             # Docking procedure
             docking.go_and_dock_client()
