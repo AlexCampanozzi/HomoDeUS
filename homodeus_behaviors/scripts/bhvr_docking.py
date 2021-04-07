@@ -14,6 +14,9 @@ class Docking():
         self.dock_checker_sub = rospy.Subscriber("/power/is_docked", Bool, self.is_docked_cb)
         self.is_docked = False
 
+    def go_to_dock(self):
+        self.nav.goToLandmark("dock")
+
     def go_and_dock_client(self):
         goal = GoAndDockGoal()
         goal.use_current_pose = True
@@ -40,22 +43,24 @@ if __name__ == '__main__':
     try:
         rospy.init_node('bhvr_docking')
         
-        mode == "dock"
+        mode = "dock"
+        docking = Docking()
 
         if mode == "dock":
+            #nav = Navigator()
             # Going to the docking station
-            nav = Navigator()
-            nav.registerLandmark("dock") # Will be done at the start of the scenario
-            nav.goto(0,0,0) # Moving the robot for testing purposes
+            #nav.registerLandmark("dock") # Will be done at the start of the scenario
+            #nav.goto(0,0,0) # Moving the robot for testing purposes
 
-            nav.goToLandmark("dock")
+            #docking.nav = nav
+            #docking.go_to_dock()
             
             # Docking procedure
-            sd = Docking()
-            sd.go_and_dock_client()
+            docking.go_and_dock_client()
         
         elif mode == "undock":
-            sd.undock_client
+            # Undocking procedure
+            docking.undocking_client
 
     except rospy.ROSInterruptException:
         rospy.loginfo("program interrupted before completion")
