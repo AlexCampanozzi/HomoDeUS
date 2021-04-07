@@ -27,7 +27,7 @@
 #include <vector>
 #include <stdexcept>
 
-/* ArmInterface
+/* FaceDetector
 Description:    This class uses the Haar Cascades algorithm in OpenCV to allow the detection
                 of faces in an image.
 Attributes:     _nh (type, ros::NodeHandle):
@@ -58,7 +58,7 @@ class FaceDetector
 {
 public:
 
-  FaceDetector(ros::NodeHandle& nh);
+  FaceDetector(ros::NodeHandle& nh, std::string mode);
   virtual ~FaceDetector();
 
 protected:
