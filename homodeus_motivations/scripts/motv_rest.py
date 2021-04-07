@@ -6,6 +6,7 @@ import traceback
 
 from std_msgs.msg import String, Bool
 from hbba_msgs.msg import Desire, DesiresSet, Event
+from hbba_msgs.srv import AddDesires, RemoveDesires
 
 import HomoDeUS_common_py.HomoDeUS_common_py as common
 
@@ -20,6 +21,7 @@ class Rest_the_robot:
 
         self.add_desires_service = rospy.ServiceProxy('add_desires', AddDesires)
         self.rem_desires_service = rospy.ServiceProxy('remove_desires', RemoveDesires)
+        rospy.wait_for_service("add_desires")
 
     def add_desire(self,desire_id, desire_type,desire_utility,desire_intensity, desire_params=None):
         des = Desire()
@@ -31,6 +33,9 @@ class Rest_the_robot:
             des.params = desire_params
         
         self.add_desires_service.call([des])
+    
+    def remove(self):
+        self.rem_desires.call(["rest"])
 
     def battery_cb(self, level):
         if level == "high":
@@ -56,6 +61,7 @@ if __name__ == '__main__':
         rospy.init_node(common.get_file_name(__file__))
         node = Rest_the_robot()
         rospy.on_shutdown(node.node_shutdown)
+        node.battery_cb()
         rospy.spin()
 
     except Exception:
