@@ -14,7 +14,7 @@ class Rest_the_robot:
 
      def __init__(self):
 
-        self.input_motv =rospy.Subscriber("/proc_output_batterie_level", String, self.battery_cb, queue_size=10)
+        self.input_motv =rospy.Subscriber("/proc_output_battery_level", String, self.battery_cb, queue_size=10)
 
         # the output of the module
         self.event_Subcriber = rospy.Subscriber("events",Event, self.listen_event_cb , queue_size = 10)

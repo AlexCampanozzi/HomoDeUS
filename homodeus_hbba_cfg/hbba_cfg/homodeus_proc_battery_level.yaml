@@ -6,7 +6,7 @@ hbba_conf:
     input: 
         - /power_status/charge
     output:
-        - /proc_output_batterie_level
+        - /proc_output_battery_level
 
 - strat:
     name: 

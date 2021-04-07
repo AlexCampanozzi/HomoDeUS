@@ -15,7 +15,7 @@ class Battery_level:
         """
         This method initializes the perception module 
         """
-        self.output_perc = rospy.Publisher("/proc_output_batterie_level", String, queue_size=10)
+        self.output_perc = rospy.Publisher("/proc_output_battery_level", String, queue_size=10)
 
         #self.input_perc = rospy.Subscriber("/power_status/charge", Float32, self.perc_to_level)
         self.input_perc = rospy.Subscriber("fake_battery_percent", Float32, self.perc_to_level) #use for test,put power_status/charge in comment

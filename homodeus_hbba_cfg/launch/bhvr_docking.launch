@@ -1,0 +1,3 @@
+<launch>
+  <node name="bhvr_docking" pkg="homodeus_behaviors" type="bhvr_docking.py" output="screen"/>
+</launch>
