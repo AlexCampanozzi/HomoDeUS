@@ -13,7 +13,7 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh, std::string mode):
   _nh(nh)
 {
   // Image topics
-  std::string imageTopic = "/homodeus_proc_face_detection/proc_input_camera_feed";
+  std::string imageTopic = "proc_input_camera_feed";
 
   image_transport::ImageTransport imageTransport(nh);
 
@@ -223,8 +223,7 @@ int main(int argc, char **argv)
   ros::init(argc,argv,"homodeus_proc_face_detection_node");
   std::string mode;
 
-  ros::param::get("~camera_mode", mode);
-  ros::NodeHandle nh("~");
+  ros::NodeHandle nh;
 
   double frequency = 5;
 
