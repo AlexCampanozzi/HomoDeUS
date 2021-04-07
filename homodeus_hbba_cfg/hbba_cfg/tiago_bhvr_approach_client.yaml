@@ -1,0 +1,21 @@
+hbba_conf:
+
+- behavior:
+    name: approach_client
+    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/bhvr_approach_client.launch'}
+    priority: 10
+    input:
+        - bhvr_input_faces: {src: /proc_output_face_positions}
+    output:
+        - /mobile_base/cmd_vel
+        # Not sure what a result would be for this, but could send movement state as feedback
+            
+- strat:
+    name: TIApproachClient
+    class: ApproachClient
+    utility: 8
+    # costs: {move_stack: 1} Can't put this or only one of this or GoTos will be active at a time
+    modules:
+        - homodeus_proc_face_detection:
+                - xtion_rgb_image_raw: 1
+        - approach_client

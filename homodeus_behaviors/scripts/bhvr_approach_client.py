@@ -2,12 +2,18 @@
 import rospy
 from geometry_msgs.msg import Twist
 from custom_msgs.msg import FacePositions, FacePosition
+import HomoDeUS_common_py as common
 
 class ClientApproach(self):
     def __init__(self):
-        self.vel_publisher = rospy.Publisher("cmd_vel", Twist, queue_size=5)
+        self.vel_publisher = rospy.Publisher("/mobile_base/cmd_vel", Twist, queue_size=5)
         self.target_box_size = 80000 # actual number TBD
         self.tolerance = 500 # actual number TBD
+        # We are looking to be around 1.6-2m from the client
+
+        self.dif_to_vel_factor = 0.0001 # actual number TBD
+
+        # It might be a good idea to use Depth from rgbd the laser scan as supplementary information input sources
 
         # Copied from face tracking
         camera_info = rospy.wait_for_message("/usb_cam/camera_info", CameraInfo)
@@ -20,7 +26,10 @@ class ClientApproach(self):
         self.img_center_y = self.img_height // 2
 
     def approach(self):
-        rospy.Subscriber('bhvr_input_face_boxes', FacePositions, self.facesCB)
+        self.boxes_listener = rospy.Subscriber('bhvr_input_faces', FacePositions, self.facesCB)
+
+    def stopApproach(self):
+        self.boxes_listener.unregister()
 
     # Following 2 methods are ripped directly from face_tracking. Move to common maybe?
     def _distance_from_img_center(self, x, y):
@@ -44,4 +53,20 @@ class ClientApproach(self):
                 main_face_height = face.height
 
         face_size = main_face_width x main_face_width
-        # Will need fuzzy equal here to see if we move at all
+
+        if common.equalWithinTolerance(face_size, self.target_box_size, self.tolerance):
+            # Then we are within tolerance and don't need to do anything
+            return
+        else:
+            # >0: too big -> too close | <0: too small -> too far
+            size_diff = face_size - self.target_box_size
+
+            # TODO: if client is far enough, use goto to get closer: ~3m ish threshold for vel command?
+
+            command = Twist()
+            # invert sign so we move in right direction 
+            command.linear.x = -1*size_diff * self.dif_to_vel_factor
+            self.vel_publisher.publish(command)
+
+            # Coding this assuming head_tracking will rotate base to center Client: only sending linear commands
+
