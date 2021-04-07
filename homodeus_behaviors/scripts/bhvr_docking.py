@@ -54,7 +54,7 @@ if __name__ == '__main__':
             sd = Docking()
             sd.go_and_dock_client()
         
-        elif mode == "unlock":
+        elif mode == "undock":
             sd.undock_client
 
     except rospy.ROSInterruptException:
