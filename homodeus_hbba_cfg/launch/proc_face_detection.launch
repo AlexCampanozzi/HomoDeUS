@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
 <launch>
   <node name="homodeus_proc_face_detection_node" pkg="homodeus_perceptions" type="proc_face_detection" output="screen">
-    <param name="processing_img_width" value="320"/>
-    <param name="processing_img_height" value="240"/>
   </node>
 </launch>

@@ -13,7 +13,7 @@ import numpy as np
 from custom_msgs.msg import FacePosition
 from custom_msgs.msg import FacePositions
 
-from head_control.scripts.Utility import PID
+import HomoDeUS_common_py.HomoDeUS_common_py as common  
 
 class FaceTracking:
     def __init__(self):
@@ -21,8 +21,8 @@ class FaceTracking:
 
         rospy.Subscriber('/proc_output_face_positions', FacePositions, self._head_callback, queue_size=5)
 
-        #camera_info = rospy.wait_for_message("/usb_cam/camera_info", CameraInfo)
-        camera_info = rospy.wait_for_message("/xtion/rgb/camera_info", CameraInfo)
+        camera_info = rospy.wait_for_message("/usb_cam/camera_info", CameraInfo)
+        #camera_info = rospy.wait_for_message("/xtion/rgb/camera_info", CameraInfo)
 
         self.img_height = camera_info.height
         self.img_width = camera_info.width
@@ -34,8 +34,8 @@ class FaceTracking:
 
         self.threshold = 1
 
-        self.pid_x = PID(self.img_center_x, K_P=0.003, K_I=0.0, K_D=0.0)
-        self.pid_y = PID(self.img_center_y, K_P=0.003, K_I=0.0, K_D=0.0)
+        self.pid_x = common.PID(self.img_center_x, K_P=0.003, K_I=0.0, K_D=0.0)
+        self.pid_y = common.PID(self.img_center_y, K_P=0.003, K_I=0.0, K_D=0.0)
 
     def _head_callback(self, detections):
         rospy.loginfo("received face")
