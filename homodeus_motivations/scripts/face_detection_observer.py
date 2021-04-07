@@ -7,12 +7,15 @@ import actionlib
 from yaml import safe_load
 from std_msgs.msg import Bool
 from hbba_msgs.msg import Desire, DesiresSet, Event
+import HomoDeUS_common_py.HomoDeUS_common_py as common
+import traceback
 
 class FaceDetectionObserver:
 
     def __init__(self):
         self.eventPublisher = rospy.Publisher("events", Event, queue_size = 10)
         self.curDesireSet = DesiresSet()
+        rospy.loginfo("face detection observer")
 
     def listenDesiresSet(self):
         self.desiresSetSubscriber = rospy.Subscriber("desires_set", DesiresSet, self.listenDesiresSetCB)
@@ -21,9 +24,9 @@ class FaceDetectionObserver:
         self.curDesireSet = desireSet
 
     def listenFaceDetection(self):
-        self.faceDetectionSubscriber = rospy.Subscriber("/face_detection_observer", Bool, self.listenFaceTrackingCB)
+        self.faceDetectionSubscriber = rospy.Subscriber("/face_detection_observer", Bool, self.listenFaceDetectionCB)
 
-    def listenFaceTrackingCB(self, success):
+    def listenFaceDetectionCB(self, success):
         if success.data == True:
             for desire in self.curDesireSet.desires:
                 if desire.type == "face_detection":
@@ -33,7 +36,8 @@ class FaceDetectionObserver:
                     event.desire = desire.id
                     event.desire_type = desire.type
                     event.type = Event.ACC_ON
-                    self.eventPublisher.publish(event)                  
+                    self.eventPublisher.publish(event)
+                    rospy.loginfo("ok face detection")                
         else:
             # here things to do if we have a false too often
             pass
@@ -48,7 +52,6 @@ if __name__ == '__main__':
         node = FaceDetectionObserver()
         node.listenDesiresSet()
         node.listenFaceDetection()
-        rospy.on_shutdown(node.node_shutdown)
         rospy.spin()
 
     except Exception:

@@ -2,10 +2,9 @@ hbba_conf:
 
 - procmodule:
     name: homodeus_proc_face_detection
-    launch: {pkg: 'homodeus_hbba_cfg', path: "launch/homodeus_proc_face_detection.launch"}
-    launch: {pkg: "homodeus_hbba_cfg", path: "launch/face_detection_observer.launch"}
+    launch: {pkg: 'homodeus_hbba_cfg', path: "launch/proc_face_detection.launch"}
     input: 
-        #- proc_input_camera_feed: {src: usb_cam/image_raw}
+        - proc_input_camera_feed: {src: usb_cam/image_raw}
         - proc_input_camera_feed: {src: xtion/rgb/image_raw}
     output:
         - /proc_output_face_positions
@@ -17,5 +16,5 @@ hbba_conf:
     modules:
         - homodeus_proc_face_detection:
             - xtion_rgb_image_raw: 1
-            #- usb_cam_image_raw:   1
+            - usb_cam_image_raw:   1
 

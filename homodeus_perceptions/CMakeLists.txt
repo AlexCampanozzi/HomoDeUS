@@ -139,8 +139,8 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 
-add_executable(homodeus_proc_face_detection
-src/homodeus_proc_face_detection.cpp
+add_executable(proc_face_detection
+src/proc_face_detection.cpp
 )
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -150,10 +150,10 @@ src/homodeus_proc_face_detection.cpp
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(homodeus_proc_face_detection ${catkin_EXPORTED_TARGETS})
+add_dependencies(proc_face_detection ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(homodeus_proc_face_detection ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+target_link_libraries(proc_face_detection ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 #############
 ## Install ##

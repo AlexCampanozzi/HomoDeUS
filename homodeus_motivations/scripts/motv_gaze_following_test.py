@@ -36,7 +36,7 @@ class GazeFollowingManager:
 
     def removeOnEvent(self, event):
         if event.desire_type == "face_detection" and event.type == Event.ACC_ON:
-            self.rem_desires.call([event.desire])
+            pass # in this case we just want to know if a face has been detected
         elif event.desire_type == "face_tracking" and event.type == Event.ACC_ON:
             self.rem_desires.call([event.desire])
         else:

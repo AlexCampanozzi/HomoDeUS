@@ -13,6 +13,8 @@ class FaceTrackingResultObserver:
     def __init__(self):
         self.eventPublisher = rospy.Publisher("events", Event, queue_size = 10)
         self.curDesireSet = DesiresSet()
+        rospy.loginfo("face tracking observer")
+
 
     def listenDesiresSet(self):
         self.desiresSetSubscriber = rospy.Subscriber("desires_set", DesiresSet, self.listenDesiresSetCB)
@@ -27,14 +29,15 @@ class FaceTrackingResultObserver:
         if success.data == True:
             for desire in self.curDesireSet.desires:
                 if desire.type == "FaceTracking":
-                    rospy.log("looking at a FaceTracking")
                     paramsDict = safe_load(desire.params)
                     
                     event = Event()
                     event.desire = desire.id
                     event.desire_type = desire.type
                     event.type = Event.ACC_ON
-                    self.eventPublisher.publish(event)                  
+                    self.eventPublisher.publish(event)
+                    rospy.loginfo("ok face tracking")                
+
         else:
             # here things to do if we have a false too often
             pass
@@ -42,7 +45,6 @@ class FaceTrackingResultObserver:
 if __name__ == "__main__":
     try:
         rospy.init_node("motv_face_tracking_observer")
-
         node = FaceTrackingResultObserver()
         node.listenDesiresSet()
         node.listenFaceTracking()

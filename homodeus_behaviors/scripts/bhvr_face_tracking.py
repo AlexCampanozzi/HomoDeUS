@@ -5,7 +5,7 @@ import rospy
 import roslib
 import actionlib
 from geometry_msgs.msg import PoseStamped
-from std_msgs import Bool
+from std_msgs.msg import Bool
 import math
 from sensor_msgs.msg import CameraInfo
 import numpy as np
@@ -56,6 +56,7 @@ class FaceTracking:
         # If the main face is inside the limit, don't move the head
         if main_face_dist < self.threshold:
             self.pubETA.publish(True)
+            rospy.loginfo("face centered")
             return
         else:
             self.pubETA.publish(False)

@@ -1,4 +1,4 @@
-#include <face_detection/homodeus_proc_face_detection.h>
+#include <face_detection/proc_face_detection.h>
 
 #define MIN_FACE_SIZE_RATIO 0.00001
 /* FaceDetector: Constructor
@@ -181,15 +181,20 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     {
       publishDetections(faces);
       observerMsg.data = true;
+      ROS_INFO("face detected");
     }
     else
     {
       observerMsg.data = false;
     }
+    //ROS_INFO("image sent");
+
     observer_pub.publish(observerMsg);
 
     if ( _imDebugPub.getNumSubscribers() > 0 )
+    {
       publishDebugImage(imgScaled, faces);
+    }
   }
 }
 
