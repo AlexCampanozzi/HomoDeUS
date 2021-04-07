@@ -11,8 +11,7 @@ from hbba_msgs.srv import AddDesires, RemoveDesires
 import HomoDeUS_common_py.HomoDeUS_common_py as common
 
 class Rest_the_robot:
-
-     def __init__(self):
+    def __init__(self):
 
         self.input_motv =rospy.Subscriber("/proc_output_battery_level", String, self.battery_cb, queue_size=10)
 
@@ -23,7 +22,7 @@ class Rest_the_robot:
         self.rem_desires_service = rospy.ServiceProxy('remove_desires', RemoveDesires)
         rospy.wait_for_service("add_desires")
 
-    def add_desire(self,desire_id, desire_type,desire_utility,desire_intensity, desire_params=None):
+    def add_desire(self,desire_id, desire_type, desire_utility, desire_intensity, desire_params=None):
         des = Desire()
         des.id          = desire_id
         des.type        = desire_type
@@ -47,10 +46,11 @@ class Rest_the_robot:
         elif level == "critical low":
             self.add_desire(desire_id="rest",desire_type="Recharge",desire_utility=8,desire_intensity=100)
     
-    def wait_to_long(self):
+    def wait_too_long(self):
+        pass
         #TODO sur quoi je veux me timer( dernier mvt,dernier scenario entrepris, etc)
-        if timer > 10 #en minute, surment changer en seconde
-            self.add_desire(desire_id="rest",desire_type="Recharge",desire_utility=8,desire_intensity=50)
+        #if timer > 10: #en minute, surment changer en seconde
+         #   self.add_desire(desire_id="rest",desire_type="Recharge",desire_utility=8,desire_intensity=50)
 
 if __name__ == '__main__':
     """
