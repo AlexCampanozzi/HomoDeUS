@@ -9,7 +9,7 @@ from laser_servoing_msgs.msg import UndockAction, UndockGoal
 from std_msgs.msg import Bool
 from base_navigation.scripts.navigator import Navigator
 
-class SimpleDock():
+class Docking():
     def __init__ ( self ) :
         self.dock_checker_sub = rospy.Subscriber("/power/is_docked", Bool, self.is_docked_cb)
         self.is_docked = False
@@ -40,17 +40,22 @@ if __name__ == '__main__':
     try:
         rospy.init_node('bhvr_docking')
         
-        # Going to the docking station
-        nav = Navigator()
-        nav.registerLandmark("dock") # Will be done at the start of the scenario
-        nav.goto(0,0,0) # Moving the robot for testing purposes
+        mode == "dock"
 
-        nav.goToLandmark("dock")
+        if mode == "dock":
+            # Going to the docking station
+            nav = Navigator()
+            nav.registerLandmark("dock") # Will be done at the start of the scenario
+            nav.goto(0,0,0) # Moving the robot for testing purposes
 
-        # Docking procedure
-        sd = SimpleDock()
-        sd.go_and_dock_client()
-        rospy.spin()
+            nav.goToLandmark("dock")
+            
+            # Docking procedure
+            sd = Docking()
+            sd.go_and_dock_client()
+        
+        elif mode == "unlock":
+            sd.undock_client
 
     except rospy.ROSInterruptException:
         rospy.loginfo("program interrupted before completion")
