@@ -9,11 +9,11 @@ Inputs:         _nh (type, ros::NodeHandle): Manages things related to the node
           
 Outputs:        None
 */
-FaceDetector::FaceDetector(ros::NodeHandle& nh):
+FaceDetector::FaceDetector(ros::NodeHandle& nh, std::string mode):
   _nh(nh)
 {
   // Image topics
-  std::string imageTopic = "/homodeus_proc_face_detection/proc_input_camera_feed";
+  std::string imageTopic = "proc_input_camera_feed";
 
   image_transport::ImageTransport imageTransport(nh);
 
@@ -22,6 +22,7 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
   std::string pathToProfileClassifier = ros::package::getPath("homodeus_external") +
                                  "/face_detection/config/haarcascade_profileface.xml";
 
+  std::string camera_mode = mode;
   // Checks if the classifier files are there
   if ( !_frontClassifier.load(pathToFrontClassifier.c_str())  or 
       ! _profileClassifier.load(pathToProfileClassifier.c_str()) )
@@ -35,9 +36,16 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh):
   _imDebugPub = imageTransport.advertise("debug", 1);
 
   sensor_msgs::CameraInfo camera_info;
+
   //Dimensions of the image
-  //camera_info = *(ros::topic::waitForMessage<sensor_msgs::CameraInfo>("/usb_cam/camera_info"));
-  camera_info = *(ros::topic::waitForMessage<sensor_msgs::CameraInfo>("/xtion/rgb/camera_info"));
+  if (camera_mode == "remote")
+  {
+    camera_info = *(ros::topic::waitForMessage<sensor_msgs::CameraInfo>("/usb_cam/camera_info"));
+  }
+  else
+  {
+    camera_info = *(ros::topic::waitForMessage<sensor_msgs::CameraInfo>("/xtion/rgb/camera_info"));
+  }
   _imgProcessingSize.height = camera_info.height;
   _imgProcessingSize.width = camera_info.width;
 }
@@ -229,15 +237,17 @@ std::vector<cv::Rect> FaceDetector::detectFaces(const cv::Mat& img,
 int main(int argc, char **argv)
 {
   ros::init(argc,argv,"homodeus_proc_face_detection_node");
+  std::string mode;
+
   ros::NodeHandle nh("~");
-  ros::Publisher chatter_pub = nh.advertise<std_msgs::String>("chatter", 1000);
 
   double frequency = 5;
 
   ROS_INFO("Creating face detector");
+  nh.getParam("camera_mode", mode);
 
-  FaceDetector detector(nh);
-
+  ROS_INFO("Face detection camera mode: %s", mode.c_str());
+  FaceDetector detector(nh, mode);
   ROS_INFO("Spinning to serve callbacks ...");
 
   ros::Rate rate(frequency);
