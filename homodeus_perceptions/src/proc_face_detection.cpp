@@ -1,4 +1,4 @@
-#include <face_detection/homodeus_proc_face_detection.h>
+#include <face_detection/proc_face_detection.h>
 
 #define MIN_FACE_SIZE_RATIO 0.00001
 /* FaceDetector: Constructor
@@ -152,6 +152,9 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     cv_bridge::CvImageConstPtr cvImgPtr;
     cvImgPtr = cv_bridge::toCvShare(msg);
     cvImgPtr->image.copyTo(img);
+
+    std_msgs::Bool observerMsg;
+
   
     // Minimum and maximum sizes of the faces that can be detected
     _minFaceSize.width = static_cast<int>(MIN_FACE_SIZE_RATIO * _imgProcessingSize.width);
@@ -184,10 +187,23 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                         );
 
     if ( _pub.getNumSubscribers() > 0 && !faces.empty())
+    {
       publishDetections(faces);
+      observerMsg.data = true;
+      ROS_INFO("face detected");
+    }
+    else
+    {
+      observerMsg.data = false;
+    }
+    //ROS_INFO("image sent");
+
+    observer_pub.publish(observerMsg);
 
     if ( _imDebugPub.getNumSubscribers() > 0 )
+    {
       publishDebugImage(imgScaled, faces);
+    }
   }
 }
 

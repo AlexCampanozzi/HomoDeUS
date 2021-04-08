@@ -7,14 +7,10 @@ hbba_conf:
 - include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_face_tracking.yaml'}
 
 # Motivations
-- include: {pkg: 'homodeus_hbba_cfg', file: 'motv_gaze_following_test.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'motv_gaze_following.yaml'}
 
 # Perceptions
 - include: {pkg: 'homodeus_hbba_cfg', file: 'proc_face_detection.yaml'}
-
-# Observers
-- include: {pkg: 'homodeus_hbba_cfg', file: 'face_detection_observer.yaml'}
-- include: {pkg: 'homodeus_hbba_cfg', file: 'face_tracking_observer.yaml'}
 
 # Available resources:
 - resources:

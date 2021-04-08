@@ -5,6 +5,7 @@ import rospy
 import roslib
 import actionlib
 from geometry_msgs.msg import PoseStamped
+from std_msgs.msg import Bool
 import math
 from sensor_msgs.msg import CameraInfo
 import numpy as np
@@ -28,6 +29,7 @@ class FaceTracking:
         self.img_height = camera_info.height
         self.img_width = camera_info.width
         self.pub = rospy.Publisher('tiago_head_controller', PoseStamped, queue_size=5)
+        self.pubObserver = rospy.Publisher('Face_tracking_observer', Bool, queue_size=5)
 
         self.img_center_x = self.img_width // 2
         self.img_center_y = self.img_height // 2
@@ -55,7 +57,11 @@ class FaceTracking:
 
         # If the main face is inside the limit, don't move the head
         if main_face_dist < self.threshold:
+            self.pubObserver.publish(True)
+            rospy.loginfo("face centered")
             return
+        else:
+            self.pubObserver.publish(False)
 
         x = self.pid_x.get_next_command(main_face_x)
         y = self.pid_y.get_next_command(main_face_y)

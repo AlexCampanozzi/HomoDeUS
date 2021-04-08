@@ -1,0 +1,5 @@
+hbba_conf:
+
+- motivation:
+    name: face_detection_observer
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/face_detection_observer.launch"}

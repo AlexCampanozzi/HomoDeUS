@@ -10,6 +10,8 @@
 #include <image_transport/image_transport.h>
 #include <sensor_msgs/image_encodings.h>
 #include <ros/package.h>
+#include "std_msgs/Bool.h"
+#include "std_msgs/String.h"
 
 // OpenCV headers
 #include <opencv2/objdetect/objdetect.hpp>
@@ -65,6 +67,7 @@ protected:
 
   ros::NodeHandle _nh;
   ros::Publisher _pub;
+  ros::Publisher observer_pub;
 
   cv::CascadeClassifier _frontClassifier;
   cv::CascadeClassifier _profileClassifier;
