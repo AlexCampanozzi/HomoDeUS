@@ -37,7 +37,11 @@ class Speech_recognition:
         while not rospy.is_shutdown():
 
             speechText = self.speech_to_text()
-            self.output_perc.publish(speechText)
+            if not speechText:
+                rospy.loginfo("speech empty")
+            else:
+                rospy.loginfo(speechText)
+                self.output_perc.publish(speechText)
     
     def speech_to_text(self):
         """
@@ -46,7 +50,7 @@ class Speech_recognition:
         """
         with sr.Microphone() as source:
             self.speech_recognizer.adjust_for_ambient_noise(source, duration=1) 
-            common.loginfo(self,"Listening...")
+            rospy.loginfo("Listening...")
             audio = self.speech_recognizer.listen(source)
 
             try:
@@ -54,18 +58,18 @@ class Speech_recognition:
                 return speech
 
             except LookupError:
-                common.loginfo(self,"LookupError")
+                rospy.loginfo("LookupError")
                 return ""
 
             except sr.UnknownValueError:
-                common.loginfo(self,"UnknownValue")
+                rospy.loginfo("UnknownValue")
                 return ""
 
     def node_shutdown(self):
         """
         This method informs the developper about the shutdown of this node
         """
-        common.loginfo(self,"have been shutdown")
+        rospy.loginfo("have been shutdown")
 
     
 
@@ -82,5 +86,5 @@ if __name__ == '__main__':
         rospy.spin()
 
     except Exception:
-        common.logerr(__file__,traceback.format_exc())
+        rospy.logerr(traceback.format_exc())
         

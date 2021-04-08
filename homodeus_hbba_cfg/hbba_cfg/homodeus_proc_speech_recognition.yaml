@@ -8,8 +8,9 @@ hbba_conf:
 
 - strat:
     name: googleAPI
-    class: Speech_recognition
+    class: Listening
     utility: 10
     costs: {microphone: 1}
     modules:
         - homodeus_proc_speech_recognition
+    custom_bringup: "pubString('/proc_goal_context',params.context);"
