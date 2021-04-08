@@ -239,7 +239,7 @@ int main(int argc, char **argv)
   ros::init(argc,argv,"homodeus_proc_face_detection_node");
   std::string mode;
 
-  ros::NodeHandle nh("~");
+  ros::NodeHandle nh;
 
   double frequency = 5;
 
