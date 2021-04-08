@@ -1,9 +1,0 @@
-<launch>
-
-  <include file="$(find tiago_gazebo)/launch/tiago_gazebo.launch">
-		<arg name="public_sim" value="true"/>
-		<arg name="robot" value="titanium"/>
-		<arg name="world" value="look_to_point"/>
-	</include>
-
-</launch>

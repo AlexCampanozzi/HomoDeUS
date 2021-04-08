@@ -1,3 +1,0 @@
-<launch>
-    <node name="headAction" pkg="HomoDeUS" type="headActionClientTestMain.py" output="screen"/>
-</launch>
