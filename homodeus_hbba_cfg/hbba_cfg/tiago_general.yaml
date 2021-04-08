@@ -1,4 +1,3 @@
-
 hbba_conf:
 
 - include: {pkg: 'hbba_synth',         file: 'common.yaml'}
@@ -10,9 +9,18 @@ hbba_conf:
 - include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_motv_gaze_following.yaml'}
 
 # Perceptions
-- include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_proc_face_detection.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_proc_keyword_detection.yaml'}
 
+# Needed for localization:
+- desire:
+    id: testing
+    type: Keyword_detection
+    utility: 1
+    intensity: 1.0
+    security: False
+    params: "{value: 'roboto'}"
 
 # Available resources:
 - resources:
     CPU: 100
+    microphone: 2
