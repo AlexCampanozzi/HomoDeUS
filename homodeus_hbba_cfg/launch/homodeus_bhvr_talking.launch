@@ -1,3 +1,4 @@
 <launch>
   <node name="bhvr_talking" pkg="homodeus_behaviors" type="bhvr_talking.py" output="screen"/>
+  <param name="on_robot" type="bool" value="True" />
 </launch>
