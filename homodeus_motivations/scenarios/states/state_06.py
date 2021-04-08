@@ -7,7 +7,7 @@ class State06(StateBase):
         self.max_fail_count = 3
         self.order = ""
         # TODO set topic to correct name
-        rospy.Subscriber("client_order", String, self.order_cb, queue_size=5)
+        rospy.Subscriber("/obs_client_order", String, self.order_cb, queue_size=5)
 
     def order_cb(self, order_string):
         self.order = "{TtsText: 'You ordered: " + order_string.data + "'}"
@@ -29,7 +29,7 @@ class State06(StateBase):
                 if self.stateDict[desire] == Event.ACC_ON:
                     self.remove("repeat_order_06")
                     self.stateDict.pop("repeat_order_06")
-                    self.add(self, "listen_for_answer_06", "Listen",  params="{context: 'yes_or_no'}") # TODO Fix params
+                    self.add(self, "listen_for_answer_06", "Listening",  params="{context: 'yes_or_no'}") # TODO Fix params
                     self.stateDict["listen_for_answer_06"] = Event.DES_ON
                     return None
 
