@@ -7,7 +7,7 @@ class State06(StateBase):
         self.max_fail_count = 3
         self.order = ""
         # TODO set topic to correct name
-        rospy.Subscriber("client_order", String, self.order_cb, queue_size=5)
+        rospy.Subscriber("/obs_client_order", String, self.order_cb, queue_size=5)
 
     def order_cb(self, order_string):
         self.order = "{TtsText: 'You ordered: " + order_string.data + "'}"

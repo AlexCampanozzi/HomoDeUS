@@ -5,7 +5,7 @@ class State09(StateBase):
         StateBase.__init__(self, stateDict)
         self.order = ""
         # TODO set topic to correct name
-        rospy.Subscriber("client_order", String, self.order_cb, queue_size=5)
+        rospy.Subscriber("/obs_client_order", String, self.order_cb, queue_size=5)
 
     def order_cb(self, order_string):
         self.order = "{TtsText: 'A client ordered: " + order_string.data + "'}"
