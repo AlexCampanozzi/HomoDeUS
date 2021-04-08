@@ -30,7 +30,7 @@ class State02(StateBase):
                 if self.stateDict[desire] == Event.ACC_ON:
                     self.remove("ask_for_order_02")
                     self.stateDict.pop("ask_for_order_02")
-                    self.add(self, "listen_for_order_02", "Speech_recognition",  params="") # TODO Fix params?
+                    self.add(self, "listen_for_order_02", "Listening",  params="") # TODO Fix params?
                     self.stateDict["listen_for_order_02"] = Event.DES_ON
                     return None
 

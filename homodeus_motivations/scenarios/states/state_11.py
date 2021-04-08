@@ -18,22 +18,22 @@ class State11(StateBase):
                 if self.stateDict[desire] == Event.ACC_ON:
                     self.remove("ask_for_help_11")
                     self.stateDict.pop("ask_for_help_11")
-                    self.add(self, "listen_for_answer_11", "Listen",  params="{context: 'continue_or_reset'}") # TODO Fix params
-                    self.stateDict["listen_for_answer_11"] = Event.DES_ON
+                    self.add(self, "Listening_for_answer_11", "Listening",  params="{context: 'continue_or_reset'}") # TODO Fix params
+                    self.stateDict["Listening_for_answer_11"] = Event.DES_ON
                     return None
 
             # ACC_OFF: reset heard
-            if desire == "listen_for_answer_11": 
+            if desire == "Listening_for_answer_11": 
                 if self.stateDict[desire] == Event.ACC_OFF:
-                    self.remove("listen_for_answer_11")
-                    self.stateDict.pop("listen_for_answer_11")
+                    self.remove("Listening_for_answer_11")
+                    self.stateDict.pop("Listening_for_answer_11")
                     return "state_00"
 
             # ACC_ON: ok heard
-            if desire == "listen_for_answer_11": 
+            if desire == "Listening_for_answer_11": 
                 if self.stateDict[desire] == Event.ACC_ON:
-                    self.remove("listen_for_answer_11")
-                    self.stateDict.pop("listen_for_answer_11")
+                    self.remove("Listening_for_answer_11")
+                    self.stateDict.pop("Listening_for_answer_11")
                     return "state_10"
 
         return None
