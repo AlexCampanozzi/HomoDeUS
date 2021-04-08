@@ -61,6 +61,7 @@ class Talking_module:
                 goal.rawtext.text = TtsText.data
 
             self.output_bhvr_command.send_goal(goal=goal,done_cb=self.goal_achieve_Cb)
+            
         rospy.loginfo(TtsText.data)
 
     def goal_achieve_Cb(self):
