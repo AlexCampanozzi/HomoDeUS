@@ -19,7 +19,7 @@ class Speech_recognition_observer:
     """
     def __init__(self):
         # The input of the module
-        self.input_motv = rospy.Subscriber("/proc_output_listenText", String, self.listen_Cb, queue_size=10)
+        self.input_motv = rospy.Subscriber("/proc_output_listenText", String, self.listen_Cb, queue_size=5)
         self.input_context = rospy.Subscriber("/proc_goal_context", String,self.set_context, queue_size=5 )
 
         # the output of the module
@@ -48,7 +48,7 @@ class Speech_recognition_observer:
         """
         self.curDesireSet = desireSet
     
-    def set_context(self,context):
+    def set_context(self, context):
         """
         This method updated the context used to detect the waited answer from Listening desire.
         It also set a timer following the time before receiving a relevant answer and sending a IMP state if no 
@@ -94,7 +94,7 @@ class Speech_recognition_observer:
         self.timer.cancel()
         self.actual_context=""
                 
-    def listen_Cb(self,Stt_text):
+    def listen_Cb(self, Stt_text):
         """
         This method is the Cb of the speech_recognition perception
         Arguments
@@ -112,7 +112,7 @@ class Speech_recognition_observer:
         else:
             rospy.loginfo("Listening without receiving a context")
 
-    def _look_answer(self,Stt_text):
+    def _look_answer(self, Stt_text):
         """
         This method analyse if the desire is accomplish or not depending on the context and the xml doc
         Arguments
@@ -125,12 +125,13 @@ class Speech_recognition_observer:
             if re.search(r"\b{}\b".format(answer.text), Stt_text) is not None:
                 if answer.get('acc_type') == 'ON':
                     self.desire_event_change(Event.ACC_ON)
-                    return
+                    break
                 elif answer.get('acc_type') == 'OFF':
                     self.desire_event_change(Event.ACC_OFF)
-                    return
+                    break
+        return
 
-    def _look_answer_menu(self,Stt_text):
+    def _look_answer_menu(self, Stt_text):
         """
         This method analyse if the desire is accomplish or not depending on the context and the xml doc.
         It also send information of the order of the client to the appropriate topic
@@ -157,7 +158,7 @@ class Speech_recognition_observer:
         """
         This method informs the developper about the shutdown of this node
         """
-        rospy.loginfo(self,"have been shutdown")
+        rospy.loginfo("have been shutdown")
 
     
 
