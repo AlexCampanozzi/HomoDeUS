@@ -108,7 +108,6 @@ class KeywordRecognizer:
             for a keyword. It can be seen as the sensitivity. By default,
             its value is set to 1e-20.
         """
-        rospy.loginfo("--------------------------------- " + keyword + "----------------------------------")
         self.set_new_keyword = True
         time.sleep(0.2)
 

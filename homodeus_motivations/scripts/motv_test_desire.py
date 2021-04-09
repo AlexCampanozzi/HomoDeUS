@@ -26,6 +26,7 @@ class testManager:
         des.params      = "{context: 'order_ready'}"
 
         self.add_desires.call([des])
+        # Help to spot when the desire has been added so it is more easy to follow after
         rospy.loginfo("-------------------------ADDING DESIRE----------------------------")
 
     def remove(self):
