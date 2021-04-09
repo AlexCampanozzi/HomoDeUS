@@ -1,24 +1,41 @@
 #! /usr/bin/env python
+import re
+import os
 import rospy
 import actionlib
 import traceback
+import xml.etree.ElementTree as ET
 
+
+from threading import Timer
 from std_msgs.msg import String, Bool
 from hbba_msgs.msg import Desire, DesiresSet, Event
+from HomoDeUS_common_py.HomoDeUS_common_py import no_caps_and_whitespace
+
 
 class Speech_recognition_observer:
     """
-    This class follows the state of the keyword_detection desire
+    This class follows observe the speech_recognition perception and handles the state of the Listening desire based on an XML
     """
     def __init__(self):
         # The input of the module
-        self.input_motv = rospy.Subscriber("/proc_output_listenText", String, self.desire_event_change, queue_size=10)
+        self.input_motv = rospy.Subscriber("/proc_output_listenText", String, self.listen_Cb, queue_size=10)
+        self.input_context = rospy.Subscriber("/proc_goal_context", String,self.set_context, queue_size=5 )
 
         # the output of the module
         self.event_publisher = rospy.Publisher("events",Event, queue_size = 10)
+        self.menu_publisher = rospy.Publisher("/obs_client_order", String, queue_size = 10)
 
         # following DesireSet
         self.desires_set_subscriber = rospy.Subscriber("desires_set", DesiresSet, self.listen_desires_set_Cb)
+
+        self.actual_context = ""
+        
+        # Setting up Pocket Sphinx        
+        speech_context_xml_path= os.path.join(os.path.dirname(__file__), '../../homodeus_external/xml_folder/speech_context.xml') 
+        self.speech_context_parsed = ET.parse(speech_context_xml_path).getroot()
+
+        self.cancel = False
 
     def listen_desires_set_Cb(self,desireSet):
         """
@@ -30,57 +47,112 @@ class Speech_recognition_observer:
             The most recent desireSet
         """
         self.curDesireSet = desireSet
-
-    def desire_event_change(self, SpeechText):
+    
+    def set_context(self,context):
         """
-        This method is the callback of the output of the module it is connected to, it then send an event depening of the result
-        get from the topic.
+        This method updated the context used to detect the waited answer from Listening desire.
+        It also set a timer following the time before receiving a relevant answer and sending a IMP state if no 
+        relevant answer before reaching the set time.
 
         Arguments
         ---------
-        SpeechText: String
-            The result of the output of the module it is connected to. In this case it is the speech recognized
+        context: string
+            the context given to the xml parser
+        """
+        self.actual_context = context.data
+        for context in self.speech_context_parsed.iter(self.actual_context):
+            rospy.loginfo(context.get('timer'))
+            self.timer = Timer(int(context.get('timer')), self.timeout_cb)
+            break
+        self.timer.start()
+
+    def timeout_cb(self):
+        """
+        This method send an IMP_ON event.type following the timer reaching it's set time.
+        """
+        self.desire_event_change(Event.IMP_ON)
+
+    def desire_event_change(self, Event_type):
+        """
+        This method send an event depening from which it's type depend of the argument
+        Arguments
+        ---------
+        Event_type: Event.type
+            The type of event given by the caller representing the states of the desire
         """
         # S'il y a beaucoup de desirs du meme type... il me semble que ca ne fonctionnera pas
         event = Event()
+        rospy.loginfo(self.curDesireSet.desires)
         for desire in self.curDesireSet.desires:
-            if desire.type == "Speech_recognition":
+            if desire.type == "Listening":
                 event.desire = desire.id
                 event.desire_type = desire.type
-                if self.accomplish_criterion(SpeechText.data):
-                    event.type = Event.ACC_ON
-                    self.event_publisher.publish(event)
-                elif self.cancel_criterion():
-                    #Probleme actuel est que si le desir n'est pas active il peut tout de meme changer d'etat!
-                    event.type = Event.IMP_ON
-                    self.event_publisher.publish(event)
+                event.type = Event_type
+                self.event_publisher.publish(event)
+
+        #reset 
+        self.timer.cancel()
+        self.actual_context=""
                 
-
-
-    def accomplish_criterion(self, SpeechText):
+    def listen_Cb(self,Stt_text):
         """
-        This method look the result of the module and return True if it accomplished the criterion the motivation is looking for
-
+        This method is the Cb of the speech_recognition perception
         Arguments
         ---------
-        SpeechText : string
-            The text recognizes by the robot, it will be analyzed to know if something 
-            relevant have been said and considerer if the desire is now accomplished
+        Stt_text: String()
+            the string received from speech_recognition perception
         """
-        # Pourrait etre un xml avec les mots a retrouves selon le contexte et le desir donne le contexte
-        if 'scenario' in str(SpeechText):
-            return True
-        else:
-            return False
 
-    def cancel_criterion(self):
+        text_to_use = no_caps_and_whitespace(Stt_text.data)
+        if self.actual_context:
+            if self.actual_context !="menu":
+                self._look_answer(text_to_use)
+            else:
+                self._look_answer_menu(text_to_use)
+        else:
+            rospy.loginfo("Listening without receiving a context")
+
+    def _look_answer(self,Stt_text):
         """
-        This method follows up the environment of the robot and return True if
-         it is now impossible to accomplish the purpose of the desire.
+        This method analyse if the desire is accomplish or not depending on the context and the xml doc
+        Arguments
+        ---------
+        Stt_text: string
+            the string received from speech_recognition perception
         """
-        #should look for the ambiant noise and if it is too high for a certain time, consider it is impossible
-        return False
-        
+        xml_path_to_search= "./"+self.actual_context+"/answer"
+        for answer in self.speech_context_parsed.findall(xml_path_to_search):
+            if re.search(r"\b{}\b".format(answer.text), Stt_text) is not None:
+                if answer.get('acc_type') == 'ON':
+                    self.desire_event_change(Event.ACC_ON)
+                    return
+                elif answer.get('acc_type') == 'OFF':
+                    self.desire_event_change(Event.ACC_OFF)
+                    return
+
+    def _look_answer_menu(self,Stt_text):
+        """
+        This method analyse if the desire is accomplish or not depending on the context and the xml doc.
+        It also send information of the order of the client to the appropriate topic
+        Arguments
+        ---------
+        Stt_text: string
+            the string received from speech_recognition perception
+        """
+        order_string = ""
+        xml_path_to_search= "./"+self.actual_context+"/answer"
+        for answer in self.speech_context_parsed.findall(xml_path_to_search):
+            if re.search(r"\b{}\b".format(answer.text), Stt_text) is not None:
+                order_string += answer.text
+                order_string += " "
+
+        if order_string:
+            self.desire_event_change(Event.ACC_ON)
+            order_string = "You want " + order_string + "right?"
+            self.menu_publisher.publish(order_string)
+        else:
+            self.desire_event_change(Event.ACC_OFF)
+
     def node_shutdown(self):
         """
         This method informs the developper about the shutdown of this node

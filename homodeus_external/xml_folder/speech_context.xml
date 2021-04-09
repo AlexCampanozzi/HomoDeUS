@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<context>
+    <yes_or_no timer="20">
+        <answer acc_type="ON">yes</answer>
+        <answer acc_type="ON">yeah</answer>
+        <answer acc_type="ON">affirmative</answer>
+        <answer acc_type="ON">sure</answer>
+        <answer acc_type="ON">all right</answer>
+        <answer acc_type="ON">ok</answer>
+        <answer acc_type="ON">agree</answer>
+        <answer acc_type="ON">confirm</answer>
+        <answer acc_type="OFF">no</answer>
+        <answer acc_type="OFF">nope</answer>
+        <answer acc_type="OFF">not</answer>
+        <answer acc_type="OFF">negative</answer>
+        <answer acc_type="OFF">disagree</answer>
+    </yes_or_no>
+    <menu timer="50">
+        <answer acc_type="ON">apple</answer>
+        <answer acc_type="ON">apples</answer>
+        <answer acc_type="ON">banana</answer>
+        <answer acc_type="ON">bananas</answer>
+        <answer acc_type="ON">orange</answer>
+        <answer acc_type="ON">oranges</answer>
+        <answer acc_type="ON">cheese</answer>
+    </menu>
+    <continue_or_reset timer="20">
+        <answer acc_type="ON">continue</answer>
+        <answer acc_type="ON">keep up</answer>
+        <answer acc_type="ON">pursue</answer>
+        <answer acc_type="ON">carry on</answer>
+        <answer acc_type="ON">resume</answer>
+        <answer acc_type="OFF">reset</answer>
+        <answer acc_type="OFF">rectify</answer>
+        <answer acc_type="OFF">revise</answer>
+        <answer acc_type="OFF">restart</answer>
+    </continue_or_reset>
+    <order_ready timer="60">
+        <answer acc_type="ON">ready</answer>
+        <answer acc_type="ON">prepared</answer>
+        <answer acc_type="ON">prepare</answer>
+    </order_ready>
+</context>
+

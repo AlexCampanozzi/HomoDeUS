@@ -26,6 +26,10 @@ class Talking_module:
         self.talking_text = text
         # Goal input
         self.input_bhvr_goal = rospy.Subscriber("/bhvr_input_goal_talking",data_class=String,callback=self.action_Cb,queue_size=10)
+
+        #look if being test on robot or computer 
+        param_name = rospy.search_param('on_robot')
+        self.on_robot = rospy.get_param(param_name,False)
         
         # Output
         self.output_bhvr_result = rospy.Publisher("/bhvr_output_res_talking", Bool, queue_size=10)
@@ -34,9 +38,9 @@ class Talking_module:
 
         # wait for the action server to come up
         while(not self.output_bhvr_command.wait_for_server(rospy.Duration.from_sec(5.0)) and not rospy.is_shutdown()):
-            common.loginfo("Waiting for the action server to come up")
+            rospy.loginfo("Waiting for the action server to come up")
         
-        common.loginfo("Connection to server done")
+        rospy.loginfo("Connection to server done")
 
     def action_Cb(self, TtsText):
         """
@@ -48,14 +52,17 @@ class Talking_module:
         TtsText : String
             String mentionning what to say by the robot
         """
-        goal = pal_interaction_msgs.msg.TtsGoal()
-        goal.rawtext.lang_id = self.language
-        if TtsText == "":
-            goal.rawtext.text= self.talking_text
-        else:
-            goal.rawtext.text = TtsText.data
+        if self.on_robot:
+            goal = pal_interaction_msgs.msg.TtsGoal()
+            goal.rawtext.lang_id = self.language
+            if TtsText == "":
+                goal.rawtext.text= self.talking_text
+            else:
+                goal.rawtext.text = TtsText.data
 
-        self.output_bhvr_command.send_goal(goal=goal,done_cb=self.goal_achieve_Cb)
+            self.output_bhvr_command.send_goal(goal=goal,done_cb=self.goal_achieve_Cb)
+            
+        rospy.loginfo(TtsText.data)
 
     def goal_achieve_Cb(self):
         """
@@ -68,7 +75,7 @@ class Talking_module:
         This method cancel goal if their is a sudden shutdown. It also informs by a log that the node was shutdown
         """
         self.output_bhvr_command.cancel_goal()
-        common.loginfo(self,"have been shutdown")
+        rospy.loginfo(self,"have been shutdown")
 
 
 if __name__ == "__main__":
@@ -82,4 +89,4 @@ if __name__ == "__main__":
         rospy.spin()
 
     except Exception:
-        common.logerr(__file__,traceback.format_exc())
+        rospy.logerr(__file__,traceback.format_exc())
