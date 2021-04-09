@@ -2,23 +2,12 @@ hbba_conf:
 
 - include: {pkg: 'hbba_synth',         file: 'common.yaml'}
 
-# Behaviors:
-- include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_bhvr_face_tracking.yaml'}
-
 # Motivations
-- include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_motv_gaze_following.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_motv_speech_recognition_obs.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_motv_test_desire.yaml'}
 
 # Perceptions
-- include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_proc_keyword_detection.yaml'}
-
-# Needed for localization:
-- desire:
-    id: testing
-    type: Keyword_detection
-    utility: 1
-    intensity: 1.0
-    security: False
-    params: "{value: 'roboto'}"
+- include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_proc_speech_recognition.yaml'}
 
 # Available resources:
 - resources:
