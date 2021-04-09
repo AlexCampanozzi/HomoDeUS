@@ -67,7 +67,7 @@ protected:
 
   ros::NodeHandle _nh;
   ros::Publisher _pub;
-  ros::Publisher observer_pub;
+  ros::Publisher _observer_pub;
 
   cv::CascadeClassifier _frontClassifier;
   cv::CascadeClassifier _profileClassifier;
