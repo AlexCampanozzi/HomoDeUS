@@ -1,4 +1,4 @@
-#include <face_detection/homodeus_proc_face_detection.h>
+#include <face_detection/proc_face_detection.h>
 
 #define MIN_FACE_SIZE_RATIO 0.00001
 /* FaceDetector: Constructor
@@ -28,12 +28,12 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh, std::string mode):
       ! _profileClassifier.load(pathToProfileClassifier.c_str()) )
     throw std::runtime_error("Error loading classifier");
 
-  //Initializing subscribers and publishers
+  //Initializing publishers
   image_transport::TransportHints transportHint("raw");
-  _imageSub = imageTransport.subscribe(imageTopic, 1, &FaceDetector::imageCallback, this, transportHint);
 
   _pub = _nh.advertise<custom_msgs::FacePositions>("/proc_output_face_positions", 1);
   _imDebugPub = imageTransport.advertise("debug", 1);
+  _observer_pub = _nh.advertise<std_msgs::Bool>("/face_detection_observer", 1);
 
   sensor_msgs::CameraInfo camera_info;
 
@@ -48,6 +48,10 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh, std::string mode):
   }
   _imgProcessingSize.height = camera_info.height;
   _imgProcessingSize.width = camera_info.width;
+
+  //Subscribers
+  _imageSub = imageTransport.subscribe(imageTopic, 1, &FaceDetector::imageCallback, this, transportHint);
+
 }
 
 
@@ -152,6 +156,9 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     cv_bridge::CvImageConstPtr cvImgPtr;
     cvImgPtr = cv_bridge::toCvShare(msg);
     cvImgPtr->image.copyTo(img);
+
+    std_msgs::Bool observerMsg;
+
   
     // Minimum and maximum sizes of the faces that can be detected
     _minFaceSize.width = static_cast<int>(MIN_FACE_SIZE_RATIO * _imgProcessingSize.width);
@@ -184,10 +191,23 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                         );
 
     if ( _pub.getNumSubscribers() > 0 && !faces.empty())
+    {
       publishDetections(faces);
+      observerMsg.data = true;
+      ROS_INFO("face detected");
+    }
+    else
+    {
+      observerMsg.data = false;
+    }
+    //ROS_INFO("image sent");
+
+    _observer_pub.publish(observerMsg);
 
     if ( _imDebugPub.getNumSubscribers() > 0 )
+    {
       publishDebugImage(imgScaled, faces);
+    }
   }
 }
 

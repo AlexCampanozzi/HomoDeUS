@@ -28,7 +28,7 @@ class State03(StateBase):
                 if self.stateDict[desire] == Event.ACC_ON:
                     self.remove("ask_for_order_03")
                     self.stateDict.pop("ask_for_order_03")
-                    self.add(self, "listen_for_order_03", "Listen",  params="{context: 'menu'}") # TODO Fix params
+                    self.add(self, "listen_for_order_03", "Listening",  params="{context: 'menu'}") # TODO Fix params
                     self.stateDict["listen_for_order_03"] = Event.DES_ON
                     return None
 

@@ -1,0 +1,10 @@
+hbba_conf:
+
+# faceTracking observer
+- motivation:
+    name: face_tracking_obs
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/motv_face_tracking_observer.launch"}
+    input:
+        - homodeus_bhvr_face_tracking
+    output:
+        - events

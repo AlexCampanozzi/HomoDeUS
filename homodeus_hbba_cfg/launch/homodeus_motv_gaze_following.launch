@@ -1,3 +1,0 @@
-<launch>
-    <node name="gazeFollowing" pkg="homodeus_motivations" type="homodeus_motv_gaze_following.py" output="screen"/>
-</launch>

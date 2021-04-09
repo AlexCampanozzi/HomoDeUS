@@ -1,0 +1,3 @@
+<launch>
+  <node name="face_tracking_observer" pkg="homodeus_motivations" type="face_tracking_observer.py" output="screen"/>
+</launch>
