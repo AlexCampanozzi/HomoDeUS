@@ -57,7 +57,7 @@ class Keyword_detection:
         """
         This method informs the developper about the shutdown of this node
         """
-        rospy.loginfo(self, "is shutting down")
+        rospy.loginfo("is shutting down")
     
 
 if __name__ == '__main__':
@@ -65,12 +65,12 @@ if __name__ == '__main__':
     This if condition tells what to do if the script is called directely. Otherwise, this part should be ignored.
     It vreates a node and starts the speechRecognition server in it.
     """
-    #try:
-    rospy.init_node(common.get_file_name(__file__))
-    node = Keyword_detection()
-    node.transform()
-    rospy.on_shutdown(node.node_shutdown)
-    rospy.spin()
+    try:
+        rospy.init_node(common.get_file_name(__file__))
+        node = Keyword_detection()
+        node.transform()
+        rospy.on_shutdown(node.node_shutdown)
+        rospy.spin()
 
-    #except Exception:
-        #rospy.logerr(__file__,traceback.format_exc())
+    except Exception:
+        rospy.logerr(traceback.format_exc())

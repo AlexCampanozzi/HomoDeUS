@@ -51,7 +51,7 @@ class KeywordRecognizer:
             channels=1,
             rate=16000,
             input=True,
-            frames_per_buffer=512)
+            frames_per_buffer=1024)
 
     def wait_for_keyword(self):
         """
