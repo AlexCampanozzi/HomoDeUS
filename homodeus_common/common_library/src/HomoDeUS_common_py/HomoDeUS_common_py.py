@@ -5,8 +5,9 @@
         To use it, only type :
         import HomoDeUS_common_py.HomoDeUS_common_py as common  
 """ 
-import rospy
 import os
+import re
+import rospy
 
 def convert_char_array_to_string(char_array):
     """
@@ -51,6 +52,17 @@ def equalWithinTolerance(a, b, tol):
             the tolerance within which the difference between the two value is considered non relevant.
     """ 
     return abs(a-b) <= tol
+
+def no_caps_and_whitespace(text):
+    """
+        This function return the text received without whitespace and Caps
+        
+        Arguments
+        ---------
+        text: string
+            The text to alter
+    """
+    return re.sub(r'[^\w\s]', '', text).lower()
 
 def loginfo(origin, text=""):
     """

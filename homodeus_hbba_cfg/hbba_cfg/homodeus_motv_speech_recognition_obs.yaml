@@ -8,3 +8,4 @@ hbba_conf:
         - proc_output_listenText
     output:
         - events
+        - obs_client_order

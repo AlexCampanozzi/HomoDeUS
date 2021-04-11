@@ -28,12 +28,12 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh, std::string mode):
       ! _profileClassifier.load(pathToProfileClassifier.c_str()) )
     throw std::runtime_error("Error loading classifier");
 
-  //Initializing subscribers and publishers
+  //Initializing publishers
   image_transport::TransportHints transportHint("raw");
-  _imageSub = imageTransport.subscribe(imageTopic, 1, &FaceDetector::imageCallback, this, transportHint);
 
   _pub = _nh.advertise<custom_msgs::FacePositions>("/proc_output_face_positions", 1);
   _imDebugPub = imageTransport.advertise("debug", 1);
+  _observer_pub = _nh.advertise<std_msgs::Bool>("/face_detection_observer", 1);
 
   sensor_msgs::CameraInfo camera_info;
 
@@ -48,6 +48,10 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh, std::string mode):
   }
   _imgProcessingSize.height = camera_info.height;
   _imgProcessingSize.width = camera_info.width;
+
+  //Subscribers
+  _imageSub = imageTransport.subscribe(imageTopic, 1, &FaceDetector::imageCallback, this, transportHint);
+
 }
 
 
@@ -198,7 +202,7 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     }
     //ROS_INFO("image sent");
 
-    observer_pub.publish(observerMsg);
+    _observer_pub.publish(observerMsg);
 
     if ( _imDebugPub.getNumSubscribers() > 0 )
     {
@@ -239,7 +243,7 @@ int main(int argc, char **argv)
   ros::init(argc,argv,"homodeus_proc_face_detection_node");
   std::string mode;
 
-  ros::NodeHandle nh("~");
+  ros::NodeHandle nh;
 
   double frequency = 5;
 

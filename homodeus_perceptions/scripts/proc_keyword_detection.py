@@ -3,7 +3,7 @@ import os
 import rospy
 import traceback
 import keyword_detector.KeywordRecognizer as kr
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, String
 import HomoDeUS_common_py.HomoDeUS_common_py as common
 
 class Keyword_detection:
@@ -27,8 +27,19 @@ class Keyword_detection:
         """ 
         #The output of the module
         self.output_perc = rospy.Publisher("/proc_output_keywordDetect", Bool, queue_size=10)
+        self.intput_perc_keyword = rospy.Subscriber("/desire_keyword", String, self.set_keyword,queue_size=2)
+
+
+        param_name = rospy.search_param('keyword')
+        keyword = rospy.get_param(param_name,"alfred")
+        rospy.loginfo(keyword)
 
         self.keyword_recognizer = kr.KeywordRecognizer(keyword=keyword, timeout=timeout)
+
+    def set_keyword(self,keyword):
+        ##TODO: make set_keyword usable so it continue to wait for keyword afterward
+        if keyword.data:
+            self.keyword_recognizer.set_keyword(keyword.data)
 
     def transform(self):
         """
@@ -46,7 +57,7 @@ class Keyword_detection:
         """
         This method informs the developper about the shutdown of this node
         """
-        common.loginfo(self, "is shutting down")
+        rospy.loginfo(self, "is shutting down")
     
 
 if __name__ == '__main__':
@@ -62,4 +73,4 @@ if __name__ == '__main__':
         rospy.spin()
 
     except Exception:
-        common.logerr(__file__,traceback.format_exc())
+        rospy.logerr(__file__,traceback.format_exc())

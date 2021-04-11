@@ -1,4 +1,3 @@
-
 hbba_conf:
 
 - include: {pkg: 'hbba_synth',         file: 'common.yaml'}
@@ -19,3 +18,4 @@ hbba_conf:
 # Available resources:
 - resources:
     CPU: 100
+    microphone: 2

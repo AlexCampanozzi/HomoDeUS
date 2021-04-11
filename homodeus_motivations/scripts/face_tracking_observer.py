@@ -23,7 +23,7 @@ class FaceTrackingResultObserver:
         self.curDesireSet = desireSet
 
     def listenFaceTracking(self):
-        self.faceTrackingETASubscriber = rospy.Subscriber("FaceTrackingETA", Bool, self.listenFaceTrackingCB)
+        self.faceTrackingSubscriber = rospy.Subscriber("Face_tracking_observer", Bool, self.listenFaceTrackingCB)
 
     def listenFaceTrackingCB(self, success):
         if success.data == True:

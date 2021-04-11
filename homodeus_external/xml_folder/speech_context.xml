@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <context>
-    <yes_or_no>
+    <yes_or_no timer="20">
         <answer acc_type="ON">yes</answer>
         <answer acc_type="ON">yeah</answer>
         <answer acc_type="ON">affirmative</answer>
@@ -15,7 +15,7 @@
         <answer acc_type="OFF">negative</answer>
         <answer acc_type="OFF">disagree</answer>
     </yes_or_no>
-    <menu>
+    <menu timer="50">
         <answer acc_type="ON">apple</answer>
         <answer acc_type="ON">apples</answer>
         <answer acc_type="ON">banana</answer>
@@ -24,7 +24,7 @@
         <answer acc_type="ON">oranges</answer>
         <answer acc_type="ON">cheese</answer>
     </menu>
-    <continue_or_reset>
+    <continue_or_reset timer="20">
         <answer acc_type="ON">continue</answer>
         <answer acc_type="ON">keep up</answer>
         <answer acc_type="ON">pursue</answer>
@@ -35,7 +35,7 @@
         <answer acc_type="OFF">revise</answer>
         <answer acc_type="OFF">restart</answer>
     </continue_or_reset>
-    <order_ready>
+    <order_ready timer="60">
         <answer acc_type="ON">ready</answer>
         <answer acc_type="ON">prepared</answer>
         <answer acc_type="ON">prepare</answer>
