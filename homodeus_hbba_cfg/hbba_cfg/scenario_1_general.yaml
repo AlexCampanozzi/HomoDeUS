@@ -19,8 +19,8 @@ hbba_conf:
 - include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_motv_speech_recognition_obs.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_motv_talking_obs.yaml'}
 # Motivations
-#- include: {pkg: 'homodeus_hbba_cfg', file: 'motv_scenario_1.yaml'}
-- include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_motv_test_desire.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'motv_scenario_1.yaml'}
+# - include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_motv_test_desire.yaml'}
 
 # Available resources:
 - resources:

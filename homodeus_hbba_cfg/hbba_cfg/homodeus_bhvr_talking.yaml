@@ -8,8 +8,8 @@ hbba_conf:
     priority: 10
     input:
         - bhvr_input_goal_talking
+        - tts: {src: tts, filtered: false}
     output:
-        - tts
         - bhvr_output_res_talking
             
 - strat:

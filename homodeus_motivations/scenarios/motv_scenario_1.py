@@ -10,6 +10,7 @@ from states import state_00, state_01, state_02, state_03, state_04, state_05, s
 class Scenario1Manager(ScenarioManagerAction):
 
     def __init__(self):
+        print("init scen1")
         ScenarioManagerAction.__init__(self, name="scenario_1_manager")
         self.desires = {}
         self.states = {}
@@ -32,6 +33,7 @@ class Scenario1Manager(ScenarioManagerAction):
         self._as.register_preempt_callback(self.canceled_cb)
         self.rem_desires = rospy.ServiceProxy('remove_desires', RemoveDesires)
         rospy.wait_for_service("remove_desires")
+        print('scen init done')
 
     def add_state(self, state):
 
@@ -41,7 +43,7 @@ class Scenario1Manager(ScenarioManagerAction):
             self.states[key] = state
 
             if self.current_state is None:
-                self.current_state = self.states.get(key)
+                self.current_state = key
 
     def observe(self):
         self.sub_desires = rospy.Subscriber("events", Event, self.eventCB, queue_size=5)
@@ -80,6 +82,8 @@ class Scenario1Manager(ScenarioManagerAction):
         if goal.execute is True:
             self.observe()
             # initial desire addition
+            print("current state")
+            print(self.current_state)
             self.states[self.current_state].add_desires()
         else:
             pass
@@ -95,10 +99,14 @@ class Scenario1Manager(ScenarioManagerAction):
 
 class Scenario1Tester:
     def __init__(self):
-        client = actionlib.SimpleActionClient("sc1tester", custom_msgs.msg.scenario_managerAction)
+        print("test ini")
+        client = actionlib.SimpleActionClient("scenario_1_manager", custom_msgs.msg.scenario_managerAction)
+        print("made client")
         client.wait_for_server()
+        print("scen server found")
         goal = custom_msgs.msg.scenario_managerGoal(execute=True)
         client.send_goal(goal)
+        print("goal sent to scen")
 
 
 if __name__ == "__main__":

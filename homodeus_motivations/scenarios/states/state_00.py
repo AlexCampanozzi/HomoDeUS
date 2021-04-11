@@ -8,8 +8,10 @@ class State00(StateBase):
         return "state_00"
 
     def add_state_desires(self):
+        print("00 init")
         self.add(self, "detect_customer_00", "face_detection")
         self.add(self, "hear_hotword_00", "Keyword_detection",  params="{keyword: 'robot'}")
+        print("added keyword desire")
         self.stateDict["detect_customer_00"] = Event.DES_ON
         self.stateDict["hear_hotword_00"] = Event.DES_ON
 
