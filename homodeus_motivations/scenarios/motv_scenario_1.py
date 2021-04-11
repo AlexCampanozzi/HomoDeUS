@@ -3,6 +3,8 @@ import rospy
 from hbba_msgs.msg import Desire, Event
 from hbba_msgs.srv import AddDesires, RemoveDesires
 from scenario_manager_action_server import ScenarioManagerAction
+import actionlib
+import custom_msgs.msg
 from states import state_00, state_01, state_02, state_03, state_04, state_05, state_06, state_07, state_08, state_09, state_10, state_11, state_12
 
 class Scenario1Manager(ScenarioManagerAction):
@@ -27,24 +29,18 @@ class Scenario1Manager(ScenarioManagerAction):
         self.add_state(state_10.State10(self.desires))
         self.add_state(state_11.State11(self.desires))
         self.add_state(state_12.State12(self.desires))
-        self.register_preempt_callback(self.canceled_cb)
+        self._as.register_preempt_callback(self.canceled_cb)
         self.rem_desires = rospy.ServiceProxy('remove_desires', RemoveDesires)
         rospy.wait_for_service("remove_desires")
 
     def add_state(self, state):
-        print("keys")
 
         key = state.get_id()
 
-        print("key")
-
         if key not in self.states.keys():
-            print("keys")
             self.states[key] = state
-            print("state")
 
             if self.current_state is None:
-                print("none")
                 self.current_state = self.states.get(key)
 
     def observe(self):
@@ -99,7 +95,7 @@ class Scenario1Manager(ScenarioManagerAction):
 
 class Scenario1Tester:
     def __init__(self):
-        client = actionlib.SimpleActioClient("sc1tester", custom_msgs.msg.scenario_managerAction)
+        client = actionlib.SimpleActionClient("sc1tester", custom_msgs.msg.scenario_managerAction)
         client.wait_for_server()
         goal = custom_msgs.msg.scenario_managerGoal(execute=True)
         client.send_goal(goal)

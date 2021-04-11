@@ -17,8 +17,8 @@ class ClientApproach(self):
         # It might be a good idea to use Depth from rgbd the laser scan as supplementary information input sources
 
         # Copied from face tracking
-        camera_info = rospy.wait_for_message("/usb_cam/camera_info", CameraInfo)
-        #camera_info = rospy.wait_for_message("/xtion/rgb/camera_info", CameraInfo)
+        #camera_info = rospy.wait_for_message("/usb_cam/camera_info", CameraInfo)
+        camera_info = rospy.wait_for_message("/xtion/rgb/camera_info", CameraInfo)
 
         self.img_height = camera_info.height
         self.img_width = camera_info.width
