@@ -10,7 +10,6 @@ from states import state_00, state_01, state_02, state_03, state_04, state_05, s
 class Scenario1Manager(ScenarioManagerAction):
 
     def __init__(self):
-        print("init scen1")
         ScenarioManagerAction.__init__(self, name="scenario_1_manager")
         self.desires = {}
         self.states = {}
@@ -33,7 +32,6 @@ class Scenario1Manager(ScenarioManagerAction):
         self._as.register_preempt_callback(self.canceled_cb)
         self.rem_desires = rospy.ServiceProxy('remove_desires', RemoveDesires)
         rospy.wait_for_service("remove_desires")
-        print('scen init done')
 
     def add_state(self, state):
 
@@ -61,8 +59,10 @@ class Scenario1Manager(ScenarioManagerAction):
 
                 if react_result is not None:
                     self.states[self.current_state].cleanup()
+                    print("changing state")
 
                     if react_result == "Done":
+                        print("done")
                         self._result.result = True
                         self._as.set_succeeded(self._result)
 
@@ -75,23 +75,21 @@ class Scenario1Manager(ScenarioManagerAction):
 
                         self._feedback.state = react_result
                         self._as.publish_feedback(self._feedback)
+                        print(self._feedback)
 
-                        self.states[self.current_state].add_desires()
+                        self.states[self.current_state].add_state_desires()
     
     def execute_cb(self, goal):
         if goal.execute is True:
             self.observe()
             # initial desire addition
-            print("goal")
-            print(goal)
-            print("current state")
-            print(self.current_state)
             self.states[self.current_state].add_state_desires()
         else:
             pass
             # no stuff
 
     def canceled_cb(self):
+        print("cancelling scen")
         for desire in self.desires:
             self.rem_desires.call(desire)
         self.desires.clear()

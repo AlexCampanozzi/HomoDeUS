@@ -1,3 +1,6 @@
+import rospy
+from std_msgs.msg import String
+from hbba_msgs.msg import Desire, Event
 from state import StateBase
 
 class State10(StateBase):
@@ -9,7 +12,7 @@ class State10(StateBase):
 
     def add_state_desires(self):
         # Add a search before tracking? Or maybe have search be part of tracking?
-        self.add(self, "thank_cook_10", "Talking",  params = "{TtsText: 'Thank you for preparing the order, I'm going now.'}")
+        self.add("thank_cook_10", "Talking",  params = "{TtsText: 'Thank you for preparing the order, I'm going now.'}")
         self.stateDict["thank_cook_10"] = Event.DES_ON
 
     def react_to_event(self):
@@ -19,7 +22,7 @@ class State10(StateBase):
                 if self.stateDict[desire] == Event.ACC_ON:
                     self.remove("thank_cook_10")
                     self.stateDict.pop("thank_cook_10")
-                    self.add(self, "move_to_customer_10", "GoToLandmark",  params = "{name: 'customer'}")
+                    self.add("move_to_customer_10", "GoToLandmark",  params = "{name: 'customer'}")
                     self.stateDict["move_to_customer_10"] = Event.DES_ON
                     return None
 

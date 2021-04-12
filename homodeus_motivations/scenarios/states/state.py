@@ -23,6 +23,10 @@ class StateBase:
 
     def add(self, desId, desType, utility=1.0, intensity=1.0, params=""):
         des = Desire()
+        print("desire params: ")
+        print(self)
+        print(desId)
+        print(desType)
         des.id          = desId
         des.type        = desType
         des.utility     = utility

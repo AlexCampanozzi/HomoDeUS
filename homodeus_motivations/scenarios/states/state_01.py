@@ -1,3 +1,6 @@
+import rospy
+from std_msgs.msg import String
+from hbba_msgs.msg import Desire, Event
 from state import StateBase
 
 class State01(StateBase):
@@ -8,7 +11,7 @@ class State01(StateBase):
         return "state_01"
 
     def add_state_desires(self):
-        self.add(self, "say_goodbye_01", "Talking",  params="{TtsText: 'Goodbye, come again Human!'}")
+        self.add("say_goodbye_01", "Talking",  params="{TtsText: 'Goodbye, come again Human!'}")
         self.stateDict["say_goodbye_01"] = Event.DES_ON
 
     def react_to_event(self):
