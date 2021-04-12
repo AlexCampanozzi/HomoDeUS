@@ -44,14 +44,16 @@ class KeywordRecognizer:
         
         self.set_keyword(keyword)
 
-        # Setting up PortAudio
-        pa = pyaudio.PyAudio()
-        self.stream = pa.open(
-            format=pyaudio.paInt16,
-            channels=1,
-            rate=16000,
-            input=True,
-            frames_per_buffer=512)
+        with common.noalsaerr():
+            # Setting up PortAudio
+            pa = pyaudio.PyAudio()
+            self.stream = pa.open(
+                format=pyaudio.paInt16,
+                channels=1,
+                rate=16000,
+                input=True,
+                frames_per_buffer=512)
+        rospy.loginfo("KeywordDetector ready")
 
     def wait_for_keyword(self):
         """
@@ -119,7 +121,8 @@ class KeywordRecognizer:
 
         self.config.set_string('-keyphrase', keyword)
         self.config.set_float('-kws_threshold', threshold)
-
+        # This config tell pocketsphynx to mute it's verbose mode
+        self.config.set_string('-logfn','nul')
         self.decoder = Decoder(self.config)
 
         self.set_new_keyword = False

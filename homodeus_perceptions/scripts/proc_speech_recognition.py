@@ -2,9 +2,7 @@
 import os
 import rospy
 import traceback
-from keyword_detector.KeywordRecognizer import KeywordRecognizer as kr
-import speech_recognition as sr
-
+import speech_recognizer.SpeechRecognizer as sr
 from std_msgs.msg import String
 import HomoDeUS_common_py.HomoDeUS_common_py as common
 
@@ -27,7 +25,7 @@ class Speech_recognition:
         self.output_perc = rospy.Publisher("/proc_output_listenText", String, queue_size=10)
 
         self.language = language
-        self.speech_recognizer = sr.Recognizer()
+        self.speech_recognizer = sr.SpeechRecognizer()
 
     def transform(self):
         """
@@ -36,34 +34,9 @@ class Speech_recognition:
         """
         while not rospy.is_shutdown():
 
-            speechText = self.speech_to_text()
-            if not speechText:
-                rospy.loginfo("speech empty")
-            else:
-                rospy.loginfo(speechText)
+            speechText = self.speech_recognizer.speech_to_text()
+            if speechText:
                 self.output_perc.publish(speechText)
-    
-    def speech_to_text(self):
-        """
-        This method uses the Google Speech API to recognize complex sentences
-        and return what was said as a string.
-        """
-        with sr.Microphone() as source:
-            self.speech_recognizer.adjust_for_ambient_noise(source, duration=1) 
-            rospy.loginfo("Listening...")
-            audio = self.speech_recognizer.listen(source)
-
-            try:
-                speech = self.speech_recognizer.recognize_google(audio, language=self.language)
-                return speech
-
-            except LookupError:
-                rospy.loginfo("LookupError")
-                return ""
-
-            except sr.UnknownValueError:
-                rospy.loginfo("UnknownValue")
-                return ""
 
     def node_shutdown(self):
         """

@@ -30,9 +30,9 @@ class Keyword_detection:
         self.intput_perc_keyword = rospy.Subscriber("/desire_keyword", String, self.set_keyword,queue_size=2)
 
 
-        param_name = rospy.search_param('keyword')
-        keyword = rospy.get_param(param_name,"alfred")
-        rospy.loginfo(keyword)
+        # param_name = rospy.search_param('keyword')
+        # keyword = rospy.get_param(param_name,"alfred")
+        # rospy.loginfo(keyword)
 
         self.keyword_recognizer = kr.KeywordRecognizer(keyword=keyword, timeout=timeout)
 
