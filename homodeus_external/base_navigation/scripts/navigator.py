@@ -57,6 +57,9 @@ class Navigator:
         if (x is None or y is None or w is None):
             curPose = self.getCurPose()
             landmarkGoal.target_pose.pose = curPose
+            # For testing purposes
+            landmarkGoal.target_pose.pose.position.x += 1
+            landmarkGoal.target_pose.pose.position.y += 1
         else:
             landmarkGoal.target_pose.pose.position = Point(x, y, 0)
             landmarkGoal.target_pose.pose.orientation.x = 0.0
