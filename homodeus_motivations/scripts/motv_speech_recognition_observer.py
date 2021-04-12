@@ -32,7 +32,7 @@ class Speech_recognition_observer:
         self.actual_context = ""
         
         # Setting up Pocket Sphinx        
-        speech_context_xml_path= os.path.join(os.path.dirname(__file__), '../../homodeus_external/xml_folder/speech_context.xml') 
+        speech_context_xml_path = os.path.join(os.path.dirname(__file__), '../../homodeus_external/xml_folder/speech_context.xml') 
         self.speech_context_parsed = ET.parse(speech_context_xml_path).getroot()
 
         self.cancel = False
