@@ -82,9 +82,11 @@ class Scenario1Manager(ScenarioManagerAction):
         if goal.execute is True:
             self.observe()
             # initial desire addition
+            print("goal")
+            print(goal)
             print("current state")
             print(self.current_state)
-            self.states[self.current_state].add_desires()
+            self.states[self.current_state].add_state_desires()
         else:
             pass
             # no stuff
@@ -105,6 +107,7 @@ class Scenario1Tester:
         client.wait_for_server()
         print("scen server found")
         goal = custom_msgs.msg.scenario_managerGoal(execute=True)
+        print(goal)
         client.send_goal(goal)
         print("goal sent to scen")
 
