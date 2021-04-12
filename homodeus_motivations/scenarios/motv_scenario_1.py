@@ -97,13 +97,20 @@ class Scenario1Manager(ScenarioManagerAction):
         self._as.set_preempted()
         self.stopObserving()
 
+class Scenario1Tester:
+    def __init__(self):
+        client = actionlib.SimpleActioClient("sc1tester", custom_msgs.msg.scenario_managerAction)
+        client.wait_for_server()
+        goal = custom_msgs.msg.scenario_managerGoal(execute=True)
+        client.send_goal(goal)
+
 
 if __name__ == "__main__":
     try:
         rospy.init_node("scenario_1_manager")
 
         node = Scenario1Manager()
-        print("jfjfj")
+        doTest = Scenario1Tester()
 
         rospy.spin()
 
