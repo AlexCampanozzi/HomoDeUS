@@ -4,16 +4,15 @@ from hbba_msgs.msg import Desire, Event
 from state import StateBase
 
 class State06(StateBase):
-    def __int__(self, stateDict):
+    def __init__(self, stateDict):
         StateBase.__init__(self, stateDict)
         self.fail_count = 0
         self.max_fail_count = 3
         self.order = ""
-        # TODO set topic to correct name
         rospy.Subscriber("/obs_client_order", String, self.order_cb, queue_size=5)
 
     def order_cb(self, order_string):
-        self.order = "{TtsText: 'You ordered: " + order_string.data + "'}"
+        self.order = "{TtsText: 'You ordered: " + order_string.data + ", correct?" + "'}"
 
     def _set_id(self):
         return "state_06"

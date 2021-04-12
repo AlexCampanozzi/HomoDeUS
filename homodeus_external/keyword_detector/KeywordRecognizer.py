@@ -84,7 +84,7 @@ class KeywordRecognizer:
             self.stream.stop_stream()
 
             # If the keyword was recognized
-            if self.decoder.hyp() is not None:
+            if self.decoder.hyp() is not None and not self.set_new_keyword:
                 self.decoder.end_utt()
                 return True
 

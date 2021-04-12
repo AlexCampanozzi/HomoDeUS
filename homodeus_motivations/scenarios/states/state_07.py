@@ -4,14 +4,14 @@ from hbba_msgs.msg import Desire, Event
 from state import StateBase
 
 class State07(StateBase):
-    def __int__(self, stateDict):
+    def __init__(self, stateDict):
         StateBase.__init__(self, stateDict)
 
     def _set_id(self):
         return "state_07"
 
     def add_state_desires(self):
-        self.add("inform_customer_07", "Talking",  params = "{TtsText: 'Thank you for ordering, I'm headed for the kitchen now.'}")
+        self.add("inform_customer_07", "Talking",  params = "{TtsText: 'Thank you for ordering, I am headed for the kitchen now.'}")
         self.stateDict["inform_customer_07"] = Event.DES_ON
         self.add("move_to_kitchen_07", "GoToLandmark",  params = "{name: 'kitchen'}")
         self.stateDict["move_to_kitchen_07"] = Event.DES_ON

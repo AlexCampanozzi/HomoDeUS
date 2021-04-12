@@ -13,8 +13,9 @@ class State00(StateBase):
     def add_state_desires(self):
         print("00 init")
         self.add("detect_customer_00", "face_detection")
-        self.add("hear_hotword_00", "Keyword_detection",  params="{keyword: 'robot'}")
-        print("added keyword desire")
+        self.add("hear_hotword_00", "Keyword_detection",  params="{value: 'roboto'}")
+        self.add("register_customer_location_00", "AddLandmark",  params = "{name: 'kitchen'}")
+        self.stateDict["register_customer_location_00"] = Event.DES_ON
         self.stateDict["detect_customer_00"] = Event.DES_ON
         self.stateDict["hear_hotword_00"] = Event.DES_ON
 
@@ -28,3 +29,5 @@ class State00(StateBase):
         self.stateDict.pop("detect_customer_00")
         self.remove("hear_hotword_00")
         self.stateDict.pop("hear_hotword_00")
+        self.remove("register_customer_location_00")
+        self.stateDict.pop("register_customer_location_00")

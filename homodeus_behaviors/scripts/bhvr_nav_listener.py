@@ -61,6 +61,7 @@ if __name__ == '__main__':
         listener = HBBA_nav_listener()
         listener.listenGoto()
         listener.listenGotoLandmark()
+        listener.listenAddLandmark()
         rospy.spin()
     except rospy.ROSInterruptException:
         pass

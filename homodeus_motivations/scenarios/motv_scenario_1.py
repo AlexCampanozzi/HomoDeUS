@@ -75,7 +75,7 @@ class Scenario1Manager(ScenarioManagerAction):
 
                         self._feedback.state = react_result
                         self._as.publish_feedback(self._feedback)
-                        print(self._feedback)
+                        print(self._feedback.state)
 
                         self.states[self.current_state].add_state_desires()
     

@@ -149,7 +149,6 @@ class Speech_recognition_observer:
 
         if order_string:
             self.desire_event_change(Event.ACC_ON)
-            order_string = "You want " + order_string + "right?"
             self.menu_publisher.publish(order_string)
         else:
             self.desire_event_change(Event.ACC_OFF)

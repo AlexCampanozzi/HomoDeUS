@@ -33,7 +33,7 @@ hbba_conf:
     custom_bringup: "pubString('/hbba_landmark_nav_goal', params.name);"
 
 - strat:
-    name: TIAGoToLandmark
+    name: TIAddLandmark
     class: AddLandmark
     # High utility so we run it as soon as possible after request
     utility: 20

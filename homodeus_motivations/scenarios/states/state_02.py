@@ -15,7 +15,7 @@ class State02(StateBase):
     def add_state_desires(self):
         self.add("track_customer_02", "face_tracking")
         self.stateDict["track_customer_02"] = Event.DES_ON
-        self.add("apology_02", "Talking",  params="{TtsText: 'Sorry, I didn\'t catch that. Make sure that you\'re asking for something on the menu.'}")
+        self.add("apology_02", "Talking",  params="{TtsText: 'Sorry, I did not catch that. Make sure that you are asking for something on the menu.'}")
         self.stateDict["apology_02"] = Event.DES_ON
 
     def react_to_event(self):
@@ -33,7 +33,7 @@ class State02(StateBase):
                 if self.stateDict[desire] == Event.ACC_ON:
                     self.remove("ask_for_order_02")
                     self.stateDict.pop("ask_for_order_02")
-                    self.add("listen_for_order_02", "Listening",  params="") # TODO Fix params?
+                    self.add("listen_for_order_02", "Listening",  params="{context: 'menu'}")
                     self.stateDict["listen_for_order_02"] = Event.DES_ON
                     return None
 
@@ -47,7 +47,7 @@ class State02(StateBase):
                 if self.stateDict[desire] == Event.ACC_OFF and self.fail_count < self.max_fail_count:
                     self.remove("listen_for_order_02")
                     self.stateDict.pop("listen_for_order_02")
-                    self.add("apology_02", "Talking",  params="{TtsText: 'Sorry, I didn\'t catch that. Make sure that you\'re asking for something on the menu.'}") # TODO Fix params?
+                    self.add("apology_02", "Talking",  params="{TtsText: 'Sorry, I did not catch that. Make sure that you are asking for something on the menu.'}") # TODO Fix params?
                     self.stateDict["apology_02"] = Event.DES_ON
                     self.fail_count += 1
                     return None

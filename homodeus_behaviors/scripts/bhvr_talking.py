@@ -64,7 +64,7 @@ class Talking_module:
             
         rospy.loginfo(TtsText.data)
 
-    def goal_achieve_Cb(self):
+    def goal_achieve_Cb(self, _, __):
         """
         This method publishes a confirmation the goal received was achieved
         """

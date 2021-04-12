@@ -49,7 +49,7 @@ class Keyword_detection_observer:
             if desire.type == "Keyword_detection":
                 event.desire = desire.id
                 event.desire_type = desire.type
-                if self.accomplish_criterion(detection):
+                if self.accomplish_criterion(detection.data):
                     event.type = Event.ACC_ON
                     self.event_publisher.publish(event)
                 elif self.cancel_criterion():
