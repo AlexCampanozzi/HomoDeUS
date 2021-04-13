@@ -1,0 +1,8 @@
+hbba_conf:
+- motivation:
+    name: goto_results_observer
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/motv_goto_results_observer.launch"}
+    input:
+        - bhvr_output_res_nav_result
+    output:
+        - events

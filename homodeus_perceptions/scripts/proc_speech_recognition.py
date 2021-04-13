@@ -1,9 +1,10 @@
 #! /usr/bin/env python
 import os
+import time
 import rospy
 import traceback
 import speech_recognizer.SpeechRecognizer as sr
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool
 import HomoDeUS_common_py.HomoDeUS_common_py as common
 
 class Speech_recognition:
@@ -23,9 +24,17 @@ class Speech_recognition:
         """ 
         #The output of the module
         self.output_perc = rospy.Publisher("/proc_output_listenText", String, queue_size=10)
+        self.input_talking = rospy.Subscriber("/bhvr_output_isTalking", Bool, self.mute_Cb, queue_size=5)
 
         self.language = language
         self.speech_recognizer = sr.SpeechRecognizer()
+        self.is_muted = False
+
+    def mute_Cb(self,mute):
+        if mute.data:
+            self.is_muted = True
+        else:
+            self.is_muted = False
 
     def transform(self):
         """
@@ -33,10 +42,14 @@ class Speech_recognition:
         to the output topic
         """
         while not rospy.is_shutdown():
-
-            speechText = self.speech_recognizer.speech_to_text()
-            if speechText:
-                self.output_perc.publish(speechText)
+            if not self.is_muted:
+                rospy.loginfo("------------------ in NOOOT muted ------------------")
+                speechText = self.speech_recognizer.speech_to_text()
+                if speechText:
+                    self.output_perc.publish(speechText)
+            else:
+                rospy.loginfo("------------------ in muted ------------------")
+                time.sleep(0.5)
 
     def node_shutdown(self):
         """
