@@ -26,7 +26,6 @@ class GazeFollowingManager:
         moveHeadDesire.type        = "face_tracking"
         moveHeadDesire.utility     = 1.0
         moveHeadDesire.intensity   = 1.0
-        #des.params      = "{frame_id: '/xtion_rgb_optical_frame', x: 30.0, y: 0.0, t: 0.0}"
 
         self.add_desires.call([moveHeadDesire])
         # self.add_desires.call([faceDetectionDesire, moveHeadDesire])
