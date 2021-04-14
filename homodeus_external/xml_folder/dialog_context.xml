@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<context>
+    <scenario_selection>
+        <begin>
+            <question>What can I do for you?</question>
+            <question>I am listening</question>
+            <question>What do you need?</question>
+            <question>You want something dog?</question>
+            <question>Listening to your needs</question>
+        </begin>
+        <listen>
+            <answer rel_info="scenario_1" prefix="do ">scenario one</answer>
+            <answer rel_info="scenario_1" prefix="do ">first scenario</answer>
+            <answer rel_info="scenario_1" prefix="do ">take order</answer>
+            <answer rel_info="scenario_1" prefix="do ">script one</answer>
+            <answer rel_info="scenario_2" prefix="do ">scenario two</answer>
+            <answer rel_info="scenario_2" prefix="do ">second scenario</answer>
+            <answer rel_info="scenario_2" prefix="do ">bring order</answer>
+            <answer rel_info="scenario_2" prefix="do ">script two</answer>
+            <answer rel_info="scenario_3" prefix="do ">scenario three</answer>
+            <answer rel_info="scenario_3" prefix="do ">third scenario</answer>
+            <answer rel_info="scenario_3" prefix="do ">dishes</answer>
+            <answer rel_info="scenario_3" prefix="do ">script three</answer>
+            <answer rel_info="scenario_4" prefix="do ">scenario four</answer>
+            <answer rel_info="scenario_4" prefix="do ">fourth scenario</answer>
+            <answer rel_info="scenario_4" prefix="do ">fill dishwasher</answer>
+            <answer rel_info="scenario_4" prefix="do ">script four</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">stop</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">cease</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">terminate</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">break off</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">stand still</answer>
+        </listen>
+        <repeat>
+            <answer> Sorry, I'm not sure I understood, could you repeat?</answer>
+            <answer> I'm not sure I can help, could you repeat to be sure?</answer>
+            <answer> Hmmm, what?</answer>
+            <answer> Sorry, my ears must have oil in it, could speak louder?</answer>
+            <answer> Daddy did not hear right, could you repeat boss?</answer>
+        </repeat>
+        <nothing>
+            <answer> Sorry, I don't think I can help, have a great day</answer>
+            <answer> It seems like I can't help, maybe ask to an other waiter</answer>
+            <answer> I should go back to what I was doing, Goodbye </answer>
+            <answer> Ain't nobody got time for that!</answer>
+        </nothing>
+        <feedback>
+            <question>If I understood well, you want me to </question>
+            <question>So I should </question>
+            <question>Correct me if I am wrong, but I have to </question>
+            <question>Hey Big shot, please confirm me that I have to </question>
+        </feedback>
+    </scenario_selection>
+    <menu_selection>
+        <begin>
+            <question>Can I take your order?</question>
+            <question>What would you like to eat</question>
+            <question>What would satisfy your appetite?</question>
+            <question>Hungry? I'm here to take your command</question>
+            <question>Hey fatty, want to get bigger? Here to help you accomplish this goal</question>
+        </begin>
+        <listen>
+            <answer rel_info="apple">apple</answer>
+            <answer rel_info="apple">apples</answer>
+            <answer rel_info="banana">banana</answer>
+            <answer rel_info="banana">bananas</answer>
+            <answer rel_info="orange">orange</answer>
+            <answer rel_info="organge">oranges</answer>
+            <answer rel_info="cheese">cheese</answer>
+            <answer rel_info="pepsi">pepsi</answer>
+            <answer rel_info="hamburger">hamburger</answer>
+            <answer rel_info="hotdog">hotdog</answer>
+            <answer rel_info="salad">salad</answer>
+            <answer rel_info="pizza">pizza</answer>
+        </listen>
+        <repeat>
+            <answer> Sorry, could you repeat?</answer>
+            <answer> It seems like your choices are not valid, would you like something else?</answer>
+            <answer> Ehm, our restaurant doesn't seem to offer this. Maybe you  would you like something else? </answer>
+            <answer> I'm not sure I heard well, could you repeat please?</answer>
+        </repeat>
+        <nothing>
+            <answer> Sorry, I don't think I can help, have a great day</answer>
+            <answer> It seems like I can't help, maybe ask to an other waiter</answer>
+            <answer> I should go back to what I was doing, Goodbye </answer>
+            <answer> Ain't nobody got time for that!</answer>
+        </nothing>
+        <feedback>
+            <question>Just to be sure, you command </question>
+            <question>Did I note your order well, you order </question>
+            <question>Correct me if I am wrong, but you've ask for </question>
+            <question>With that order, your pants will not fit you anymore. Did you really ask for </question>
+        </feedback>
+    </menu_selection>
+    <confirmation>
+        <listen>
+            <answer rel_info='affirmative'>yes</answer>
+            <answer rel_info='affirmative'>yeah</answer>
+            <answer rel_info='affirmative'>affirmative</answer>
+            <answer rel_info='affirmative'>sure</answer>
+            <answer rel_info='affirmative'>all right</answer>
+            <answer rel_info='affirmative'>okay</answer>
+            <answer rel_info='affirmative'>agree</answer>
+            <answer rel_info='affirmative'>confirm</answer>
+            <answer rel_info='affirmative'>confirmed</answer>
+            <answer rel_info='affirmative'>correct</answer>
+            <answer rel_info='negative'>no</answer>
+            <answer rel_info='negative'>nope</answer>
+            <answer rel_info='negative'>not</answer>
+            <answer rel_info='negative'>negative</answer>
+            <answer rel_info='negative'>disagree</answer>
+        </listen>
+        <feedback>
+            <answer>Alright it's </answer>
+            <answer>I hear you boss, it's </answer>
+            <answer>Noted, it's </answer>
+            <answer>Okay, it's </answer>
+        </feedback>
+        <repeat>
+            <answer>yes or no ?</answer>
+            <answer>Do you agree or not?</answer>
+            <answer>So... I'm not sure, is that an affirmative?</answer>
+        </repeat>
+    </confirmation>
+</context>

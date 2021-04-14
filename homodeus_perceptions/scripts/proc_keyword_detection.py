@@ -26,7 +26,7 @@ class Keyword_detection:
             30 seconds.
         """ 
         #The output of the module
-        self.output_perc = rospy.Publisher("/proc_output_keywordDetect", Bool, queue_size=10)
+        self.output_perc = rospy.Publisher("proc_output_keywordDetect", Bool, queue_size=10)
         self.intput_perc_keyword = rospy.Subscriber("/desire_keyword", String, self.set_keyword,queue_size=2)
 
 
