@@ -15,11 +15,11 @@ class GazeFollowingManager:
         rospy.wait_for_service("add_desires")
 
     def add(self):
-        faceDetectionDesire = Desire()
-        faceDetectionDesire.id          = "test_face_detection"
-        faceDetectionDesire.type        = "face_detection"
-        faceDetectionDesire.utility     = 1.0
-        faceDetectionDesire.intensity   = 1.0
+        # faceDetectionDesire = Desire()
+        # faceDetectionDesire.id          = "test_face_detection"
+        # faceDetectionDesire.type        = "face_detection"
+        # faceDetectionDesire.utility     = 1.0
+        # faceDetectionDesire.intensity   = 1.0
 
         moveHeadDesire = Desire()
         moveHeadDesire.id          = "test_face_tracking"
@@ -28,7 +28,8 @@ class GazeFollowingManager:
         moveHeadDesire.intensity   = 1.0
         #des.params      = "{frame_id: '/xtion_rgb_optical_frame', x: 30.0, y: 0.0, t: 0.0}"
 
-        self.add_desires.call([faceDetectionDesire, moveHeadDesire])
+        self.add_desires.call([moveHeadDesire])
+        # self.add_desires.call([faceDetectionDesire, moveHeadDesire])
 
     def remove(self):
         self.rem_desires.call(["test_face_detection"])
@@ -38,7 +39,8 @@ class GazeFollowingManager:
         if event.desire_type == "face_detection" and event.type == Event.ACC_ON:
             pass # in this case we just want to know if a face has been detected
         elif event.desire_type == "face_tracking" and event.type == Event.ACC_ON:
-            self.rem_desires.call([event.desire])
+            #self.rem_desires.call([event.desire])
+            pass
         else:
             pass
 
