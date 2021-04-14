@@ -15,5 +15,5 @@ hbba_conf:
     utility: 10
     modules:
         - homodeus_proc_face_detection:
-            - xtion_rgb_image_raw: 1
-            - usb_cam_image_raw:   1
+            - xtion_rgb_image_raw:
+            - usb_cam_image_raw:
