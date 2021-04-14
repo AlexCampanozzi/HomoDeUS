@@ -19,6 +19,5 @@ hbba_conf:
         - homodeus_proc_face_detection:
             - xtion_rgb_image_raw: 1
         - bhvr_face_tracking
-
-    #custom_bringup: "pubNavGoal('/tiago_head_controller', params.frame_id, params.x, params.y, params.yaw);"
+    custom_bringup: "pubEmpty('/tiago_head_controller_home_reset');"
     
