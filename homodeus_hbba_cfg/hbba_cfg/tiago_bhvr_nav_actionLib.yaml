@@ -17,7 +17,7 @@ hbba_conf:
 - strat:
     name: TIAGoTo
     class: GoTo
-    utility: 8
+    utility: 21
     costs: {move_stack: 1}
     modules:
         - tiago_nav
@@ -26,7 +26,7 @@ hbba_conf:
 - strat:
     name: TIAGoToLandmark
     class: GoToLandmark
-    utility: 8
+    utility: 21
     costs: {move_stack: 1}
     modules:
         - tiago_nav
