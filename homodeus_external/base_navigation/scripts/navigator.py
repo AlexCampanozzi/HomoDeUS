@@ -58,8 +58,9 @@ class Navigator:
             curPose = self.getCurPose()
             landmarkGoal.target_pose.pose = curPose
             # For testing purposes
-            landmarkGoal.target_pose.pose.position.x += 0.1
-            landmarkGoal.target_pose.pose.position.y += 0.1
+            landmarkGoal.target_pose.pose.position.x += 0.0
+            landmarkGoal.target_pose.pose.position.y += 0.0
+            landmarkGoal.target_pose.pose.orientation.w += 3.1415
         else:
             landmarkGoal.target_pose.pose.position = Point(x, y, 0)
             landmarkGoal.target_pose.pose.orientation.x = 0.0
