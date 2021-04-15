@@ -45,8 +45,19 @@ class GoToLandmarkResultObserver:
                         print "name did not match"
                         
         else:
-            # What do we do when GoTo fails?
-            pass
+            for desire in self.curDesireSet.desires:
+                if desire.type == "GoToLandmark":
+                    print "looking at a GoToLandmark"
+                    paramsDict = safe_load(desire.params)
+                    if result.landmark == paramsDict["name"]:
+                        print "Attained Landmark found in gotoLandmark desires"
+                        event = Event()
+                        event.desire = desire.id
+                        event.desire_type = desire.type
+                        event.type = Event.ACC_OFF
+                        self.eventPublisher.publish(event)
+                    else:
+                        print "name did not match"
 
 if __name__ == "__main__":
     try:
