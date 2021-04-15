@@ -22,7 +22,8 @@ class State12(StateBase):
             if desire == "inform_customer_12":
                 if self.stateDict[desire] == Event.ACC_ON:
                     self.remove("inform_customer_12")
-                    self.stateDict.pop("inform_customer_12  ")
+                    self.stateDict.pop("inform_customer_12")
+                    return "Done"
                     # what even is wait as a desire?
                     self.add("wait_12", "i dont know",  params="") # TODO Fix class and params
                     self.stateDict["wait_12"] = Event.DES_ON

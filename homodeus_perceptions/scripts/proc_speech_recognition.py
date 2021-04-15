@@ -43,12 +43,12 @@ class Speech_recognition:
         """
         while not rospy.is_shutdown():
             if not self.is_muted:
-                rospy.loginfo("------------------ in NOOOT muted ------------------")
+                #rospy.loginfo("------------------ in NOOOT muted ------------------")
                 speechText = self.speech_recognizer.speech_to_text()
                 if speechText:
                     self.output_perc.publish(speechText)
             else:
-                rospy.loginfo("------------------ in muted ------------------")
+                #rospy.loginfo("------------------ in muted ------------------")
                 time.sleep(0.5)
 
     def node_shutdown(self):
