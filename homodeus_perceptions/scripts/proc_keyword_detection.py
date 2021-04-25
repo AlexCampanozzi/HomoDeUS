@@ -10,20 +10,10 @@ class Keyword_detection:
     """
     This class publishes the state of detection of the wanted keyword
     """
-    def __init__(self, keyword='legacy', timeout=30):
+    def __init__(self):
         """
         This method initializes the perception module by initializing the output topic and
         the keywordRecognizer object 
-        Arguments
-        ---------
-        keyword : string
-            The keyword used to activate the voice interface of the robot. By
-            default, its value is set to 'legacy', but it can be changed for
-            a word in Pocket Sphinx's dictionary.
-        timeout : int
-            The maximum duration (in seconds) of the wait when the robot is
-            waiting for a keyword to be said. By default, its value is set to
-            30 seconds.
         """ 
         #The input of the module
         self.intput_perc_keyword = rospy.Subscriber("inter_keyword_detection", Bool, self.transform_Cb,queue_size=2)

@@ -12,8 +12,8 @@ class Inter_keyword_detection:
     """
     def __init__(self, keyword='legacy', timeout=30):
         """
-        This method initializes the perception module by initializing the output topic and
-        the keywordRecognizer object 
+        This method initializes the intermediate module of keyword detection perception
+        by initializing the output topic and the keywordRecognizer object 
         Arguments
         ---------
         keyword : string
@@ -39,7 +39,14 @@ class Inter_keyword_detection:
         self.keyword_recognizer = kr.KeywordRecognizer(keyword=keyword, timeout=timeout)
 
     def set_keyword(self,keyword):
-        ##TODO: There should be an intermediate node which send detections on a topic handles by HBBA
+        """
+        This method set a new keyword for which the robot will recognize itself
+        ---------
+        keyword : string
+            The keyword used to activate the voice interface of the robot. By
+            default, its value is set to 'legacy', but it can be changed for
+            a word in Pocket Sphinx's dictionary.
+        """
         if keyword.data:
             self.keyword_recognizer.set_keyword(keyword.data)
 
@@ -48,9 +55,6 @@ class Inter_keyword_detection:
         This method transform the input which is sound into a boolean representing the detection or not of the keyword
         and send this boolean to the output topic
         """
-        #Could also be interesting to have an input topic listening for a new keyword
-        #TODO: Could be interesting use a callback using wait_for_keyword() 
-        # instead so it does not continually analyse for the keyword
         while not rospy.is_shutdown():
             detection = self.keyword_recognizer.wait_for_keyword()
             self.output_perc.publish(detection)

@@ -54,6 +54,7 @@ class Dialoguing_module:
         self.output_bhvr_result = rospy.Publisher("/bhvr_output_res_dialBool", Bool, queue_size=10)
         self.output_bhvr_relevant = rospy.Publisher("/bhvr_output_res_dialRelevant", String, queue_size=10)
 
+        # dialog only use tts_server when it's run on the robot
         if self.on_robot:
             self.connect_to_tts_server()
         
@@ -330,7 +331,6 @@ class Dialoguing_module:
         relevant_info: string
             relevant informations that will be use by another node
         """
-        rospy.loginfo("------------------------------------------------")
         self.output_bhvr_relevant.publish(relevant_info)
         self.output_bhvr_result.publish(True)
 

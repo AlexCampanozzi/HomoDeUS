@@ -1,7 +1,7 @@
 hbba_conf:
 
 - include: {pkg: 'hbba_synth',         file: 'common.yaml'}
-
+# TODO: make a intermediate.yaml where every intermediate are launch
 - launch: {pkg: "homodeus_hbba_cfg", path: "launch/intermediate_keyword_detection.launch"}
 
 # Behaviors:
