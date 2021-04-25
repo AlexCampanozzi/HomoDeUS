@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 import traceback
-
 import actionlib
 import rospy
 from std_msgs.msg import Bool, String
@@ -35,7 +34,7 @@ class Scenario_Selector:
         self.desire_keyword_id = "hear_his_name"
         
         # ajout de desire
-        self.add_desire(desire_id=self.desire_keyword_id,desire_type="Keyword_detection",desire_utility=8, \
+        common.add_desire(self,desire_id=self.desire_keyword_id,desire_type="Keyword_detection",desire_utility=8, \
             desire_intensity=50, desire_params = "{value: 'roberto'}")
        
 
@@ -50,7 +49,7 @@ class Scenario_Selector:
         """
         if detection.data:
             # self.add_desire(desire_id=self.desire_pause_id,desire_type="pause",desire_utility=5.0,desire_intensity=100.00)
-            self.add_desire(desire_id=self.desire_dialoguing_id, desire_type= "Dialoguing", desire_utility=5.0, \
+            common.add_desire(self,desire_id=self.desire_dialoguing_id, desire_type= "Dialoguing", desire_utility=5.0, \
                 desire_intensity=100.0, desire_params = "{context: 'scenario_selection'}")
             self.rem_desires_service([self.desire_keyword_id])
 
@@ -70,7 +69,7 @@ class Scenario_Selector:
         if 'cancel' in str(speechText.data):
             self.cancel_scenario()
         self.rem_desires_service.call([self.desire_pause_id, self.desire_dialoguing_id])
-        self.add_desire(desire_id=self.desire_keyword_id,desire_type="Keyword_detection",desire_utility=8, \
+        common.add_desire(self,desire_id=self.desire_keyword_id,desire_type="Keyword_detection",desire_utility=8, \
             desire_intensity=50, desire_params = "{value: 'roberto'}")
 
     def cancel_scenario(self):
@@ -103,35 +102,6 @@ class Scenario_Selector:
 
         self.actual_scenario = scenario
 
-
-    def add_desire(self,desire_id, desire_type,desire_utility,desire_intensity, desire_params=None):
-        """
-        This method adds a desire to the iw 
-        
-        Arguments
-        ---------
-        desire_id: string
-            The name of the desire
-        desire_type: string
-            the type of the desire, should fit with one listed in desires.txt in homodeus_hbba_cfg
-        desire_utility: float
-            The utility of the desire so hbba knows which strategy to use
-        desire_intensity: float
-            The intensity reprensenting the importance of the desire to be done
-        desire_params: string
-            other important informations used by the strategy to fulfill the desire
-        """
-        des = Desire()
-        des.id          = desire_id
-        des.type        = desire_type
-        des.utility     = desire_utility
-        des.intensity   = desire_intensity
-        if desire_params is not None:
-            des.params = desire_params
-        
-        rospy.loginfo("adding desire: " + des.id)
-        self.add_desires_service.call([des])
-
                 
     def node_shutdown(self):
         """
@@ -152,4 +122,4 @@ if __name__ == '__main__':
         rospy.spin()
 
     except Exception:
-        rospy.logerr(__file__,traceback.format_exc())
+        rospy.logerr(traceback.format_exc())
