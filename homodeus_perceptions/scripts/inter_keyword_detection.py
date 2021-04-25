@@ -6,7 +6,7 @@ import keyword_detector.KeywordRecognizer as kr
 from std_msgs.msg import Bool, String
 import HomoDeUS_common_py.HomoDeUS_common_py as common
 
-class Keyword_detection:
+class Inter_keyword_detection:
     """
     This class publishes the state of detection of the wanted keyword
     """
@@ -26,17 +26,34 @@ class Keyword_detection:
             30 seconds.
         """ 
         #The input of the module
-        self.intput_perc_keyword = rospy.Subscriber("inter_keyword_detection", Bool, self.transform_Cb,queue_size=2)
+        self.intput_perc_keyword = rospy.Subscriber("/desire_keyword", String, self.set_keyword,queue_size=2)
 
         #The output of the module
-        self.output_perc = rospy.Publisher("/proc_output_keywordDetect", Bool, queue_size=10)
+        self.output_perc = rospy.Publisher("/inter_keyword_detection", Bool, queue_size=10)
 
-    def transform_Cb(self, detection):
+
+        # param_name = rospy.search_param('keyword')
+        # keyword = rospy.get_param(param_name,"alfred")
+        # rospy.loginfo(keyword)
+
+        self.keyword_recognizer = kr.KeywordRecognizer(keyword=keyword, timeout=timeout)
+
+    def set_keyword(self,keyword):
+        ##TODO: There should be an intermediate node which send detections on a topic handles by HBBA
+        if keyword.data:
+            self.keyword_recognizer.set_keyword(keyword.data)
+
+    def transform(self):
         """
         This method transform the input which is sound into a boolean representing the detection or not of the keyword
         and send this boolean to the output topic
         """
-        self.output_perc.publish(detection.data)
+        #Could also be interesting to have an input topic listening for a new keyword
+        #TODO: Could be interesting use a callback using wait_for_keyword() 
+        # instead so it does not continually analyse for the keyword
+        while not rospy.is_shutdown():
+            detection = self.keyword_recognizer.wait_for_keyword()
+            self.output_perc.publish(detection)
 
     def node_shutdown(self):
         """
@@ -52,7 +69,8 @@ if __name__ == '__main__':
     """
     try:
         rospy.init_node(common.get_file_name(__file__))
-        node = Keyword_detection()
+        node = Inter_keyword_detection()
+        node.transform()
         rospy.on_shutdown(node.node_shutdown)
         rospy.spin()
 

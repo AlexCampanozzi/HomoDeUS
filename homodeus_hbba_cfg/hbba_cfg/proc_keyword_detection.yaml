@@ -4,9 +4,9 @@ hbba_conf:
     name: proc_keyword_detection
     launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/proc_keyword_detection.launch'}
     input:
-        - desire_keyword
+        - inter_keyword_detection
     output:
-        - /proc_output_keywordDetect
+        - proc_output_keywordDetect
 
 - strat:
     name: pocketSphynx
