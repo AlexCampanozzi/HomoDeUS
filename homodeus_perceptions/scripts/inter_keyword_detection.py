@@ -26,7 +26,7 @@ class Inter_keyword_detection:
             30 seconds.
         """ 
         #The input of the module
-        self.intput_perc_keyword = rospy.Subscriber("/desire_keyword", String, self.set_keyword,queue_size=2)
+        self.intput_perc_keyword = rospy.Subscriber("/desire_keyword", String, self.set_keyword,queue_size=5)
 
         #The output of the module
         self.output_perc = rospy.Publisher("/inter_keyword_detection", Bool, queue_size=10)
