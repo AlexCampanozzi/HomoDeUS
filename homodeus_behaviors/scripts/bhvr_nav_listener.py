@@ -41,10 +41,17 @@ class HBBA_nav_listener(Navigator):
         rospy.loginfo(result)
         self.result_pub.publish(result)
 
-    def addLandmarkCB(self, landmark_name):
-        # For the moment we are only going to be adding landmarks at the current pos
-        self.registerLandmark(landmark_name.data)
-        self.add_landmark_result_pub.publish(landmark_name.data)
+    def addLandmarkCB(self, landmark):
+        PoseStamped landmark_to_add = landmark.data
+        landmark_name  = landmark_to_add.header.frame_id
+        landmark_x = landmark_to_add.pose.position.x
+        landmark_y = landmark_to_add.pose.position.y
+        landmark_yaw = euler_from_quaternion((landmark_to_add.pose.orientation.x, landmark_to_add.pose.orientation.y, landmark_to_add.pose.orientation.z, landmark_to_add.pose.orientation.w))[2]
+        if (x is 0 and y is 0 and w is 0):
+            self.registerLandmark(landmark_name)
+        else:
+            self.registerLandmark(landmark_name, landmark_x, landmark_y, landmark_yaw)
+        self.add_landmark_result_pub.publish(landmark.data)
 
     def listenGoto(self):
         rospy.Subscriber('bhvr_input_goal_nav_goal', PoseStamped, self.gotoCallback)

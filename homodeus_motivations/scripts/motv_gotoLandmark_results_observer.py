@@ -35,7 +35,7 @@ class GoToLandmarkResultObserver:
                     print "looking at a GoToLandmark"
                     paramsDict = safe_load(desire.params)
                     if result.landmark == paramsDict["name"]:
-                        print "Attained Landmark found in gotoLandmark desires"
+                        print "Attained Landmark found in GoToLandmark desires"
                         event = Event()
                         event.desire = desire.id
                         event.desire_type = desire.type
@@ -44,13 +44,13 @@ class GoToLandmarkResultObserver:
                     else:
                         print "name did not match"
                         
-        else:
+        elif result.result == False:
             for desire in self.curDesireSet.desires:
                 if desire.type == "GoToLandmark":
                     print "looking at a GoToLandmark"
                     paramsDict = safe_load(desire.params)
                     if result.landmark == paramsDict["name"]:
-                        print "Attained Landmark found in gotoLandmark desires"
+                        print "Failed Landmark found in GoToLandmark desires"
                         event = Event()
                         event.desire = desire.id
                         event.desire_type = desire.type

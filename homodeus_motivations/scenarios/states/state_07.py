@@ -11,6 +11,8 @@ class State07(StateBase):
         return "state_07"
 
     def add_state_desires(self):
+        self.add("register_customer_location_07", "AddLandmark",  params = "{name: 'customer', x: 0, y: 0, yaw: 0}")
+        self.stateDict["register_customer_location_07"] = Event.DES_ON
         self.add("inform_customer_07", "Talking",  params = "{TtsText: 'Thank you for ordering, I am headed for the kitchen now.'}")
         self.stateDict["inform_customer_07"] = Event.DES_ON
         self.add("move_to_kitchen_07", "GoToLandmark",  params = "{name: 'kitchen'}")
@@ -21,8 +23,6 @@ class State07(StateBase):
 
             if desire == "move_to_kitchen_07":
                 if self.stateDict[desire] == Event.ACC_ON:
-                    self.add("register_customer_location_07", "AddLandmark",  params = "{name: 'customer'}")
-                    self.stateDict["register_customer_location_07"] = Event.DES_ON
                     self.remove("move_to_kitchen_07")
                     self.stateDict.pop("move_to_kitchen_07")
                     return "state_09"

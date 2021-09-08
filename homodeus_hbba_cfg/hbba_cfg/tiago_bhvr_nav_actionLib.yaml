@@ -39,4 +39,4 @@ hbba_conf:
     utility: 20
     modules:
         - tiago_nav
-    custom_bringup: "pubString('/hbba_add_landmark', params.name);"
+    custom_bringup: "pubNavGoal('/hbba_add_landmark', params.name, param.x, params.y, params.yaw);"

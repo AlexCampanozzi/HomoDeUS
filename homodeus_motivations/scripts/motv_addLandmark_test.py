@@ -20,7 +20,7 @@ class LandmarkAdder:
         des.type        = "AddLandmark"
         des.utility     = 1.0
         des.intensity   = 1.0
-        des.params      = "{name: 'here'}"
+        des.params      = "{name: 'here', x: 0, y: 0, yaw: 0}"
 
         self.add_desires.call([des])
 
