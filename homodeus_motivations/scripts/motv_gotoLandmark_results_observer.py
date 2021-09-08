@@ -44,7 +44,7 @@ class GoToLandmarkResultObserver:
                     else:
                         print "name did not match"
                         
-        elif result.result == False:
+        """else:
             for desire in self.curDesireSet.desires:
                 if desire.type == "GoToLandmark":
                     print "looking at a GoToLandmark"
@@ -58,6 +58,7 @@ class GoToLandmarkResultObserver:
                         self.eventPublisher.publish(event)
                     else:
                         print "name did not match"
+        """
 
 if __name__ == "__main__":
     try:

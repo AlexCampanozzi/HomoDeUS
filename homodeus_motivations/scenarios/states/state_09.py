@@ -22,6 +22,9 @@ class State09(StateBase):
         self.add("track_cook_09", "face_tracking")
         self.stateDict["track_cook_09"] = Event.DES_ON
 
+        self.add("register_customer_location_09", "AddLandmark",  params = "{name: 'customer'}")
+        self.stateDict["register_customer_location_09"] = Event.DES_ON
+
     def react_to_event(self):
         for desire in self.stateDict:
 
