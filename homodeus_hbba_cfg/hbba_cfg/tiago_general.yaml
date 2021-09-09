@@ -1,0 +1,31 @@
+hbba_conf:
+
+- include: {pkg: 'hbba_synth',         file: 'common.yaml'}
+
+# TODO: make a intermediate.yaml where every intermediate are launch
+- launch: {pkg: "homodeus_hbba_cfg", path: "launch/intermediate_keyword_detection.launch"}
+
+# Behaviors:
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_dialoguing.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_face_tracking.yaml'}
+
+# Motivations
+- include: {pkg: 'homodeus_hbba_cfg', file: 'motv_gaze_following_test.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'motv_scenario_selector.yaml'}
+
+# Perceptions
+- include: {pkg: 'homodeus_hbba_cfg', file: 'proc_keyword_detection.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'proc_face_detection.yaml'}
+
+
+# Observers
+- include: {pkg: 'homodeus_hbba_cfg', file: 'face_detection_observer.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'face_tracking_observer.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'proc_keyword_detection.yaml'}
+
+
+# Available resources:
+- resources:
+    CPU: 100
+    microphone: 2
+    speaker: 1

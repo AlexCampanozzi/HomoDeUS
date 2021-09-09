@@ -1,0 +1,18 @@
+In this file, we'll follow up every new desire type and there description
+
+standard:
+desire_type_name : description
+
+----------- perception desire ------------
+Keyword_detection: return true when it heard it's keyword in the last 5 seconds
+Listening: return what it heard in the last 10 seconds
+
+
+----------- behavior desire ------------
+Talking: output the sound/words needed
+Dialoguing: handles Speech recognition and talking in a logic way so it looks like a conversation
+
+
+
+----------- complex desire ------------
+

@@ -1,0 +1,10 @@
+hbba_conf:
+
+# talking wrapper
+- motivation:
+    name: talking_obs
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/motv_talking_obs.launch"}
+    input:
+        - bhvr_output_res_talking
+    output:
+        - events

@@ -1,0 +1,3 @@
+<launch>
+    <node name="motv_talking_observer" pkg="homodeus_motivations" type="motv_talking_observer.py" output="screen"/>
+</launch>

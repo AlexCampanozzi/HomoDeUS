@@ -1,0 +1,16 @@
+hbba_conf:
+
+- procmodule:
+    name: proc_speech_recognition
+    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/proc_speech_recognition.launch'}
+    output:
+        - proc_output_listenText
+
+- strat:
+    name: googleAPI
+    class: Listening
+    utility: 10
+    costs: {microphone: 1}
+    modules:
+        - proc_speech_recognition
+    custom_bringup: "pubString('/proc_goal_context',params.context);"
