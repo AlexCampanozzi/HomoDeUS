@@ -44,9 +44,9 @@ class ArmInterface
         ArmInterface();
 
         void setPlanningTime(float value);
-        void setPlannerId(std::string Id);
-        bool moveTo(double x, double y, double z, double roll, double pitch, double yaw);
-        bool moveToJ(double torso, double j1, double j2, double j3, double j4, double j5, double j6, double j7);
+        void setPlannerId(std::string id);
+        bool moveToCartesian(double x, double y, double z, double roll, double pitch, double yaw);
+        bool moveToJoint(double torso, double j1, double j2, double j3, double j4, double j5, double j6, double j7);
 };
 
 #endif
