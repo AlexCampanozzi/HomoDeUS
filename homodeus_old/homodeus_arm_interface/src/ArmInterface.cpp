@@ -12,6 +12,7 @@ Outputs:        None
 */
 ArmInterface::ArmInterface() : _moveGroup("arm_torso")
 {
+    // Using 5 seconds because it's a reasonable delay
     _planningTime = 5.0;
     _plannerId = "SBLkConfigDefault";
 
@@ -19,6 +20,7 @@ ArmInterface::ArmInterface() : _moveGroup("arm_torso")
 
     _jointsNames = _moveGroup.getJoints();
 
+    // Using a factor of 1.0 at first, we'll see if this value needs to be changed
     _moveGroup.setMaxVelocityScalingFactor(1.0);
 }
 
@@ -43,7 +45,7 @@ bool ArmInterface::planTrajectory(moveit::planning_interface::MoveGroupInterface
     _moveGroup.setPlanningTime(_planningTime);
 
     bool success = static_cast<bool>(_moveGroup.plan(plan));
-    
+
 
     return success;
 }
@@ -65,12 +67,11 @@ Outputs:        plan (type, moveit::planning_interface::MoveGroupInterface::Plan
 */
 bool ArmInterface::planTrajectoryJ(moveit::planning_interface::MoveGroupInterface::Plan &plan)
 {
-    
     _moveGroup.setStartStateToCurrentState();
     _moveGroup.setPlanningTime(_planningTime);
 
     bool success = static_cast<bool>(_moveGroup.plan(plan));
-    
+
     return success;
 }
 
@@ -103,9 +104,9 @@ Inputs:         Id (type, std::string):
 
 Outputs:        None
 */
-void ArmInterface::setPlannerId(std::string Id)
+void ArmInterface::setPlannerId(std::string id)
 {
-    _plannerId = Id;
+    _plannerId = id;
     _moveGroup.setPlannerId(_plannerId);
 }
 
@@ -138,7 +139,7 @@ Outputs:        success (type, bool):
                     This method returns true if it was able to move the arm and
                     false otherwise.
 */
-bool ArmInterface::moveTo(double x, double y, double z, double roll, double pitch, double yaw)
+bool ArmInterface::moveToCartesian(double x, double y, double z, double roll, double pitch, double yaw)
 {
     geometry_msgs::PoseStamped goalPose;
     goalPose.header.frame_id = "base_footprint";
@@ -146,7 +147,7 @@ bool ArmInterface::moveTo(double x, double y, double z, double roll, double pitc
     goalPose.pose.position.y = y;
     goalPose.pose.position.z = z;
     goalPose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
-    
+
     _moveGroup.setPoseReferenceFrame("base_footprint");
     _moveGroup.setPoseTarget(goalPose);
 
@@ -199,7 +200,7 @@ Outputs:        success (type, bool):
                     This method returns true if it was able to move the arm and
                     false otherwise.
 */
-bool ArmInterface::moveToJ(double torso, double j1, double j2, double j3, double j4, double j5, double j6, double j7)
+bool ArmInterface::moveToJoint(double torso, double j1, double j2, double j3, double j4, double j5, double j6, double j7)
 {
     std::map<std::string, double> targetPosition;
 
@@ -214,7 +215,7 @@ bool ArmInterface::moveToJ(double torso, double j1, double j2, double j3, double
 
     for (unsigned int i = 0; i < _jointsNames.size(); i++)
     {
-        if (targetPosition.count(_jointsNames[i]) > 0) 
+        if (targetPosition.count(_jointsNames[i]) > 0)
             _moveGroup.setJointValueTarget(_jointsNames[i], targetPosition[_jointsNames[i]]);
     }
 
