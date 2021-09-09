@@ -1,0 +1,3 @@
+<launch>
+    <node name="gotoLandmark_results_observer" pkg="homodeus_motivations" type="motv_gotoLandmark_results_observer.py" output="screen"/>
+</launch>

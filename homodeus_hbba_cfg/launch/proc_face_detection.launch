@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+  <node name="homodeus_proc_face_detection_node" pkg="homodeus_perceptions" type="proc_face_detection" output="screen"></node>
+  <rosparam file="$(find rosparams)/homodeus_params.yaml" />
+
+</launch>

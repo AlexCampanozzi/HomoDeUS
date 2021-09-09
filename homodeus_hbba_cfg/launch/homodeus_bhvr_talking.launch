@@ -1,0 +1,3 @@
+<launch>
+  <node name="bhvr_talking" pkg="homodeus_behaviors" type="bhvr_talking.py" output="screen"/>
+</launch>

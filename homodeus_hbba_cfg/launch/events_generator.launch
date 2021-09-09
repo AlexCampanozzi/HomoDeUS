@@ -1,0 +1,3 @@
+<launch>
+    <node name="events_generator" pkg="iw_tools" type="events_generator"/>
+</launch>

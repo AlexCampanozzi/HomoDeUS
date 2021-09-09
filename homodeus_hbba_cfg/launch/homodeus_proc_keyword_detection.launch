@@ -1,0 +1,3 @@
+<launch>
+  <node name="proc_keyword_detection" pkg="homodeus_perceptions" type="proc_keyword_detection.py" output="screen"/>
+</launch>
