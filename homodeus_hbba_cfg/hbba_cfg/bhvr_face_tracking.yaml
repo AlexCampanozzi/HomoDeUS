@@ -1,0 +1,24 @@
+hbba_conf:
+
+- include: {pkg: 'homodeus_hbba_cfg', file: 'proc_face_detection.yaml'}
+
+- behavior:
+    name: bhvr_face_tracking
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/bhvr_face_tracking.launch"}
+    priority: 10
+    input:
+        - /proc_output_face_positions
+    output:
+        - tiago_head_controller
+            
+- strat:
+    name: face_tracking
+    class: face_tracking
+    utility: 8
+    modules:
+        - homodeus_proc_face_detection:
+            - xtion_rgb_image_raw: 1
+        - bhvr_face_tracking
+
+    #custom_bringup: "pubNavGoal('/tiago_head_controller', params.frame_id, params.x, params.y, params.yaw);"
+    

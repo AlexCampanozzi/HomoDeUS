@@ -1,0 +1,3 @@
+<launch>
+    <node name="approachClient" pkg="homodeus_behaviors" type="bhvr_approach_client.py" output="screen"/>
+</launch>

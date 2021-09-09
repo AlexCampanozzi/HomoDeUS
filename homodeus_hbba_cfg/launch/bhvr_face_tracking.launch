@@ -1,0 +1,4 @@
+<launch>
+    <node name="faceTracking" pkg="homodeus_behaviors" type="bhvr_face_tracking.py" output="screen"/>
+    <rosparam file="$(find rosparams)/homodeus_params.yaml" />
+</launch>
