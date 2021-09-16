@@ -15,12 +15,21 @@ class bhvr_arm_mover():
 
 
     def _arm_mover_callback(self, data):
-    
+        #data should be the position and orientation of the end effector and the pick or drop action
+        #move_hand to position(data)
+        #pick() or drop()
+        #position of transport()
+
+
+    def pick(): #close hand on object
 
 
 
+    def drop(): #open hand to release object 
 
-    def wave():
+
+
+    def wave(): #series of position for the waving act
 
 
 
