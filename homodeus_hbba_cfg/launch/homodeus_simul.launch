@@ -1,8 +1,12 @@
 <launch>
+	<include file="$(find homodeus_hbba_cfg)/launch/motv_scenario_1.launch"></include>
 
-  <include file="$(find tiago_gazebo)/launch/tiago_gazebo.launch">
+	<include file="$(find usb_cam)/launch/usb_cam-test.launch"></include>
+	
+  	<include file="$(find tiago_0_gazebo)/launch/tiago_gazebo.launch">
 		<arg name="public_sim" value="true"/>
 		<arg name="robot" value="titanium"/>
-		<arg name="world" value="look_to_point"/>
+		<arg name="world" value="objects_on_table"/>
 	</include>
+
 </launch>
