@@ -103,8 +103,7 @@ class Speech_recognition_observer:
         Stt_text: String()
             the string received from speech_recognition perception
         """
-
-        text_to_use = no_caps_and_whitespace(Stt_text.data)
+        text_to_use = no_caps_and_ponctuation(Stt_text.data)
         if self.actual_context:
             if self.actual_context !="menu":
                 self._look_answer(text_to_use)

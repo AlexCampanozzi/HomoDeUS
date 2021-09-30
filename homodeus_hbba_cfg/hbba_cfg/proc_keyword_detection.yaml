@@ -1,10 +1,10 @@
 hbba_conf:
 
 - procmodule:
-    name: homodeus_proc_keyword_detection
-    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/homodeus_proc_keyword_detection.launch'}
+    name: proc_keyword_detection
+    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/proc_keyword_detection.launch'}
     input:
-        - desire_keyword
+        - inter_keyword_detection
     output:
         - proc_output_keywordDetect
 
@@ -14,5 +14,5 @@ hbba_conf:
     utility: 10
     costs: {microphone: 1}
     modules:
-        - homodeus_proc_keyword_detection
+        - proc_keyword_detection
     custom_bringup: "pubString('/desire_keyword', params.value);"

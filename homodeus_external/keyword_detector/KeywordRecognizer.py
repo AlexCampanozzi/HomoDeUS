@@ -11,7 +11,7 @@ class KeywordRecognizer:
     """
     This class provides functionality as Keyword recognition
     """
-    def __init__(self, keyword='legacy', threshold=1e-20, timeout=30):
+    def __init__(self, keyword='legacy', threshold=1e-10, timeout=30):
         """
         This method initializes the submodules used for listening the keyword.
             * Keyword (microphones) = PyAudio (PortAudio)
@@ -82,7 +82,10 @@ class KeywordRecognizer:
                     self.decoder.process_raw(buffer, False, False)
 
             self.stream.stop_stream()
-
+            if self.set_new_keyword:
+                rospy.loginfo("setting new keyword")
+                self.decoder.end_utt()
+                return False
             # If the keyword was recognized
             if self.decoder.hyp() is not None and not self.set_new_keyword:
                 self.decoder.end_utt()
@@ -96,7 +99,7 @@ class KeywordRecognizer:
             time.sleep(0.5)
             return False
 
-    def set_keyword(self, keyword, threshold=1e-20):
+    def set_keyword(self, keyword, threshold=1e-12):
         """
         This method reconfigures Pocket Sphinx to change the keyword.
 

@@ -1,0 +1,10 @@
+hbba_conf:
+
+# keyword detection observer wrapper 
+- motivation:
+    name: scenario_selector
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/motv_scenario_selector.launch"}
+    input:
+        - proc_output_keywordDetect
+        - bhvr_output_res_dialRelevant
+    
