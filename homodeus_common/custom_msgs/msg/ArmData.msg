@@ -18,4 +18,4 @@ int32 g
 int32 h
 
 #Open or close Hand
-String open_close
+String action

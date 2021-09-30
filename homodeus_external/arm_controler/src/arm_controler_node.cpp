@@ -7,13 +7,13 @@ void _arm_controler_callback(ArmData data){
     
     bool success = false;
 
-    if (data.type.compare("joint") == 0)
+    if (data.action.compare("joint") == 0)
     {
         rospy.loginfo("arm_interface_node: will attempt to move the arm in joints space.");
         success = arm.moveToJoint(data.a, data.b, data.c, data.d, data.e, data.f, data.g, data.h);
     }
 
-    else if (data.type.compare("coords") == 0)
+    else if (data.action.compare("coords") == 0)
     {
         rospy.loginfo("arm_interface_node: will attempt to move the arm in cartesian space.");
         success = arm.moveToCartesian(data.a, data.b, data.c, data.d, data.e, data.f);
