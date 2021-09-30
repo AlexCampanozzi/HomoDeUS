@@ -6,22 +6,43 @@ hbba_conf:
 - launch: {pkg: "homodeus_hbba_cfg", path: "launch/intermediate_keyword_detection.launch"}
 
 # Behaviors:
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_approach_client.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_dialoguing.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_docking.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_emergency_stop.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_face_tracking.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_fill_dishwasher.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_give_plate.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_goto.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_interlocution_reaction.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_pause.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_take_plate.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_talking.yaml'}
+
 
 # Motivations
-- include: {pkg: 'homodeus_hbba_cfg', file: 'motv_gaze_following_test.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'motv_scenario_selector.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'motv_scenario_1.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'motv_scenario_2.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'motv_scenario_3.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'motv_scenario_4.yaml'}
 
 # Perceptions
 - include: {pkg: 'homodeus_hbba_cfg', file: 'proc_keyword_detection.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'proc_face_detection.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'proc_objet_recognition.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'proc_point_cloud_perception.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'proc_speech_recognition.yaml'}
 
 
 # Observers
 - include: {pkg: 'homodeus_hbba_cfg', file: 'face_detection_observer.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'face_tracking_observer.yaml'}
-- include: {pkg: 'homodeus_hbba_cfg', file: 'proc_keyword_detection.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'motv_keyword_dtection_obs.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'motv_speech_recognition_obs.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'motv_talking_obs.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'goto_observer.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'gotoLandmark_observer.yaml'}
 
 
 # Available resources:
