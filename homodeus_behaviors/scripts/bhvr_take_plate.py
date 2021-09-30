@@ -14,9 +14,9 @@ class bhvr_take_plate():
         self.output_bhvr_result = rospy.Publisher("/bhvr_output_res_take_plate", Bool, queue_size=10)
 
 
-    def _take_plate_callback(int data): #replace data by the type of the msg
+    def _take_plate_callback(ArmData data): #replace data by the type of the msg
         #data should be the position and orientation of the end effector and the pick or drop action
-        self.output_take_plate.publish(True) #replace true by real data
+        self.output_take_plate.publish(data) #replace true by real data
         #move_hand to position(data)
         #pick() or drop()
         #position of transport()
@@ -25,6 +25,9 @@ class bhvr_take_plate():
         self.output_bhvr_result.publish(res)
 
 
+#need reception from orientation position of object/préhention
+#need series of commands to iterate trajectory
+#need return to base
 
 
 

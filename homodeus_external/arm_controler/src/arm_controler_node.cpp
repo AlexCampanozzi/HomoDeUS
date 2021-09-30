@@ -1,7 +1,7 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include <homodeus_arm_interface/ArmInterface.h>
-
+#include <custom_msgs.msg/ArmData>
 
 void _arm_controler_callback(int data){ //replace data by the type of the msg
 
