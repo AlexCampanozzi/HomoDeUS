@@ -6,11 +6,11 @@ class bhvr_take_plate():
     def __init__(self):
         rospy.loginfo("initiating take_plate")
 
-        self.input_bhvr_goal = rospy.Subscriber("/bhvr_input_goal_take_plate",data_class=int,callback=self._take_plate_callback,queue_size=10)
+        self.input_bhvr_goal = rospy.Subscriber("/bhvr_input_goal_take_plate",data_class=ArmData,callback=self._take_plate_callback,queue_size=10)
         self.input_bhvr_result = rospy.Subscriber("/res_arm_controler",data_class=Bool,callback=self._res_callback,queue_size=10)
 
 
-        self.output_take_plate = rospy.Publisher("/arm_controler", data_class=int, queue_size=10)
+        self.output_take_plate = rospy.Publisher("/arm_controler", data_class=ArmData, queue_size=10)
         self.output_bhvr_result = rospy.Publisher("/bhvr_output_res_take_plate", Bool, queue_size=10)
 
 
