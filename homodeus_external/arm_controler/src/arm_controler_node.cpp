@@ -19,6 +19,18 @@ void _arm_controler_callback(ArmData data){
         success = arm.moveToCartesian(data.a, data.b, data.c, data.d, data.e, data.f);
     }
 
+    else if (data.action.compare("open") == 0)
+    {
+        rospy.loginfo("arm_interface_node: will attempt to open the hand.");
+        success = true; //open hand to be implemented
+    }
+
+    else if (data.action.compare("close") == 0)
+    {
+        rospy.loginfo("arm_interface_node: will attempt to close the hand.");
+        success = true; //close hand to be implemented
+    }
+
     else
     {
         ROS_ERROR("arm_interface_node: wrong control type! arm_interface_node only takes joint for joints space or coords for cartesian space!");
