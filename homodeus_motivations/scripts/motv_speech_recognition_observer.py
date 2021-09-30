@@ -59,6 +59,7 @@ class Speech_recognition_observer:
         context: string
             the context given to the xml parser
         """
+        print("set context: "+str(context))
         self.actual_context = context.data
         for context in self.speech_context_parsed.iter(self.actual_context):
             rospy.loginfo(context.get('timer'))
@@ -148,7 +149,6 @@ class Speech_recognition_observer:
 
         if order_string:
             self.desire_event_change(Event.ACC_ON)
-            order_string = "You want " + order_string + "right?"
             self.menu_publisher.publish(order_string)
         else:
             self.desire_event_change(Event.ACC_OFF)

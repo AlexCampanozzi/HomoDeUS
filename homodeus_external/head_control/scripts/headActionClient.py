@@ -6,6 +6,7 @@ import roslib
 import actionlib
 import control_msgs.msg
 from geometry_msgs.msg import PoseStamped
+from std_msgs.msg import Empty
 import math
 from pal_startup_msgs.srv import StartupStart, StartupStop
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
@@ -19,6 +20,7 @@ class HeadActionClient:
     """
     def __init__(self):
         rospy.Subscriber("tiago_head_controller", PoseStamped, self.callback)
+        rospy.Subscriber("tiago_head_controller_home_reset", Empty, self.homeCB)
         self.pub_abs = rospy.Publisher("head_controller/command", JointTrajectory, queue_size=5)
 
         # Disabling the pal_head_manager to prevent unwanted head motion while moving the head
@@ -58,6 +60,9 @@ class HeadActionClient:
         rospy.loginfo("I heard %s", data.pose.position.y)
 
         self.GotoPosition(data.pose.position.x, data.pose.position.y)
+
+    def homeCB(self, data):
+        self.GotoPosition(0.0, 0.0)
 
 if __name__ == '__main__':
 

@@ -10,14 +10,14 @@ hbba_conf:
         - bhvr_input_goal_landmark_nav_goal: {src: hbba_landmark_nav_goal, filtered: false}
         - move_base: {src: move_base, filtered: false}
     output:
-        - /mobile_base/cmd_vel
+        - cmd_vel
         - bhvr_output_res_nav_result
         - bhvr_output_nav_added_landmark
             
 - strat:
     name: TIAGoTo
     class: GoTo
-    utility: 8
+    utility: 21
     costs: {move_stack: 1}
     modules:
         - tiago_nav
@@ -26,17 +26,17 @@ hbba_conf:
 - strat:
     name: TIAGoToLandmark
     class: GoToLandmark
-    utility: 8
+    utility: 21
     costs: {move_stack: 1}
     modules:
         - tiago_nav
     custom_bringup: "pubString('/hbba_landmark_nav_goal', params.name);"
 
 - strat:
-    name: TIAGoToLandmark
+    name: TIAddLandmark
     class: AddLandmark
     # High utility so we run it as soon as possible after request
     utility: 20
     modules:
         - tiago_nav
-    custom_bringup: "pubString('/hbba_add_landmark', params.name);"
+    custom_bringup: "pubNavGoal('/hbba_add_landmark', params.name, param.x, params.y, params.yaw);"

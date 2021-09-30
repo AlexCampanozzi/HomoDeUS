@@ -26,17 +26,16 @@ class GoToLandmarkResultObserver:
         self.curDesireSet = desireSet
 
     def listenGoToResult(self):
-        self.goToResultSubscriber = rospy.Subscriber("bhvr_output_res_nav_result", GoToResult, self.listenGoToResultCB)
+        self.goToResultSubscriber = rospy.Subscriber("bhvr_output_res_nav_result", GoToResult, self.listenGoToResultCB, queue_size=5)
 
     def listenGoToResultCB(self, result):
-        succes = result.result
         if result.result == True:
             for desire in self.curDesireSet.desires:
                 if desire.type == "GoToLandmark":
                     print "looking at a GoToLandmark"
                     paramsDict = safe_load(desire.params)
                     if result.landmark == paramsDict["name"]:
-                        print "Attained Landmark found in gotoLandmark desires"
+                        print "Attained Landmark found in GoToLandmark desires"
                         event = Event()
                         event.desire = desire.id
                         event.desire_type = desire.type
@@ -45,9 +44,21 @@ class GoToLandmarkResultObserver:
                     else:
                         print "name did not match"
                         
-        else:
-            # What do we do when GoTo fails?
-            pass
+        """else:
+            for desire in self.curDesireSet.desires:
+                if desire.type == "GoToLandmark":
+                    print "looking at a GoToLandmark"
+                    paramsDict = safe_load(desire.params)
+                    if result.landmark == paramsDict["name"]:
+                        print "Failed Landmark found in GoToLandmark desires"
+                        event = Event()
+                        event.desire = desire.id
+                        event.desire_type = desire.type
+                        event.type = Event.ACC_OFF
+                        self.eventPublisher.publish(event)
+                    else:
+                        print "name did not match"
+        """
 
 if __name__ == "__main__":
     try:

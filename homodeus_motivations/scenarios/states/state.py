@@ -14,9 +14,7 @@ class StateBase:
         4. cleanup()
     """
     def __init__(self, stateDict):
-        print("in state base init")
         self.id = self._set_id()
-        print("id set")
         self.stateDict = stateDict
 
         self.add_desires    = rospy.ServiceProxy('add_desires', AddDesires)
@@ -25,6 +23,10 @@ class StateBase:
 
     def add(self, desId, desType, utility=1.0, intensity=1.0, params=""):
         des = Desire()
+        print("desire params: ")
+        print(self)
+        print(desId)
+        print(desType)
         des.id          = desId
         des.type        = desType
         des.utility     = utility

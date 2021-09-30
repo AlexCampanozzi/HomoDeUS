@@ -23,12 +23,12 @@ class FaceTrackingResultObserver:
         self.curDesireSet = desireSet
 
     def listenFaceTracking(self):
-        self.faceTrackingSubscriber = rospy.Subscriber("Face_tracking_observer", Bool, self.listenFaceTrackingCB)
+        self.faceTrackingSubscriber = rospy.Subscriber("/Face_tracking_observer", Bool, self.listenFaceTrackingCB)
 
     def listenFaceTrackingCB(self, success):
         if success.data == True:
             for desire in self.curDesireSet.desires:
-                if desire.type == "FaceTracking":
+                if desire.type == "face_tracking":
                     paramsDict = safe_load(desire.params)
                     
                     event = Event()

@@ -32,7 +32,7 @@ class Keyword_detection:
         """
         This method informs the developper about the shutdown of this node
         """
-        rospy.loginfo(self, "is shutting down")
+        rospy.loginfo("is shutting down")
     
 
 if __name__ == '__main__':
@@ -47,4 +47,4 @@ if __name__ == '__main__':
         rospy.spin()
 
     except Exception:
-        rospy.logerr(__file__,traceback.format_exc())
+        rospy.logerr(traceback.format_exc())

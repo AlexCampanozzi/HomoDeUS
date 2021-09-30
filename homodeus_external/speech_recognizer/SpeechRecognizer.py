@@ -38,13 +38,14 @@ class SpeechRecognizer:
                 audio = self.speech_recognizer.listen(source)
 
                 try:
+                    #rospy.loginfo("------------------GoogleAPI-------------------")
                     speech = self.speech_recognizer.recognize_google(audio, language=self.language)
                     return speech
 
                 except LookupError:
-                    rospy.loginfo("LookupError")
+                    #rospy.loginfo("------------------LookupError-------------------")
                     return ""
 
                 except sr.UnknownValueError:
-                    rospy.loginfo("UnknownValue")
+                    #rospy.loginfo("------------------UnknownValue---------------------")
                     return ""

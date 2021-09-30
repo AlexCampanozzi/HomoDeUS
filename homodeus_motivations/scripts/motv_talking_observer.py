@@ -18,6 +18,7 @@ class Talking_observer:
 
         # the output of the module
         self.event_publisher = rospy.Publisher("events",Event, queue_size = 10)
+        self.muteSpeech = rospy.Publisher("/bhvr_output_isTalking", Bool, queue_size=5)
 
         # following DesireSet
         self.desires_set_subscriber = rospy.Subscriber("desires_set", DesiresSet, self.listen_desires_set_Cb)
@@ -51,6 +52,7 @@ class Talking_observer:
                 event.desire_type = desire.type
                 if self.accomplish_criterion(talkingDone):
                     event.type = Event.ACC_ON
+                    self.muteSpeech.publish(False)
                     self.event_publisher.publish(event)
                 elif self.cancel_criterion():
                 #Probleme actuel est que si le desir n'est pas active il peut tout de meme changer d'etat!

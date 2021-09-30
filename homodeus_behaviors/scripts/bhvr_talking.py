@@ -27,12 +27,14 @@ class Talking_module:
         # Goal input
         self.input_bhvr_goal = rospy.Subscriber("/bhvr_input_goal_talking",data_class=String,callback=self.action_Cb,queue_size=10)
 
+
         #look if being test on robot or computer 
         param_name = rospy.search_param('on_robot')
         self.on_robot = rospy.get_param(param_name,False)
         
         # Output
         self.output_bhvr_result = rospy.Publisher("/bhvr_output_res_talking", Bool, queue_size=10)
+        self.output_bhvr_muteSpeech = rospy.Publisher("/bhvr_output_isTalking", Bool, queue_size=5)
 
         self.output_bhvr_command = actionlib.SimpleActionClient("tts", pal_interaction_msgs.msg.TtsAction)
 
@@ -52,6 +54,7 @@ class Talking_module:
         TtsText : String
             String mentionning what to say by the robot
         """
+        self.output_bhvr_muteSpeech.publish(True)
         if self.on_robot:
             goal = pal_interaction_msgs.msg.TtsGoal()
             goal.rawtext.lang_id = self.language
@@ -61,10 +64,10 @@ class Talking_module:
                 goal.rawtext.text = TtsText.data
 
             self.output_bhvr_command.send_goal(goal=goal,done_cb=self.goal_achieve_Cb)
-            
+        
         rospy.loginfo(TtsText.data)
 
-    def goal_achieve_Cb(self):
+    def goal_achieve_Cb(self, _, __):
         """
         This method publishes a confirmation the goal received was achieved
         """

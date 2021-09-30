@@ -1,3 +1,6 @@
+import rospy
+from std_msgs.msg import String
+from hbba_msgs.msg import Desire, Event
 from state import StateBase
 
 class State05(StateBase):
@@ -8,9 +11,9 @@ class State05(StateBase):
         return "state_05"
 
     def add_state_desires(self):
-        self.add(self, "track_customer_05", "face_tracking")
+        self.add("track_customer_05", "face_tracking")
         self.stateDict["track_customer_05"] = Event.DES_ON
-        self.add(self, "ask_for_order_05", "Talking",  params="{TtsText: 'Please order something from our menu so I may be of service.'}")
+        self.add("ask_for_order_05", "Talking",  params="{TtsText: 'Please order something from our menu so I may be of service.'}")
         self.stateDict["ask_for_order_05"] = Event.DES_ON
 
     def react_to_event(self):
@@ -20,7 +23,7 @@ class State05(StateBase):
                 if self.stateDict[desire] == Event.ACC_ON:
                     self.remove("ask_for_order_05")
                     self.stateDict.pop("ask_for_order_05")
-                    self.add(self, "listen_for_order_05", "Listening",  params="{ context: 'menu'}") # TODO Fix params
+                    self.add("listen_for_order_05", "Listening",  params="{ context: 'menu'}") # TODO Fix params
                     self.stateDict["listen_for_order_05"] = Event.DES_ON
                     return None
 

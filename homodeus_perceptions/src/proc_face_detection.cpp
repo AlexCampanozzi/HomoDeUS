@@ -194,7 +194,7 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     {
       publishDetections(faces);
       observerMsg.data = true;
-      ROS_INFO("face detected");
+      //ROS_INFO("face detected");
     }
     else
     {

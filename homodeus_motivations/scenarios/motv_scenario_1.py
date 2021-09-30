@@ -3,6 +3,8 @@ import rospy
 from hbba_msgs.msg import Desire, Event
 from hbba_msgs.srv import AddDesires, RemoveDesires
 from scenario_manager_action_server import ScenarioManagerAction
+import actionlib
+import custom_msgs.msg
 from states import state_00, state_01, state_02, state_03, state_04, state_05, state_06, state_07, state_08, state_09, state_10, state_11, state_12
 
 class Scenario1Manager(ScenarioManagerAction):
@@ -27,25 +29,19 @@ class Scenario1Manager(ScenarioManagerAction):
         self.add_state(state_10.State10(self.desires))
         self.add_state(state_11.State11(self.desires))
         self.add_state(state_12.State12(self.desires))
-        self.register_preempt_callback(self.canceled_cb)
+        self._as.register_preempt_callback(self.canceled_cb)
         self.rem_desires = rospy.ServiceProxy('remove_desires', RemoveDesires)
         rospy.wait_for_service("remove_desires")
 
     def add_state(self, state):
-        print("keys")
 
         key = state.get_id()
 
-        print("key")
-
         if key not in self.states.keys():
-            print("keys")
             self.states[key] = state
-            print("state")
 
             if self.current_state is None:
-                print("none")
-                self.current_state = self.states.get(key)
+                self.current_state = key
 
     def observe(self):
         self.sub_desires = rospy.Subscriber("events", Event, self.eventCB, queue_size=5)
@@ -63,8 +59,10 @@ class Scenario1Manager(ScenarioManagerAction):
 
                 if react_result is not None:
                     self.states[self.current_state].cleanup()
+                    print("changing state")
 
                     if react_result == "Done":
+                        print("done")
                         self._result.result = True
                         self._as.set_succeeded(self._result)
 
@@ -77,19 +75,21 @@ class Scenario1Manager(ScenarioManagerAction):
 
                         self._feedback.state = react_result
                         self._as.publish_feedback(self._feedback)
+                        print(self._feedback.state)
 
-                        self.states[self.current_state].add_desires()
+                        self.states[self.current_state].add_state_desires()
     
     def execute_cb(self, goal):
         if goal.execute is True:
             self.observe()
             # initial desire addition
-            self.states[self.current_state].add_desires()
+            self.states[self.current_state].add_state_desires()
         else:
             pass
             # no stuff
 
     def canceled_cb(self):
+        print("cancelling scen")
         for desire in self.desires:
             self.rem_desires.call(desire)
         self.desires.clear()
@@ -99,10 +99,15 @@ class Scenario1Manager(ScenarioManagerAction):
 
 class Scenario1Tester:
     def __init__(self):
-        client = actionlib.SimpleActioClient("sc1tester", custom_msgs.msg.scenario_managerAction)
+        print("test ini")
+        client = actionlib.SimpleActionClient("scenario_1_manager", custom_msgs.msg.scenario_managerAction)
+        print("made client")
         client.wait_for_server()
+        print("scen server found")
         goal = custom_msgs.msg.scenario_managerGoal(execute=True)
+        print(goal)
         client.send_goal(goal)
+        print("goal sent to scen")
 
 
 if __name__ == "__main__":
