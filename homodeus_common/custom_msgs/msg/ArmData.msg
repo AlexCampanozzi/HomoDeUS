@@ -14,6 +14,8 @@ int32 c
 int32 d 
 int32 e
 int32 f 
+int32 g
+int32 h
 
 #Open or close Hand
 String open_close
