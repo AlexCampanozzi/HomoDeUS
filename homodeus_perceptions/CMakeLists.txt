@@ -16,6 +16,10 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   custom_msgs
+  pcl_conversions
+  pcl_ros
+  tf_conversions
+  tf2_ros
 )
 find_package(OpenCV REQUIRED)
 
@@ -111,7 +115,7 @@ find_package(OpenCV REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES face_detection
-  CATKIN_DEPENDS roscpp rospy actionlib std_msgs actionlib_msgs message_runtime
+  CATKIN_DEPENDS roscpp rospy actionlib std_msgs actionlib_msgs message_runtime pcl_conversions pcl_ros rospy tf_conversions tf2_ros
 )
 
 ###########
@@ -123,6 +127,11 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
+)
+
+SET(Libraries
+   ${PCL_LIBRARIES}
 )
 
 ## Declare a C++ library
@@ -154,6 +163,12 @@ add_dependencies(proc_face_detection ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(proc_face_detection ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+
+
+add_executable(proc_point_cloud_perception src/proc_point_cloud_perception.cpp)
+target_link_libraries(proc_point_cloud_perception ${catkin_LIBRARIES} ${Libraries})
+add_dependencies(proc_point_cloud_perception ${catkin_EXPORTED_TARGETS})
+set_target_properties(proc_point_cloud_perception PROPERTIES OUTPUT_NAME "proc_point_cloud_perception")
 
 #############
 ## Install ##
