@@ -7,7 +7,7 @@ CloudObjectFinder::CloudObjectFinder(ros::NodeHandle& nh): _nh(nh)
     tfListenerPtr = new tf2_ros::TransformListener(tfBuffer);
     _pub = _nh.advertise<geometry_msgs::PoseStamped>("/pick_position", 5);
 
-    noplane_pub = _nh.advertise<geometry_msgs::PoseStamped>("/noplane_cloud", 5);
+    noplane_pub = _nh.advertise<sensor_msgs::PointCloud2>("/noplane_cloud", 5);
 }
 
 void CloudObjectFinder::detectionCallback(const geometry_msgs::PoseStampedConstPtr& msg)
