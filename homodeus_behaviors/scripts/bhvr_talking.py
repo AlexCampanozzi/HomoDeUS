@@ -92,4 +92,4 @@ if __name__ == "__main__":
         rospy.spin()
 
     except Exception:
-        rospy.logerr(__file__,traceback.format_exc())
+        rospy.logerr(traceback.format_exc())
