@@ -1,1 +1,18 @@
 hbba_conf:
+
+- procmodule:
+    name: proc_point_cloud_perception
+    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/proc_point_cloud_perception.launch'}
+    input:
+        - /object_detections
+        - /xtion/depth_registered/points
+    output:
+        - /pick_position
+
+- strat:
+    name: ScanCloudForObjectOnDetection
+    class: point_cloud_perception
+    utility: 10
+    costs: {microphone: 1}
+    modules:
+        - proc_point_cloud_perception

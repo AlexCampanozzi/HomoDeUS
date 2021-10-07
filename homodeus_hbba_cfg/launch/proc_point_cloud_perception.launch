@@ -1,0 +1,3 @@
+<launch>
+  <node name="proc_point_cloud_perception" pkg="homodeus_perceptions" type="proc_point_cloud_perception" output="screen" />
+</launch>

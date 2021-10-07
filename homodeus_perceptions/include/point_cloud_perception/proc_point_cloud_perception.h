@@ -45,6 +45,8 @@ protected:
 
   ros::NodeHandle _nh;
   ros::Publisher _pub;
+  // for debug
+  ros::Publisher noplane_pub;
   ros::Subscriber _detection_sub;
   ros::Subscriber _cloud_sub;
 

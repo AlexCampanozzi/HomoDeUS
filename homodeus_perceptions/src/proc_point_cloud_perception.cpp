@@ -5,7 +5,9 @@ CloudObjectFinder::CloudObjectFinder(ros::NodeHandle& nh): _nh(nh)
     // TODO:  put real topic & type where face detections will be here
     _detection_sub = _nh.subscribe("/object_detections", 5, &CloudObjectFinder::detectionCallback, this);
     tfListenerPtr = new tf2_ros::TransformListener(tfBuffer);
-    _pub = nh.advertise<geometry_msgs::PoseStamped>("/pick_position", 5);
+    _pub = _nh.advertise<geometry_msgs::PoseStamped>("/pick_position", 5);
+
+    noplane_pub = _nh.advertise<geometry_msgs::PoseStamped>("/noplane_cloud", 5);
 }
 
 void CloudObjectFinder::detectionCallback(const geometry_msgs::PoseStampedConstPtr& msg)
@@ -26,24 +28,34 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
 
     // TODO: passtrhrough here depending on the position of the object detected in the image (may need head angle as input to do something clean?)
     // Put through passthrough filter to conserve only the points in the general region where we expect the target to be
-    // PointCloud point_cloud_xfiltered;
-    // PointCloud point_cloud_xyfiltered;
-    // PointCloud point_cloud_filtered;
+    auto detectedX = latest_detection.pose.position.x;
+    auto detectedY = latest_detection.pose.position.y;
+    auto detectedZ = latest_detection.pose.position.z;
 
-    // pcl::PassThrough<pcl::PointXYZ> passx;
-    // passx.setInputCloud(scene_cloud.makeShared());
-    // passx.setFilterFieldName("x");
-    // passx.setFilterLimits(0.35, 3);
-    // // passx.setFilterLimitsNegative (true);
-    // passx.filter(point_cloud_xfiltered);
+    // Define a box around the detection in which we keep information 
+    float box_half_width = 0.5;
+    float box_half_height = 0.5;
 
-    // pcl::PassThrough<pcl::PointXYZ> passy;
-    // passy.setInputCloud(point_cloud_xfiltered.makeShared());
-    // passy.setFilterFieldName("y");
-    // passy.setFilterLimits(-1, 1);
-    // //pass.setFilterLimitsNegative (true);
+    PointCloud point_cloud_xfiltered;
+    PointCloud point_cloud_xyfiltered;
+    PointCloud point_cloud_filtered;
+
+    pcl::PassThrough<pcl::PointXYZ> passx;
+    passx.setInputCloud(scene_cloud.makeShared());
+    passx.setFilterFieldName("x");
+    passx.setFilterLimits(detectedX-box_half_width, detectedX+box_half_width);
+    // passx.setFilterLimitsNegative (true);
+    passx.filter(point_cloud_xfiltered);
+
+    pcl::PassThrough<pcl::PointXYZ> passy;
+    passy.setInputCloud(point_cloud_xfiltered.makeShared());
+    passy.setFilterFieldName("y");
+    passy.setFilterLimits(detectedY-box_half_height, detectedY+box_half_height);
+    //pass.setFilterLimitsNegative (true);
     // passy.filter(point_cloud_xyfiltered);
+    passy.filter(point_cloud_filtered);
 
+    // Detection will be form a 2D image: no info on depth, and therefore we keep all of it
     // pcl::PassThrough<pcl::PointXYZ> passz;
     // passz.setInputCloud(point_cloud_xyfiltered.makeShared());
     // passz.setFilterFieldName("z");
@@ -72,27 +84,23 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     seg.setAxis(xAxis);
     seg.setEpsAngle(0.2);
 
-    // TODO: use filtered cloud
-    seg.setInputCloud(scene_cloud.makeShared());
-    // seg.setInputCloud(point_cloud_filtered);
+    seg.setInputCloud(point_cloud_filtered.makeShared());
     seg.segment(*inliers, *coefficients);
 
     PointCloud planeCloud;
 
     // Make new cloud with inliers only
-    // TODO: use filtered cloud
-    pcl::copyPointCloud(scene_cloud, *inliers, planeCloud);
-    // pcl::copyPointCloud(*cloud_filtered, *inliers, planeCloud);
+    pcl::copyPointCloud(point_cloud_filtered, *inliers, planeCloud);
 
     // Make new cloud with outliers: without the plane
     pcl::PointCloud<pcl::PointXYZ>::Ptr noPlane(new pcl::PointCloud<pcl::PointXYZ>);
     pcl::ExtractIndices<pcl::PointXYZ> extract;
     // TODO: use filtered cloud
-    extract.setInputCloud(scene_cloud.makeShared());
-    // extract.setInputCloud(cloud_filtered);
+    extract.setInputCloud(point_cloud_filtered.makeShared());
     extract.setIndices(inliers);
     extract.setNegative(true);
     extract.filter(*noPlane);
+    pcl::io::savePCDFile("noplane.pcd", *noPlane);
 
     // TODO?: segment and focus on largest cloud in case there is still junk in the ROI
 
