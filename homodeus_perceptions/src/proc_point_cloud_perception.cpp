@@ -2,12 +2,24 @@
 
 CloudObjectFinder::CloudObjectFinder(ros::NodeHandle& nh): _nh(nh)
 {
-    // TODO:  put real topic & type where face detections will be here
     _detection_sub = _nh.subscribe("/bounding_boxes", 5, &CloudObjectFinder::detectionCallback, this);
+    image_info_sub  = _nh.subscribe("/xtion/rgb/camera_info", 5, &CloudObjectFinder::imageInfoCallback, this);
+    desired_object_sub  = _nh.subscribe("/desired_object", 5, &CloudObjectFinder::desiredObjectCallback, this);
     tfListenerPtr = new tf2_ros::TransformListener(tfBuffer);
     _pub = _nh.advertise<geometry_msgs::PoseStamped>("/pick_position", 5);
 
     noplane_pub = _nh.advertise<sensor_msgs::PointCloud2>("/noplane_cloud", 5);
+}
+
+void CloudObjectFinder::imageInfoCallback(const sensor_msgs::CameraInfoConstPtr& info)
+{
+    camera_info = *info;
+    image_info_sub.shutdown();
+}
+
+void CloudObjectFinder::desiredObjectCallback(const std_msgs::StringConstPtr& type)
+{
+    desired_object_type = type->data;
 }
 
 void CloudObjectFinder::detectionCallback(const darknet_ros_msgs::BoundingBoxesConstPtr& msg)
@@ -39,9 +51,11 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
 
     // TODO: passtrhrough here depending on the position of the object detected in the image (may need head angle as input to do something clean?)
     // Put through passthrough filter to conserve only the points in the general region where we expect the target to be
-    auto detectedX = (latest_detection.xmax + latest_detection.xmin)/2;
-    auto detectedY = (latest_detection.ymax + latest_detection.ymin)/2;
+    auto detectedX = camera_info.width*(latest_detection.xmax + latest_detection.xmin)/2;
+    auto detectedY = camera_info.height*(latest_detection.ymax + latest_detection.ymin)/2;
     // auto detectedZ = latest_detection.pose.position.z;
+
+    // TODO: unproject 2D image to 3D ref frames
 
     // Define a box around the detection in which we keep information 
     float box_half_width = 0.5;

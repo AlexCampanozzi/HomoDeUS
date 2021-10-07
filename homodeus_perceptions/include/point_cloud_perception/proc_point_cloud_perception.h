@@ -48,19 +48,25 @@ protected:
   ros::Publisher _pub;
   // for debug
   ros::Publisher noplane_pub;
+
   ros::Subscriber _detection_sub;
   ros::Subscriber _cloud_sub;
+  ros::Subscriber image_info_sub;
+  ros::Subscriber desired_object_sub;
 
   darknet_ros_msgs::BoundingBox latest_detection;
   PointCloud scene_cloud;
 
   std::string desired_object_type;
+  sensor_msgs::CameraInfo camera_info;
 
   tf2_ros::Buffer tfBuffer;
   tf2_ros::TransformListener* tfListenerPtr;
   
   void detectionCallback(const darknet_ros_msgs::BoundingBoxesConstPtr& msg);
   void cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg);
+  void imageInfoCallback(const sensor_msgs::CameraInfoConstPtr& info);
+  void desiredObjectCallback(const std_msgs::StringConstPtr& type);
 
 };
 
