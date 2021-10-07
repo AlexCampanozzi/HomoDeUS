@@ -7,6 +7,7 @@
 #include <ros/package.h>
 #include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
+#include <darknet_ros_msgs/BoundingBoxes.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -50,13 +51,15 @@ protected:
   ros::Subscriber _detection_sub;
   ros::Subscriber _cloud_sub;
 
-  geometry_msgs::PoseStamped latest_detection;
+  darknet_ros_msgs::BoundingBox latest_detection;
   PointCloud scene_cloud;
+
+  std::string desired_object_type;
 
   tf2_ros::Buffer tfBuffer;
   tf2_ros::TransformListener* tfListenerPtr;
   
-  void detectionCallback(const geometry_msgs::PoseStampedConstPtr& msg);
+  void detectionCallback(const darknet_ros_msgs::BoundingBoxesConstPtr& msg);
   void cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg);
 
 };

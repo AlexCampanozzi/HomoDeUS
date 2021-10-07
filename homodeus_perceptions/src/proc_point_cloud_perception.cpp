@@ -3,19 +3,30 @@
 CloudObjectFinder::CloudObjectFinder(ros::NodeHandle& nh): _nh(nh)
 {
     // TODO:  put real topic & type where face detections will be here
-    _detection_sub = _nh.subscribe("/object_detections", 5, &CloudObjectFinder::detectionCallback, this);
+    _detection_sub = _nh.subscribe("/bounding_boxes", 5, &CloudObjectFinder::detectionCallback, this);
     tfListenerPtr = new tf2_ros::TransformListener(tfBuffer);
     _pub = _nh.advertise<geometry_msgs::PoseStamped>("/pick_position", 5);
 
     noplane_pub = _nh.advertise<sensor_msgs::PointCloud2>("/noplane_cloud", 5);
 }
 
-void CloudObjectFinder::detectionCallback(const geometry_msgs::PoseStampedConstPtr& msg)
+void CloudObjectFinder::detectionCallback(const darknet_ros_msgs::BoundingBoxesConstPtr& msg)
 {
-    latest_detection = *msg;
-    // Stop taking detections into account while we process this one
-    _detection_sub.shutdown();
-    _cloud_sub = _nh.subscribe("/xtion/depth_registered/points", 5, &CloudObjectFinder::cloudCallback, this);
+    bool found_object = false;
+    for (auto box : msg->bounding_boxes)
+    {
+        if (box.Class == desired_object_type)
+        {
+            found_object = true;
+            latest_detection = box;
+        }
+    }
+    if (found_object)
+    {
+        // Stop taking detections into account while we process this one
+        _detection_sub.shutdown();
+        _cloud_sub = _nh.subscribe("/xtion/depth_registered/points", 5, &CloudObjectFinder::cloudCallback, this);
+    }
 }
 
 void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
@@ -28,9 +39,9 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
 
     // TODO: passtrhrough here depending on the position of the object detected in the image (may need head angle as input to do something clean?)
     // Put through passthrough filter to conserve only the points in the general region where we expect the target to be
-    auto detectedX = latest_detection.pose.position.x;
-    auto detectedY = latest_detection.pose.position.y;
-    auto detectedZ = latest_detection.pose.position.z;
+    auto detectedX = (latest_detection.xmax + latest_detection.xmin)/2;
+    auto detectedY = (latest_detection.ymax + latest_detection.ymin)/2;
+    // auto detectedZ = latest_detection.pose.position.z;
 
     // Define a box around the detection in which we keep information 
     float box_half_width = 0.5;
@@ -65,7 +76,7 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
 
 
     // Put the worked cloud in the robot's frame so operation directions make sense to us
-    pcl_ros::transformPointCloud("base_link", ros::Time::now(), scene_cloud, latest_detection.header.frame_id, scene_cloud, tfBuffer);
+    pcl_ros::transformPointCloud("base_link", ros::Time::now(), scene_cloud, scene_cloud.header.frame_id, scene_cloud, tfBuffer);
 
 
     // Extract table plane
