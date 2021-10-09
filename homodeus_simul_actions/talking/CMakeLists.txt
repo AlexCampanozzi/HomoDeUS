@@ -4,6 +4,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  actionlib_msgs
   geometry_msgs
 )
 ## Generate actions in the 'action' folder

@@ -11,7 +11,7 @@ import traceback
 from gtts import gTTS
 from pytictoc import TicToc
 from pydub import AudioSegment
-from talking_action import ttsActionAction, ttsActionResult, ttsActionGoal
+from talking_node.msg import ttsActionAction, ttsActionResult, ttsActionGoal
 from std_msgs.msg import String
 import HomoDeUS_common_py.HomoDeUS_common_py as common
 
@@ -46,6 +46,7 @@ class talkingSynthesizer:
         self.tts_action = actionlib.SimpleActionServer("tts", ttsActionAction,
                                                              self.__goal_action_cb, auto_start=False)
         self.tts_action.register_preempt_callback(self.__interrupt_action_cb)
+        self.tts_action.start()
 
         # self.thread_check_connection = threading.Thread(target=self.check_connection)
         #self.thread_check_connection.start()

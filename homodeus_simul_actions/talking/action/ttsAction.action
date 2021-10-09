@@ -1,9 +1,6 @@
-# Goal definition
 string lang_id
 string text
 ---
-# Result definition
 bool success
 ---
-# Feedback
 string feedback
