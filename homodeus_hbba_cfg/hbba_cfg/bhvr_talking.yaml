@@ -3,8 +3,8 @@
 hbba_conf:
 
 - behavior:
-    name: homodeus_bhvr_talking
-    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/homodeus_bhvr_talking.launch'}
+    name: bhvr_talking
+    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/bhvr_talking.launch'}
     priority: 10
     input:
         - bhvr_input_goal_talking
@@ -18,5 +18,5 @@ hbba_conf:
     utility: 8
     costs: {speaker: 1}
     modules:
-        - homodeus_bhvr_talking
+        - bhvr_talking
     custom_bringup: "pubString('/bhvr_input_goal_talking',params.TtsText);"

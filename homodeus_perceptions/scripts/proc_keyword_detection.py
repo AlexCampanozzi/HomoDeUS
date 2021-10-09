@@ -10,48 +10,23 @@ class Keyword_detection:
     """
     This class publishes the state of detection of the wanted keyword
     """
-    def __init__(self, keyword='legacy', timeout=30):
+    def __init__(self):
         """
         This method initializes the perception module by initializing the output topic and
         the keywordRecognizer object 
-        Arguments
-        ---------
-        keyword : string
-            The keyword used to activate the voice interface of the robot. By
-            default, its value is set to 'legacy', but it can be changed for
-            a word in Pocket Sphinx's dictionary.
-        timeout : int
-            The maximum duration (in seconds) of the wait when the robot is
-            waiting for a keyword to be said. By default, its value is set to
-            30 seconds.
         """ 
+        #The input of the module
+        self.intput_perc_keyword = rospy.Subscriber("inter_keyword_detection", Bool, self.transform_Cb,queue_size=2)
+
         #The output of the module
         self.output_perc = rospy.Publisher("/proc_output_keywordDetect", Bool, queue_size=10)
-        self.intput_perc_keyword = rospy.Subscriber("/desire_keyword", String, self.set_keyword,queue_size=2)
 
-
-        # param_name = rospy.search_param('keyword')
-        # keyword = rospy.get_param(param_name,"alfred")
-        # rospy.loginfo(keyword)
-
-        self.keyword_recognizer = kr.KeywordRecognizer(keyword=keyword, timeout=timeout)
-
-    def set_keyword(self,keyword):
-        ##TODO: make set_keyword usable so it continue to wait for keyword afterward
-        if keyword.data:
-            self.keyword_recognizer.set_keyword(keyword.data)
-
-    def transform(self):
+    def transform_Cb(self, detection):
         """
         This method transform the input which is sound into a boolean representing the detection or not of the keyword
         and send this boolean to the output topic
         """
-        #Could also be interesting to have an input topic listening for a new keyword
-        #TODO: Could be interesting use a callback using wait_for_keyword() 
-        # instead so it does not continually analyse for the keyword
-        while not rospy.is_shutdown():
-            detection = self.keyword_recognizer.wait_for_keyword()
-            self.output_perc.publish(detection)
+        self.output_perc.publish(detection.data)
 
     def node_shutdown(self):
         """
@@ -68,7 +43,6 @@ if __name__ == '__main__':
     try:
         rospy.init_node(common.get_file_name(__file__))
         node = Keyword_detection()
-        node.transform()
         rospy.on_shutdown(node.node_shutdown)
         rospy.spin()
 

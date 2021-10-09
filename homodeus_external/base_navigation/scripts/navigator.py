@@ -7,10 +7,12 @@ from actionlib_msgs.msg import *
 from geometry_msgs.msg import Point, Pose
 import tf_lookup.srv
 from tf.transformations import quaternion_from_euler, euler_from_quaternion
+import yaml 
 
 class Navigator:
     def __init__(self):
-        self.landmarks = {}
+        file = open("test.yaml", "r")
+        self.landmarks = yaml.safe_load(file)
         
         # define a client to send goal requests to the move_base server through a SimpleActionClient
         self.ac = actionlib.SimpleActionClient("move_base", MoveBaseAction)
@@ -52,9 +54,28 @@ class Navigator:
                 rospy.loginfo("The robot failed to reach the destination")
                 self.doneCB(False)
 
+    def goalToLandmark(self, goal):
+        position = goal.target_pose.pose.position
+        orientation = goal.target_pose.pose.orientation
+        orientation  = euler_from_quaternion(orientation.x, orientation.y, orientation.z, orientation.w)[2]
+        landmark = [position.x, position.y, 0, 0, 0, orientation]
+        return landmark
+
+    def landmarkToGoal(self, landmark):
+        x = landmark[0]
+        y = landmark[1]
+        yaw = landmark[5]
+
+        goal  =  MoveBaseGoal()
+        goal.target_pose.pose.position = Point(x, y, 0)
+        goal.target_pose.pose.orientation = quaternion_from_euler(0, 0, yaw)
+        goal.target_pose.header.frame_id = "map"
+        goal.target_pose.header.stamp = rospy.Time(0)
+        return goal
+
     def registerLandmark(self, name, x = None, y = None, yaw = None):
         landmarkGoal = MoveBaseGoal()
-        if (x is None or y is None or w is None):
+        if (x is None or y is None or yaw is None):
             curPose = self.getCurPose()
             landmarkGoal.target_pose.pose = curPose
             # For testing purposes
@@ -68,13 +89,13 @@ class Navigator:
         landmarkGoal.target_pose.header.frame_id = "map"
         #Time will have to be overwritten before actually sending the goal
         landmarkGoal.target_pose.header.stamp = rospy.Time(0)
-        self.landmarks[name] = landmarkGoal
+        self.landmarks[name] = self.goalToLandmark(landmarkGoal)
 
     def gotoLandmark(self, name):
         if name not in self.landmarks:
             rospy.loginfo("Name does not correspond to any known landmark")
             return
-        goal = self.landmarks[name]
+        goal = self.landmarkToGoal(self.landmarks[name])
         goal.target_pose.header.stamp = rospy.Time(0)
         self.gotoGoal(goal)
 
@@ -92,4 +113,5 @@ class Navigator:
         pose = Pose()
         pose.position = response.transform.transform.translation
         pose.orientation = response.transform.transform.rotation
+        print(self.landmarks)
         return pose

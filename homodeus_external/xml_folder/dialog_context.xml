@@ -12,6 +12,10 @@
             <answer rel_info="scenario_1" prefix="do ">scenario one</answer>
             <answer rel_info="scenario_1" prefix="do ">first scenario</answer>
             <answer rel_info="scenario_1" prefix="do ">take order</answer>
+<<<<<<< HEAD
+=======
+            <answer rel_info="scenario_1" prefix="do ">take command</answer>
+>>>>>>> 5c4f568f0d65d3044394bc867fa1c88f2f993d63
             <answer rel_info="scenario_1" prefix="do ">see client</answer>
             <answer rel_info="scenario_1" prefix="do ">script one</answer>
             
@@ -67,12 +71,20 @@
             <answer> Sorry, I'm not sure I understood, could you repeat?</answer>
             <answer> I'm not sure I can help, could you repeat to be sure?</answer>
             <answer> Hmmm, what?</answer>
+<<<<<<< HEAD
             <answer> Sorry, my ears must have oil in them, could you speak louder?</answer>
+=======
+            <answer> Sorry, my ears must have oil in it, could speak louder?</answer>
+>>>>>>> 5c4f568f0d65d3044394bc867fa1c88f2f993d63
             <answer> Daddy did not hear right, could you repeat boss?</answer>
         </repeat>
         <deadline>
             <answer> Sorry, I don't think I can help, have a great day</answer>
+<<<<<<< HEAD
             <answer> It seems like I can't help, maybe ask another waiter</answer>
+=======
+            <answer> It seems like I can't help, maybe ask to an other waiter</answer>
+>>>>>>> 5c4f568f0d65d3044394bc867fa1c88f2f993d63
             <answer> I should go back to what I was doing, Goodbye </answer>
             <answer> Ain't nobody got time for that!</answer>
         </deadline>
@@ -222,4 +234,7 @@
         </deadline>
     </confirmation>
 </context>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5c4f568f0d65d3044394bc867fa1c88f2f993d63

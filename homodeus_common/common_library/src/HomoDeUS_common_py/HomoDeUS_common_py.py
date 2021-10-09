@@ -13,6 +13,7 @@ import unicodedata
 
 from ctypes import *
 from contextlib import contextmanager
+from hbba_msgs.msg import Desire
 
 try:
     import httplib
@@ -78,6 +79,34 @@ def no_caps_and_ponctuation(text):
     """
     return re.sub(r'[^\w\s]', '', text).lower()
 
+def add_desire(origin,desire_id, desire_type,desire_utility,desire_intensity, desire_params=None):
+        """
+        This method adds a desire to the iw 
+        
+        Arguments
+        ---------
+        desire_id: string
+            The name of the desire
+        desire_type: string
+            the type of the desire, should fit with one listed in desires.txt in homodeus_hbba_cfg
+        desire_utility: float
+            The utility of the desire so hbba knows which strategy to use
+        desire_intensity: float
+            The intensity reprensenting the importance of the desire to be done
+        desire_params: string
+            other important informations used by the strategy to fulfill the desire
+        """
+        des = Desire()
+        des.id          = desire_id
+        des.type        = desire_type
+        des.utility     = desire_utility
+        des.intensity   = desire_intensity
+        if desire_params is not None:
+            des.params = desire_params
+        
+        rospy.loginfo("adding desire: " + des.id)
+
+        origin.add_desires_service.call([des])
 
 def loginfo(origin, text=""):
     """
