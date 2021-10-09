@@ -42,7 +42,7 @@ class HBBA_nav_listener(Navigator):
         self.result_pub.publish(result)
 
     def addLandmarkCB(self, landmark):
-        PoseStamped landmark_to_add = landmark.data
+        landmark_to_add = landmark.data
         landmark_name  = landmark_to_add.header.frame_id
         landmark_x = landmark_to_add.pose.position.x
         landmark_y = landmark_to_add.pose.position.y
