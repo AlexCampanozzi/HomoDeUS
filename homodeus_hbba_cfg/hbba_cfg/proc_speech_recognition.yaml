@@ -1,8 +1,8 @@
 hbba_conf:
 
 - procmodule:
-    name: homodeus_proc_speech_recognition
-    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/homodeus_proc_speech_recognition.launch'}
+    name: proc_speech_recognition
+    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/proc_speech_recognition.launch'}
     output:
         - proc_output_listenText
 
@@ -12,5 +12,5 @@ hbba_conf:
     utility: 10
     costs: {microphone: 1}
     modules:
-        - homodeus_proc_speech_recognition
+        - proc_speech_recognition
     custom_bringup: "pubString('/proc_goal_context',params.context);"

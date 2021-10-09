@@ -3,20 +3,21 @@
 hbba_conf:
 
 - behavior:
-    name: homodeus_bhvr_talking
-    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/homodeus_bhvr_talking.launch'}
+    name: bhvr_dialoguing
+    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/bhvr_dialoguing.launch'}
     priority: 10
     input:
-        - bhvr_input_goal_talking
+        - bhvr_input_goal_dialContext
         - tts: {src: tts, filtered: false}
     output:
-        - bhvr_output_res_talking
+        - bhvr_output_res_dialBool
+        - bhvr_output_res_dialRelevant
             
 - strat:
     name: palActionLibTts
-    class: Talking
+    class: Dialoguing
     utility: 8
     costs: {speaker: 1}
     modules:
-        - homodeus_bhvr_talking
-    custom_bringup: "pubString('/bhvr_input_goal_talking',params.TtsText);"
+        - bhvr_dialoguing
+    custom_bringup: "pubString('/bhvr_input_goal_dialContext', params.context);"

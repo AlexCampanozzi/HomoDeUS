@@ -7,10 +7,12 @@ from actionlib_msgs.msg import *
 from geometry_msgs.msg import Point, Pose
 import tf_lookup.srv
 from tf.transformations import quaternion_from_euler, euler_from_quaternion
+import yaml 
 
 class Navigator:
     def __init__(self):
-        self.landmarks = {}
+        file = open("test.yaml", "r")
+        self.landmarks = yaml.safe_load(file)
         
         # define a client to send goal requests to the move_base server through a SimpleActionClient
         self.ac = actionlib.SimpleActionClient("move_base", MoveBaseAction)
@@ -52,9 +54,9 @@ class Navigator:
                 rospy.loginfo("The robot failed to reach the destination")
                 self.doneCB(False)
 
-    def registerLandmark(self, name, x = None, y = None, yaw = None):
+    def registerLandmark(self, name, x  =None, y = None, yaw = None):
         landmarkGoal = MoveBaseGoal()
-        if (x is None or y is None or w is None):
+        if (x is None or y is None or yaw is None):
             curPose = self.getCurPose()
             landmarkGoal.target_pose.pose = curPose
             # For testing purposes
@@ -92,4 +94,5 @@ class Navigator:
         pose = Pose()
         pose.position = response.transform.transform.translation
         pose.orientation = response.transform.transform.rotation
+        print(self.landmarks)
         return pose

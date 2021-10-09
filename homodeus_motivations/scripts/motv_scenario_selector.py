@@ -109,7 +109,6 @@ class Scenario_Selector:
         """
         rospy.loginfo("have been shutdown")
 
-    
 
 if __name__ == '__main__':
     """
