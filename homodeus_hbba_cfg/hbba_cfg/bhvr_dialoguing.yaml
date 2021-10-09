@@ -1,0 +1,23 @@
+# SLAM Planner can be used either GMapping or static maps as they both provide
+# SLAM strategies, see the related proc modules configurations.
+hbba_conf:
+
+- behavior:
+    name: bhvr_dialoguing
+    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/bhvr_dialoguing.launch'}
+    priority: 10
+    input:
+        - bhvr_input_goal_dialContext
+        - tts: {src: tts, filtered: false}
+    output:
+        - bhvr_output_res_dialBool
+        - bhvr_output_res_dialRelevant
+            
+- strat:
+    name: palActionLibTts
+    class: Dialoguing
+    utility: 8
+    costs: {speaker: 1}
+    modules:
+        - bhvr_dialoguing
+    custom_bringup: "pubString('/bhvr_input_goal_dialContext', params.context);"

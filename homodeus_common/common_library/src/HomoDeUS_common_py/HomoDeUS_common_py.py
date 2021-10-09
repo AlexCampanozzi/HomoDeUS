@@ -67,7 +67,7 @@ def equalWithinTolerance(a, b, tol):
     return abs(a - b) <= tol
 
 
-def no_caps_and_whitespace(text):
+def no_caps_and_ponctuation(text):
     """
         This function return the text received without whitespace and Caps
         

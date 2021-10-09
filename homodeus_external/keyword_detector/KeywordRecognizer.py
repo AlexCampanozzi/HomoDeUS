@@ -126,5 +126,6 @@ class KeywordRecognizer:
         self.decoder = Decoder(self.config)
 
         self.set_new_keyword = False
+        rospy.loginfo(keyword)
 
         

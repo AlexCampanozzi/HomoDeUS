@@ -11,9 +11,12 @@ import traceback
 from gtts import gTTS
 from pytictoc import TicToc
 from pydub import AudioSegment
-from talking_node.msg import ttsActionAction, ttsActionResult, ttsActionGoal
+from custom_msgs.msg import ttsActionAction, ttsActionResult, ttsActionGoal
 from std_msgs.msg import String
 import HomoDeUS_common_py.HomoDeUS_common_py as common
+import wave
+import contextlib
+
 
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -67,8 +70,15 @@ class talkingSynthesizer:
 
     def __goal_action_cb(self, goal):
         rospy.loginfo("tts_action receive a goal")
-        self.language = goal.lang_id
+        if goal.lang_id == '':
+            self.language = 'fr-FR'
+        else:
+            self.language = goal.lang_id
         self.say(goal.text)
+        time.sleep(self.get_wav_duration(self.file_path_wav))
+        result = ttsActionResult()
+        result.success = True
+        self.tts_action.set_succeeded(result)
 
     def __interrupt_action_cb(self): # pygame interromp lui même le texte avec une nouvelle requête "say"
         rospy.loginfo('tts action is being interrupted')
@@ -83,6 +93,13 @@ class talkingSynthesizer:
         """
         pygame.mixer.music.stop()
         rospy.loginfo("have been shutdown")
+
+    def get_wav_duration(self, fname):
+        with contextlib.closing(wave.open(fname,'r')) as f:
+            frames = f.getnframes()
+            rate = f.getframerate()
+            duration = frames / float(rate)
+            return duration
 
     # def check_connection(self):       #MAINTENANT INUTILE PUISQUE LE GESTION D'EXCEPTION SE CHARGE DE LE VOIR
     #     while not rospy.is_shutdown():
