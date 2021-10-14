@@ -25,6 +25,7 @@ add_message_files(
 add_action_files(
   DIRECTORY action
   FILES
+  ttsAction.action
   scenario_manager.action
 )
 

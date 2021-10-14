@@ -5,7 +5,7 @@ import rospy
 from std_msgs.msg import Bool, String
 from hbba_msgs.msg import Desire, DesiresSet, Event
 from hbba_msgs.srv import AddDesires, RemoveDesires
-from custom_actions.msg import ScenarioSelectorActivatedAction, ScenarioSelectorActivatedGoal
+from custom_msgs.msg import scenario_managerAction, scenario_managerGoal, scenario_managerResult
 
 import HomoDeUS_common_py.HomoDeUS_common_py as common
 
@@ -16,7 +16,7 @@ class Scenario_Selector:
     """
     def __init__(self):
         #initialise scenario_client so it can be modified later
-        self.scenario_client = actionlib.SimpleActionClient("Empty",ScenarioSelectorActivatedAction)
+        self.scenario_client: actionlib.ActionClient = None
 
         # The input of the module
         self.input_motv_keyword = rospy.Subscriber("/proc_output_keywordDetect", Bool, self.listen_Keyword_cb, queue_size=10)
@@ -92,12 +92,12 @@ class Scenario_Selector:
         if self.actual_scenario is not "":
             self.cancel_scenario()
         
-        self.scenario_client = actionlib.SimpleActionClient(scenario.split()[0],ScenarioSelectorActivatedAction)
+        self.scenario_client = actionlib.SimpleActionClient(scenario.split()[0],scenario_managerAction)
 
         self.scenario_client.wait_for_server()
         
-        goal = ScenarioSelectorActivatedGoal()
-        goal.start_scenario = True
+        goal = scenario_managerGoal()
+        goal.execute = True
         self.scenario_client.send_goal(goal)
 
         self.actual_scenario = scenario
