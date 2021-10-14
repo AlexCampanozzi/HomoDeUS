@@ -46,8 +46,17 @@ protected:
 
   ros::NodeHandle _nh;
   ros::Publisher _pub;
+
   // for debug
+  sensor_msgs::PointCloud2 _filtered_cloud;
+  sensor_msgs::PointCloud2 _noplane_cloud;
+  geometry_msgs::PoseStamped _pick_pose;
+  ros::Publisher filtered_pub;
   ros::Publisher noplane_pub;
+  ros::Publisher pick_point_pub;
+  void noplaneTimerCallback(const ros::TimerEvent&);
+  void filteredTimerCallback(const ros::TimerEvent&);
+  void pickpointTimerCallback(const ros::TimerEvent&);
 
   ros::Subscriber _detection_sub;
   ros::Subscriber _cloud_sub;
