@@ -12,7 +12,7 @@ class State00(StateBase):
 
     def add_state_desires(self):
         print("00 init")
-        self.add("move_to_table_00", "GoToLandmark",  params = "{name: 'customer'}")
+        self.add("move_to_table_00", "GoToLandmark",  params = "{name: 'table1'}")
         self.stateDict["move_to_table_00"] = Event.DES_ON
 
     def react_to_event(self):
