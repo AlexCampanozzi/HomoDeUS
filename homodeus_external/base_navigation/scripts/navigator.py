@@ -40,8 +40,7 @@ class Navigator:
 
     def gotoGoal(self, goal):
         rospy.loginfo("Sending goal location ...")
-        rospy.loginfo("==================")
-        rospy.loginfo(goal)
+
         self.ac.send_goal(goal, self.gotoDoneCB)
 
         # Old way of doing it, we non-blocking now
@@ -107,6 +106,9 @@ class Navigator:
             rospy.loginfo("Name does not correspond to any known landmark")
             return
         goal = self.landmarkToGoal(self.landmarks[name])
+        rospy.loginfo("==================")
+
+        rospy.loginfo(goal)
         goal.target_pose.header.stamp = rospy.Time(0)
         self.gotoGoal(goal)
 

@@ -10,7 +10,7 @@ from tf.transformations import quaternion_from_euler, euler_from_quaternion
 
 class HBBA_nav_listener(Navigator):
     def __init__(self):
-        rospy.loginfo("===================================================================================================================================initing nav_listener")
+        rospy.loginfo("initing nav_listener")
         Navigator.__init__(self)
         rospy.loginfo("init navigator")
 
@@ -23,14 +23,12 @@ class HBBA_nav_listener(Navigator):
         self.result_pub = rospy.Publisher("bhvr_output_res_nav_result", GoToResult, queue_size=5)
         self.add_landmark_result_pub = rospy.Publisher("bhvr_output_nav_added_landmark", String, queue_size=5)
         self.curLandmark = ""
-        rospy.loginfo("==================================================================================================================================bhvr_nav init")
+        rospy.loginfo("bhvr_nav init")
 
     def gotoCallback(self, data):
-        rospy.loginfo("==================================================================================================================================go to bhvr_nav debut")
         self.cancelAllGoto()
         self.curLandmark = ""
         self.goto(data.pose.position.x, data.pose.position.y, data.pose.orientation.w)
-        rospy.loginfo("==================================================================================================================================go to bhvr_nav fin")
 
     def gotoLandmarkCallback(self, data):
         rospy.loginfo("==================================================================================================================================go to landmark bhvr_nav debut")
