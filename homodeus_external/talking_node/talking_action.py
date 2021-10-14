@@ -21,7 +21,7 @@ import contextlib
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
+TALK_DELAY = 0.4
 TIMEOUT = 2
 SOURCE_MP3 = "talking_file.mp3"
 SOURCE_WAV = "talking_file.wav"
@@ -75,7 +75,7 @@ class talkingSynthesizer:
         else:
             self.language = goal.lang_id
         self.say(goal.text)
-        time.sleep(self.get_wav_duration(self.file_path_wav))
+        time.sleep(abs(self.get_wav_duration(self.file_path_wav)-TALK_DELAY))
         result = ttsActionResult()
         result.success = True
         self.tts_action.set_succeeded(result)

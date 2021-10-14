@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 from threading import Timer
 from std_msgs.msg import String, Bool
 from hbba_msgs.msg import Desire, DesiresSet, Event
-from HomoDeUS_common_py.HomoDeUS_common_py import no_caps_and_whitespace
+from HomoDeUS_common_py.HomoDeUS_common_py import no_caps_and_ponctuation
 
 
 class Speech_recognition_observer:

@@ -33,7 +33,7 @@ class SpeechRecognizer:
         """
         with common.noalsaerr():
             with sr.Microphone() as source:
-                self.speech_recognizer.adjust_for_ambient_noise(source, duration=2) 
+                self.speech_recognizer.adjust_for_ambient_noise(source, duration=0.5) 
                 rospy.loginfo("Listening...")
                 audio = self.speech_recognizer.listen(source)
 

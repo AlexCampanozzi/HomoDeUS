@@ -120,6 +120,7 @@ add_hbba_cfg(tiago_nav_actionLib hbba_cfg/tiago_nav_actionLib.yaml)
 add_hbba_cfg(tiago_general hbba_cfg/tiago_general.yaml)
 add_hbba_cfg(tiago_gaze_following_test hbba_cfg/tiago_gaze_following_test.yaml)
 add_hbba_cfg(scenario_1_general hbba_cfg/scenario_1_general.yaml)
+add_hbba_cfg(scenario_selector_simulation hbba_cfg/scenario_selector_simulation.yaml)
 
 #############
 ## Install ##

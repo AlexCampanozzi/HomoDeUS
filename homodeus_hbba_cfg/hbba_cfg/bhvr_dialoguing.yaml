@@ -14,7 +14,7 @@ hbba_conf:
         - bhvr_output_res_dialRelevant
             
 - strat:
-    name: palActionLibTts
+    name: dialogueXML
     class: Dialoguing
     utility: 8
     costs: {speaker: 1}

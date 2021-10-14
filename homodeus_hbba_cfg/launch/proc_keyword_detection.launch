@@ -1,3 +1,4 @@
 <launch>
   <node name="proc_keyword_detection" pkg="homodeus_perceptions" type="proc_keyword_detection.py"/>
+  <node name="proc_keyword_intermediate" pkg="homodeus_perceptions" type="inter_keyword_detection.py"/>
 </launch>
