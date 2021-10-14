@@ -12,7 +12,7 @@ import os
 class Navigator:
     def __init__(self):
         self.landmarks = {}
-        with open('/home/nickgb/catkin_ws/src/HomoDeUS/homodeus_common/landmarks.json') as json_file:
+        with open('/home/pal/catkin_ws/src/HomoDeUS/homodeus_common/landmarks.json') as json_file:
             self.landmarks = json.load(json_file)
 
         # define a client to send goal requests to the move_base server through a SimpleActionClient

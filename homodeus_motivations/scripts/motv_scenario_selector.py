@@ -34,7 +34,7 @@ class Scenario_Selector:
         #self.desire_pause_id = "pause_for_keyword"
         self.desire_dialoguing_id = "listen_for_task"
         self.desire_keyword_id = "hear_his_name"
-        
+        self.do_not_restart = False
         # ajout de desire
         common.add_desire(self,desire_id=self.desire_keyword_id,desire_type="Keyword_detection",desire_utility=8, \
             desire_intensity=50, desire_params = "{value: 'robot'}")
@@ -50,12 +50,16 @@ class Scenario_Selector:
         detection: Bool()
             if the robot heard or not it's name
         """
-        if detection.data:
+        if self.do_not_restart:
+            self.do_not_restart = False
+            return
+        if detection.data and not self.do_not_restart:
             rospy.logwarn("------------------------")
             # self.add_desire(desire_id=self.desire_pause_id,desire_type="pause",desire_utility=5.0,desire_intensity=100.00)
             common.add_desire(self,desire_id=self.desire_dialoguing_id, desire_type= "Dialoguing", desire_utility=5.0, \
                 desire_intensity=100.0, desire_params = "{context: 'scenario_selection'}")
             self.rem_desires_service([self.desire_keyword_id])
+            self.do_not_restart = True
 
     def listen_dialog_cb(self,speechText):
         """
@@ -96,7 +100,7 @@ class Scenario_Selector:
         """
         if self.actual_scenario is not "":
             self.cancel_scenario()
-        action_name = "/motv_scenario1/"+scenario.split()[0]+"_manager"
+        action_name = scenario.split()[0]+"_manager"
         rospy.loginfo(action_name)
         self.scenario_client = actionlib.SimpleActionClient(action_name,scenario_managerAction)
 

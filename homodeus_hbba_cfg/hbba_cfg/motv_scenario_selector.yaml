@@ -7,4 +7,5 @@ hbba_conf:
     input:
         - proc_output_keywordDetect
         - bhvr_output_res_dialRelevant
-    
+    output:
+        - scenario_1_manager

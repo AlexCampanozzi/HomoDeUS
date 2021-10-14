@@ -115,7 +115,6 @@ if __name__ == "__main__":
     try:
         rospy.init_node("scenario_1_manager")
         node = Scenario1Manager()
-        #Scenario1Tester()
         rospy.spin()
 
     except rospy.ROSInterruptException:
