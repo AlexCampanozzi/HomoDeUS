@@ -106,9 +106,7 @@ class Navigator:
             rospy.loginfo("Name does not correspond to any known landmark")
             return
         goal = self.landmarkToGoal(self.landmarks[name])
-        rospy.loginfo("==================")
 
-        rospy.loginfo(goal)
         goal.target_pose.header.stamp = rospy.Time(0)
         self.gotoGoal(goal)
 
