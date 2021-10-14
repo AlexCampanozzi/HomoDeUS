@@ -9,10 +9,7 @@ import random as rand
 from threading import Timer
 import speech_recognizer.SpeechRecognizer as sr
 import pal_interaction_msgs.msg
-<<<<<<< HEAD
 from custom_msgs.msg import ttsActionAction, ttsActionGoal
-=======
->>>>>>> 5c4f568f0d65d3044394bc867fa1c88f2f993d63
 import xml.etree.ElementTree as ET
 from enum import Enum
 from std_msgs.msg import String, Bool
@@ -30,11 +27,8 @@ class Dialoguing_module:
     """
     This class provides a sort of chatbot so the robot can have fluid interaction with people
     """
-<<<<<<< HEAD
+
     def __init__(self, language = "en-GB"):
-=======
-    def __init__(self, language = "en_GB"):
->>>>>>> 5c4f568f0d65d3044394bc867fa1c88f2f993d63
 
         dialog_context_xml_path=os.path.join(os.path.dirname(__file__), '../../homodeus_external/xml_folder/dialog_context.xml') 
         self.dialog_context = ET.parse(dialog_context_xml_path).getroot()
@@ -51,13 +45,9 @@ class Dialoguing_module:
         self.dialog_state = Dialog_state.begin
 
         # the code works differently if it's run on the robot or not
-<<<<<<< HEAD
         #param_name = rospy.search_param('on_robot')
         self.on_robot = rospy.get_param('on_robot',False)
-=======
-        param_name = rospy.search_param('on_robot')
-        self.on_robot = rospy.get_param(param_name,False)
->>>>>>> 5c4f568f0d65d3044394bc867fa1c88f2f993d63
+
         
 
         # Goal input
@@ -68,13 +58,7 @@ class Dialoguing_module:
         self.output_bhvr_relevant = rospy.Publisher("/bhvr_output_res_dialRelevant", String, queue_size=10)
 
         # dialog only use tts_server when it's run on the robot
-<<<<<<< HEAD
-        
         self.connect_to_tts_server()
-=======
-        if self.on_robot:
-            self.connect_to_tts_server()
->>>>>>> 5c4f568f0d65d3044394bc867fa1c88f2f993d63
         
         self.speech_recognizer = sr.SpeechRecognizer()
         
@@ -83,14 +67,10 @@ class Dialoguing_module:
         """
         This method connects the node to the tts_server so it can later send sentence to be pronounce by the robot
         """
-<<<<<<< HEAD
         if self.on_robot:
             self.output_bhvr_command = actionlib.SimpleActionClient("tts", pal_interaction_msgs.msg.TtsAction)
         else:
             self.output_bhvr_command = actionlib.SimpleActionClient("tts", ttsActionAction)
-=======
-        self.output_bhvr_command = actionlib.SimpleActionClient("tts", pal_interaction_msgs.msg.TtsAction)
->>>>>>> 5c4f568f0d65d3044394bc867fa1c88f2f993d63
 
         # wait for the action server to come up
         while(not self.output_bhvr_command.wait_for_server(rospy.Duration.from_sec(5.0)) and not rospy.is_shutdown()):
@@ -157,13 +137,10 @@ class Dialoguing_module:
             goal = pal_interaction_msgs.msg.TtsGoal()
             goal.rawtext.lang_id = self.language
             goal.rawtext.text = TtsText
-<<<<<<< HEAD
         else:
             goal = ttsActionGoal()
             goal.lang_id = self.language
             goal.text = TtsText
-=======
->>>>>>> 5c4f568f0d65d3044394bc867fa1c88f2f993d63
 
             self.output_bhvr_command.send_goal_and_wait(goal=goal)
 
@@ -185,8 +162,8 @@ class Dialoguing_module:
                 self.talking(self._select_talking_text(self.selected_context,self.dialog_state.name))
                 self._increasing_state()
                 context =self.selected_context
+                # set a timer so the discussion does not wander
                 self._set_timer(self.dialog_context.getiterator(context)[0].get('timer'))
-
             listen_text = common.no_caps_and_ponctuation(self.speech_recognizer.speech_to_text())
             rospy.logdebug(listen_text)
 
@@ -345,7 +322,8 @@ class Dialoguing_module:
         if talking_state == "feedback":       
             if self.selected_context == "menu_selection":
                 rel_info = rel_info.replace(" "," and ")
-           
+            if self.selected_context == "scenario_selection":
+                rel_info = rel_info.replace("_"," ")
             talking_text = self._select_talking_text(context,talking_state) + \
                  relevant_infos[1] + rel_info + relevant_infos[2] 
         else:

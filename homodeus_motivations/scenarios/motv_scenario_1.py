@@ -80,6 +80,7 @@ class Scenario1Manager(ScenarioManagerAction):
                         self.states[self.current_state].add_state_desires()
     
     def execute_cb(self, goal):
+        rospy.logwarn("---------------- scenario 1 has been called ----------------")
         if goal.execute is True:
             self.observe()
             # initial desire addition
@@ -115,7 +116,6 @@ if __name__ == "__main__":
         rospy.init_node("scenario_1_manager")
 
         node = Scenario1Manager()
-        doTest = Scenario1Tester()
 
         rospy.spin()
 
