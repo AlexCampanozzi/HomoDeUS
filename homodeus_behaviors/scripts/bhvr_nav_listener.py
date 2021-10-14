@@ -13,13 +13,11 @@ class HBBA_nav_listener(Navigator):
         Navigator.__init__(self)
 
         self.registerLandmark("testPoint", 1, 0, 0)
-
         self.registerLandmark("origin")
 
         self.result_pub = rospy.Publisher("bhvr_output_res_nav_result", GoToResult, queue_size=5)
         self.add_landmark_result_pub = rospy.Publisher("bhvr_output_nav_added_landmark", String, queue_size=5)
         self.curLandmark = ""
-        rospy.loginfo("bhvr_nav init")
 
     def gotoCallback(self, data):
         self.cancelAllGoto()
