@@ -16,8 +16,11 @@ CloudObjectFinder::CloudObjectFinder(ros::NodeHandle& nh): _nh(nh)
 void CloudObjectFinder::imageInfoCallback(const sensor_msgs::CameraInfoConstPtr& info)
 {
     camera_info = *info;
+    camera_model.fromCameraInfo(camera_info);
     image_info_sub.shutdown();
+    got_cam_info = true;
     ROS_INFO("Got camera info");
+    std::cout << "Info: " << camera_info << std::endl;
 }
 
 void CloudObjectFinder::desiredObjectCallback(const std_msgs::StringConstPtr& type)
@@ -37,8 +40,7 @@ void CloudObjectFinder::detectionCallback(const darknet_ros_msgs::BoundingBoxesC
             ROS_INFO("Object of desired class found");
             found_object = true;
             latest_detection = box;
-            // Reset object we ae looking for so we dont keep looking
-            desired_object_type = "";
+            std::cout << "Detection: " << latest_detection << std::endl;
         }
     }
     if (found_object)
@@ -51,7 +53,15 @@ void CloudObjectFinder::detectionCallback(const darknet_ros_msgs::BoundingBoxesC
 
 void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
 {
+    if (!got_cam_info)
+    {
+        // then we cant transform pixels to coords yet, retry later
+        ROS_INFO("Did not have cam_info when attempting to process cloud, will try again on next CB");
+        return;
+    }
+
     // Unsub so we dont keep analysing the same thing w/o a new detection
+    desired_object_type = "";
     _cloud_sub.shutdown();
     pcl::fromROSMsg(*msg, scene_cloud);
     // scene_cloud = *msg;
@@ -65,17 +75,22 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     ROS_INFO("Cloud now has %lu points", scene_cloud.size());
     ROS_INFO("Cloud is now dense: %d", scene_cloud.is_dense);
 
-    // TODO: passtrhrough here depending on the position of the object detected in the image (may need head angle as input to do something clean?)
+    // TODO: passthrough here depending on the position of the object detected in the image (may need head angle as input to do something clean?)
     // Put through passthrough filter to conserve only the points in the general region where we expect the target to be
-    auto detectedX = camera_info.width*(latest_detection.xmax + latest_detection.xmin)/2;
-    auto detectedY = camera_info.height*(latest_detection.ymax + latest_detection.ymin)/2;
+    auto detectedXpix = (latest_detection.xmax + latest_detection.xmin)/2;
+    auto detectedYpix = (latest_detection.ymax + latest_detection.ymin)/2;
+    std::cout << "Object center in px: (" << detectedXpix << ", " << detectedYpix << ")" << std::endl;
+    auto detected_coordinates = camera_model.projectPixelTo3dRay(cv::Point2d(detectedXpix, detectedYpix));
+    auto detectedX = detected_coordinates.x;
+    auto detectedY = detected_coordinates.y;
+
+    std::cout << "Object center in camera frame: (" << detected_coordinates << ")" << std::endl;
+
     // auto detectedZ = latest_detection.pose.position.z;
 
-    // TODO: unproject 2D image to 3D ref frames
-
     // Define a box around the detection in which we keep information 
-    float box_half_width = 0.5;
-    float box_half_height = 0.5;
+    float box_half_width = 0.1;
+    float box_half_height = 0.2;
 
     PointCloud point_cloud_xfiltered;
     PointCloud point_cloud_xyfiltered;
@@ -99,11 +114,14 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     ROS_INFO("Filtered with passthrough");
 
     pcl::toROSMsg(point_cloud_filtered, _filtered_cloud);
+    _filtered_cloud.header.frame_id = "xtion_rgb_optical_frame";
     ros::Timer filtered_timer = _nh.createTimer(ros::Duration(2), &CloudObjectFinder::filteredTimerCallback, this);
     filtered_timer.start();
     filtered_pub.publish(_filtered_cloud);
+    ROS_INFO("Cloud now has %lu points", point_cloud_filtered.size());
 
-    // Detection will be form a 2D image: no info on depth, and therefore we keep all of it
+    // Detection will be from a 2D image: no info on depth, and therefore we keep all of it
+    // NOTE: could map point to depth seen at that pixel in depth image to get z info
     // pcl::PassThrough<pcl::PointXYZ> passz;
     // passz.setInputCloud(point_cloud_xyfiltered.makeShared());
     // passz.setFilterFieldName("z");
@@ -115,11 +133,13 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     // Put the worked cloud in the robot's frame so operation directions make sense to us
     auto curTime = ros::Time::now();
     auto curTransform = tfBuffer.lookupTransform("base_link", scene_cloud.header.frame_id, curTime, ros::Duration(10));
-    pcl_ros::transformPointCloud("base_link", curTime, scene_cloud, scene_cloud.header.frame_id, scene_cloud, tfBuffer);
+    // pcl_ros::transformPointCloud("base_link", curTime, scene_cloud, scene_cloud.header.frame_id, scene_cloud, tfBuffer);
+    pcl_ros::transformPointCloud("base_link", curTime, point_cloud_filtered, scene_cloud.header.frame_id, point_cloud_filtered, tfBuffer);
 
-    pcl::toROSMsg(scene_cloud, _filtered_cloud);
-    _filtered_cloud.header.frame_id = "base_link";
-    filtered_pub.publish(_filtered_cloud);
+
+    // pcl::toROSMsg(scene_cloud, _filtered_cloud);
+    // _filtered_cloud.header.frame_id = "base_link";
+    // filtered_pub.publish(_filtered_cloud);
 
     ROS_INFO("Moved to base_link frame");
 
@@ -133,15 +153,13 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     // Mandatory
     seg.setModelType(pcl::SACMODEL_PLANE);
     seg.setMethodType(pcl::SAC_RANSAC);
-    seg.setDistanceThreshold(0.05);
+    seg.setDistanceThreshold(0.02);
     // Table should be perpendicular to the z axis (in the x-y plane)
     Eigen::Vector3f zAxis = Eigen::Vector3f(0,0,1);
     seg.setAxis(zAxis);
     seg.setEpsAngle(0.2);
 
-    seg.setInputCloud(scene_cloud.makeShared());
-    // TODO: use filtered cloud
-    // seg.setInputCloud(point_cloud_filtered.makeShared());
+    seg.setInputCloud(point_cloud_filtered.makeShared());
     seg.segment(*inliers, *coefficients);
 
     ROS_INFO("Segmented plane");
@@ -149,21 +167,19 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     PointCloud planeCloud;
 
     // Make new cloud with inliers only
-    pcl::copyPointCloud(scene_cloud, *inliers, planeCloud);
-    // TODO: use filtered cloud
-    // pcl::copyPointCloud(point_cloud_filtered, *inliers, planeCloud);
+    pcl::copyPointCloud(point_cloud_filtered, *inliers, planeCloud);
 
     // Make new cloud with outliers: without the plane
     pcl::PointCloud<pcl::PointXYZ>::Ptr noPlane(new pcl::PointCloud<pcl::PointXYZ>);
     ROS_INFO("noplane initial frame: %s", noPlane->header.frame_id.c_str());
     noPlane->header.frame_id = "base_link";
     pcl::ExtractIndices<pcl::PointXYZ> extract;
-    // TODO: use filtered cloud
-    // extract.setInputCloud(point_cloud_filtered.makeShared());
-    extract.setInputCloud(scene_cloud.makeShared());
+    extract.setInputCloud(point_cloud_filtered.makeShared());
     extract.setIndices(inliers);
     extract.setNegative(true);
     extract.filter(*noPlane);
+
+    // TODO?: add passthrough in z to remove anything below top of table if plane extraction alone is not enough
 
     pcl::io::savePCDFile("noplane.pcd", *noPlane);
     pcl::toROSMsg(*noPlane, _noplane_cloud);

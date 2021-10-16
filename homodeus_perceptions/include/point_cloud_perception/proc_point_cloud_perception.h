@@ -13,6 +13,7 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <tf2_ros/transform_listener.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <image_geometry/pinhole_camera_model.h>
 
 // pcl headers
 #include <pcl_conversions/pcl_conversions.h>
@@ -71,6 +72,10 @@ protected:
 
   tf2_ros::Buffer tfBuffer;
   tf2_ros::TransformListener* tfListenerPtr;
+
+  bool got_cam_info = false;
+
+  image_geometry::PinholeCameraModel camera_model;
   
   void detectionCallback(const darknet_ros_msgs::BoundingBoxesConstPtr& msg);
   void cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg);
