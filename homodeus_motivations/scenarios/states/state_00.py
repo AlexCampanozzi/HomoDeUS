@@ -12,14 +12,17 @@ class State00(StateBase):
 
     def add_state_desires(self):
         print("00 init")
-        self.add("move_to_table_00", "GoToLandmark",  params = "{name: 'table1'}")
-        self.stateDict["move_to_table_00"] = Event.DES_ON
-
+        # self.add("move_to_table_00", "GoToLandmark",  params = "{name: 'table1'}")
+        # self.stateDict["move_to_table_00"] = Event.DES_ON
+        self.add("track_customer_00", "face_tracking")
+        self.stateDict["track_customer_00"] = Event.DES_ON
     def react_to_event(self):
         for desire in self.stateDict:
             if self.stateDict[desire] == Event.ACC_ON:
                 return "state_03"
 
     def cleanup(self):
-        self.remove("move_to_table_00")
-        self.stateDict.pop("move_to_table_00")
+        # self.remove("move_to_table_00")
+        # self.stateDict.pop("move_to_table_00")
+        self.remove("track_customer_00")
+        self.stateDict.pop("track_customer_00")
