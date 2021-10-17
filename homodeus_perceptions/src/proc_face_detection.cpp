@@ -13,7 +13,7 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh, std::string mode):
   _nh(nh)
 {
   // Image topics
-  std::string imageTopic = "/usb_cam/image_raw";
+  std::string imageTopic = "proc_input_camera_feed";
 
   image_transport::ImageTransport imageTransport(nh);
 
@@ -141,69 +141,73 @@ Outputs:        None
 */
 void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
-  cv::Mat img;
-  cv::Rect r;
-
-  std::vector<cv::Rect> faces;
-  std::vector<cv::Rect> leftProfileFaces;
-  std::vector<cv::Rect> rightProfileFaces;
-
-  cv::Mat flipped;
-  cv::Mat imgScaled;
-
-  cv_bridge::CvImageConstPtr cvImgPtr;
-  cvImgPtr = cv_bridge::toCvShare(msg);
-  cvImgPtr->image.copyTo(img);
-
-  std_msgs::Bool observerMsg;
-
-  // Minimum and maximum sizes of the faces that can be detected
-  _minFaceSize.width = static_cast<int>(MIN_FACE_SIZE_RATIO * _imgProcessingSize.width);
-  _maxFaceSize.width = static_cast<int>(_imgProcessingSize.width);
-  cv::resize(img, imgScaled, _imgProcessingSize);
-
-  _minFaceSize.height = _minFaceSize.width;
-  _maxFaceSize.height = _maxFaceSize.width;
-
-  faces = detectFaces(imgScaled, _frontClassifier); // Front faces
-
-  leftProfileFaces = detectFaces(imgScaled, _profileClassifier); // Left profile
-  cv::flip(imgScaled, flipped, 1);
-  rightProfileFaces = detectFaces(flipped, _profileClassifier); // Right Profile
-
-  // Flipping the rectangles detected for the right profile
-  for(int i=0;i<rightProfileFaces.size();i++)
+  if ( _pub.getNumSubscribers() > 0 || _imDebugPub.getNumSubscribers() > 0 )
   {
-      r=rightProfileFaces[i];
-      r.x=flipped.cols-r.x-r.width;
-      rightProfileFaces[i]=r;
-  }
+    cv::Mat img;
+    cv::Rect r;
 
-  faces.insert(faces.end(), leftProfileFaces.begin(), leftProfileFaces.end());
-  faces.insert(faces.end(), rightProfileFaces.begin(), rightProfileFaces.end());
+    std::vector<cv::Rect> faces;
+    std::vector<cv::Rect> leftProfileFaces;
+    std::vector<cv::Rect> rightProfileFaces;
 
-  cv::groupRectangles(faces,  // Merges rectangles that are close to each other
-                      1, // Min number of rectangles
-                      0.5 // Distance between rectangles to merge
-                      );
+    cv::Mat flipped;
+    cv::Mat imgScaled;
 
-  if (!faces.empty())
-  {
-    publishDetections(faces);
-    observerMsg.data = true;
-    ROS_INFO("face detected");
-  }
-  else
-  {
-    observerMsg.data = false;
-  }
-  ROS_INFO("image sent");
+    cv_bridge::CvImageConstPtr cvImgPtr;
+    cvImgPtr = cv_bridge::toCvShare(msg);
+    cvImgPtr->image.copyTo(img);
 
-  _observer_pub.publish(observerMsg);
+    std_msgs::Bool observerMsg;
 
-  if ( _imDebugPub.getNumSubscribers() > 0 )
-  {
-    publishDebugImage(imgScaled, faces);
+  
+    // Minimum and maximum sizes of the faces that can be detected
+    _minFaceSize.width = static_cast<int>(MIN_FACE_SIZE_RATIO * _imgProcessingSize.width);
+    _maxFaceSize.width = static_cast<int>(_imgProcessingSize.width);
+    cv::resize(img, imgScaled, _imgProcessingSize);
+
+    _minFaceSize.height = _minFaceSize.width;
+    _maxFaceSize.height = _maxFaceSize.width;
+
+    faces = detectFaces(imgScaled, _frontClassifier); // Front faces
+
+    leftProfileFaces = detectFaces(imgScaled, _profileClassifier); // Left profile
+    cv::flip(imgScaled, flipped, 1);
+    rightProfileFaces = detectFaces(flipped, _profileClassifier); // Right Profile
+
+    // Flipping the rectangles detected for the right profile
+    for(int i=0;i<rightProfileFaces.size();i++)
+    {
+        r=rightProfileFaces[i];
+        r.x=flipped.cols-r.x-r.width;
+        rightProfileFaces[i]=r;
+    }
+
+    faces.insert(faces.end(), leftProfileFaces.begin(), leftProfileFaces.end());
+    faces.insert(faces.end(), rightProfileFaces.begin(), rightProfileFaces.end());
+
+    cv::groupRectangles(faces,  // Merges rectangles that are close to each other
+                        1, // Min number of rectangles
+                        0.5 // Distance between rectangles to merge
+                        );
+
+    if ( _pub.getNumSubscribers() > 0 && !faces.empty())
+    {
+      publishDetections(faces);
+      observerMsg.data = true;
+      //ROS_INFO("face detected");
+    }
+    else
+    {
+      observerMsg.data = false;
+    }
+    //ROS_INFO("image sent");
+
+    _observer_pub.publish(observerMsg);
+
+    if ( _imDebugPub.getNumSubscribers() > 0 )
+    {
+      publishDebugImage(imgScaled, faces);
+    }
   }
 }
 
@@ -231,7 +235,6 @@ std::vector<cv::Rect> FaceDetector::detectFaces(const cv::Mat& img,
                                    0, // flags
                                    _minFaceSize,
                                    _maxFaceSize);
-                              
   return detections;
 }
 
