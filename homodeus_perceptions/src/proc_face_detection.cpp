@@ -13,7 +13,7 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh, std::string mode):
   _nh(nh)
 {
   // Image topics
-  std::string imageTopic = "proc_input_camera_feed";
+  std::string imageTopic = "/homodeus_proc_face_detection/proc_input_camera_feed";
 
   image_transport::ImageTransport imageTransport(nh);
 
@@ -141,8 +141,6 @@ Outputs:        None
 */
 void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
-  if ( _pub.getNumSubscribers() > 0 || _imDebugPub.getNumSubscribers() > 0 )
-  {
     cv::Mat img;
     cv::Rect r;
 
@@ -190,17 +188,16 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
                         0.5 // Distance between rectangles to merge
                         );
 
-    if ( _pub.getNumSubscribers() > 0 && !faces.empty())
+    if (!faces.empty())
     {
       publishDetections(faces);
       observerMsg.data = true;
-      //ROS_INFO("face detected");
+      ROS_INFO("face detected");
     }
     else
     {
       observerMsg.data = false;
     }
-    //ROS_INFO("image sent");
 
     _observer_pub.publish(observerMsg);
 
@@ -208,7 +205,6 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     {
       publishDebugImage(imgScaled, faces);
     }
-  }
 }
 
 

@@ -18,6 +18,8 @@ hbba_conf:
     modules:
         - homodeus_proc_face_detection:
             - xtion_rgb_image_raw: 1
+            - usb_cam_image_raw:  1
+
         - bhvr_face_tracking
     custom_bringup: "pubEmpty('/tiago_head_controller_home_reset');"
     
