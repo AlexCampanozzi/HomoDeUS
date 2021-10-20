@@ -324,6 +324,8 @@ class Dialoguing_module:
                 rel_info = rel_info.replace(" "," and ")
             if self.selected_context == "scenario_selection":
                 rel_info = rel_info.replace("_"," ")
+            if context == 'confirmation' and 'negative' in relevant_infos[0]:
+                return
             talking_text = self._select_talking_text(context,talking_state) + \
                  relevant_infos[1] + rel_info + relevant_infos[2] 
         else:

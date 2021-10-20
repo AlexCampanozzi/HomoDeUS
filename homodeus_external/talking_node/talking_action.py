@@ -80,38 +80,30 @@ class talkingSynthesizer:
         result.success = True
         self.tts_action.set_succeeded(result)
 
-    def __interrupt_action_cb(self): # pygame interromp lui même le texte avec une nouvelle requête "say"
+    def __interrupt_action_cb(self): # pygame interrompt lui même le texte avec une nouvelle requête "say"
         rospy.loginfo('tts action is being interrupted')
         pygame.mixer.music.stop()
         result = ttsActionResult()
         result.success = True
         self.tts_action.set_preempted(result)
 
-    def node_shutdown(self):
+    def __node_shutdown(self):
         """
         This method cancel goal if their is a sudden shutdown. It also informs by a log that the node was shutdown
         """
         pygame.mixer.music.stop()
         rospy.loginfo("have been shutdown")
 
-    def get_wav_duration(self, fname):
+    def __get_wav_duration(self, fname):
         with contextlib.closing(wave.open(fname,'r')) as f:
             frames = f.getnframes()
             rate = f.getframerate()
             duration = frames / float(rate)
             return duration
 
-    # def check_connection(self):       #MAINTENANT INUTILE PUISQUE LE GESTION D'EXCEPTION SE CHARGE DE LE VOIR
-    #     while not rospy.is_shutdown():
-    #         if self.is_connected is not common.check_connection():
-    #             self.is_connected = common.check_connection()
-    #             print("Change of internet connection status:" + str(self.is_connected))
-    #             #rospy.loginfo("Change of internet connection status:" + self.is_connected)
-    #
-    #         time.sleep(TIMEOUT)
 
 if __name__ == '__main__':
-    # PROBLEME POSSIBLE: TROP LONG TEXTE EST LONG A GÉNÉRÉ
+
     try:
         rospy.init_node(common.get_file_name(__file__))
         node = talkingSynthesizer()

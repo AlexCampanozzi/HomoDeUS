@@ -17,6 +17,7 @@ class State03(StateBase):
         self.stateDict["greet_customer_03"] = Event.DES_ON
 
     def react_to_event(self):
+        print("state 03 init")
         for desire in self.stateDict:
 
             if desire == "greet_customer_03":

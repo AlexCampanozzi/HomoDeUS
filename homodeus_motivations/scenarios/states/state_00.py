@@ -14,10 +14,11 @@ class State00(StateBase):
         print("00 init")
         self.add("move_to_table_00", "GoToLandmark",  params = "{name: 'table1'}")
         self.stateDict["move_to_table_00"] = Event.DES_ON
-
+        
     def react_to_event(self):
         for desire in self.stateDict:
             if self.stateDict[desire] == Event.ACC_ON:
+                print("going to state 03")
                 return "state_03"
 
     def cleanup(self):
