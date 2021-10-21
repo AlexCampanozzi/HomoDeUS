@@ -16,11 +16,11 @@ def equalWithinTolerance(a, b, tol):
 class GoToLandmarkResultObserver:
 
     def __init__(self):
-        self.eventPublisher = rospy.Publisher("events", Event)
+        self.eventPublisher = rospy.Publisher("events", Event, queue_size=5)
         self.curDesireSet = DesiresSet()
 
     def listenDesiresSet(self):
-        self.desiresSetSubscriber = rospy.Subscriber("desires_set", DesiresSet, self.listenDesiresSetCB)
+        self.desiresSetSubscriber = rospy.Subscriber("desires_set", DesiresSet, self.listenDesiresSetCB, queue_size=5)
 
     def listenDesiresSetCB(self, desireSet):
         self.curDesireSet = desireSet

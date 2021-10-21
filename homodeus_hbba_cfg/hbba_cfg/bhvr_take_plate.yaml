@@ -1,1 +1,19 @@
 hbba_conf:
+
+- behavior:
+    name: bhvr_take_plate
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/bhvr_take_plate.launch"}
+    priority: 10
+    input:
+        - /proc_point_cloud_perception
+    output:
+        - tiago_arm_controller
+            
+- strat:
+    name: take_plate
+    class: take_plate
+    utility: 8
+    modules:
+        - bhvr_take_plate
+    #custom_bringup: "pubEmpty('/tiago_head_controller_home_reset');"
+    

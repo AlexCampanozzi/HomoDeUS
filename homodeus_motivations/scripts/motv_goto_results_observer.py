@@ -16,17 +16,17 @@ def equalWithinTolerance(a, b, tol):
 class GoToResultObserver:
 
     def __init__(self):
-        self.eventPublisher = rospy.Publisher("events", Event)
+        self.eventPublisher = rospy.Publisher("events", Event, queue_size=5)
         self.curDesireSet = DesiresSet()
 
     def listenDesiresSet(self):
-        self.desiresSetSubscriber = rospy.Subscriber("desires_set", DesiresSet, self.listenDesiresSetCB)
+        self.desiresSetSubscriber = rospy.Subscriber("desires_set", DesiresSet, self.listenDesiresSetCB, queue_size=5)
 
     def listenDesiresSetCB(self, desireSet):
         self.curDesireSet = desireSet
 
     def listenGoToResult(self):
-        self.goToResultSubscriber = rospy.Subscriber("bhvr_output_res_nav_result", GoToResult, self.listenGoToResultCB)
+        self.goToResultSubscriber = rospy.Subscriber("bhvr_output_res_nav_result", GoToResult, self.listenGoToResultCB, queue_size=5)
 
     def listenGoToResultCB(self, result):
         succes = result.result

@@ -1,0 +1,3 @@
+<launch>
+    <node name="scenario_1_manager" pkg="homodeus_motivations" type="motv_scenario_4.py" output="screen"/>
+</launch>

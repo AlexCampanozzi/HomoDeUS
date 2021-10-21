@@ -1,0 +1,3 @@
+<launch>
+  <node name="bhvr_nav_listener" pkg="homodeus_behaviors" type="bhvr_goto.py" output="screen"/>
+</launch>
