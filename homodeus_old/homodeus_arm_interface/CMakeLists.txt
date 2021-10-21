@@ -140,6 +140,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(${PROJECT_NAME}_node
    src/homodeus_arm_interface_node.cpp
+   src/homodeus_arm_interface_Tester.cpp
    src/ArmInterface.cpp
  )
 
