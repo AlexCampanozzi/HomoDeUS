@@ -75,7 +75,7 @@ class talkingSynthesizer:
         else:
             self.language = goal.lang_id
         self.say(goal.text)
-        time.sleep(abs(self.get_wav_duration(self.file_path_wav)-TALK_DELAY))
+        time.sleep(abs(self.__get_wav_duration(self.file_path_wav)-TALK_DELAY))
         result = ttsActionResult()
         result.success = True
         self.tts_action.set_succeeded(result)
@@ -87,7 +87,7 @@ class talkingSynthesizer:
         result.success = True
         self.tts_action.set_preempted(result)
 
-    def __node_shutdown(self):
+    def node_shutdown(self):
         """
         This method cancel goal if their is a sudden shutdown. It also informs by a log that the node was shutdown
         """

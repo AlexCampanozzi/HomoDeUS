@@ -19,12 +19,17 @@ class Scenario1Manager(ScenarioManagerAction):
 
         self.reaction_events = [Event.ACC_ON, Event.ACC_OFF, Event.IMP_ON, Event.IMP_OFF]
         self.rem_desires = rospy.ServiceProxy('remove_desires', RemoveDesires)
+
         self.menu_selection = ''
         # Get and add all states
-        self.state_00 = state_00_simul('GoTo_Table')
-        self.state_01 = state_00_simul('Get_command')
-        self.state_02 = state_00_simul('GoTo_Kitchen')
-        self.state_03 = state_00_simul('Say_Command')
+        self.state_00 = state_00_simul.State00(self.desires)
+        self.state_01 = state_01_simul.State01(self.desires)
+        self.state_02 = state_02_simul.State02(self.desires)
+        self.state_03 = state_03_simul.State03(self.desires)
+        self.add_state(self.state_00)
+        self.add_state(self.state_01)
+        self.add_state(self.state_02)
+        self.add_state(self.state_03)
         self.sequence = [self.state_00,self.state_01,self.state_02,self.state_03]
         self.index = 0
         self.current_state = self.sequence[self.index]
@@ -37,9 +42,6 @@ class Scenario1Manager(ScenarioManagerAction):
 
         if key not in self.states.keys():
             self.states[key] = state
-
-            if self.current_state is None:
-                self.current_state = key
 
     def observe(self):
         self.sub_desires = rospy.Subscriber("events", Event, self.eventCB, queue_size=5)
@@ -54,31 +56,35 @@ class Scenario1Manager(ScenarioManagerAction):
                 self.desires[event.desire] = event.type
 
                 success = self.states[self.current_state].react_to_event()
-                self.states[self.current_state].cleanup()
-                if success:
-                    if self.current_state.name == 'dialog':
-                        dialog_info = self.read_dialog_info(FILE_LOCATION)
-                        if dialog_info == 'nothing':
-                            self._result.result = False
-                            self._as.set_aborted(result=self._result)
+                if success is not None:
+                    self.states[self.current_state].cleanup()
+                    if success:
+                        if self.current_state.get_id() == 'Get_Command':
+                            dialog_info = self.read_dialog_info(FILE_LOCATION)
+                            if dialog_info == 'nothing':
+                                self._result.result = False
+                                self._as.set_aborted(result=self._result)
+                                return
+
+                            else:
+                                self.menu_selection = dialog_info
+
+                        elif len(self.sequence)-1 <= self.index:
+                            self.index = 0
+                            self.current_state = None
+                            self._result = True
+                            self._as.set_succeeded(result=self._result)
                             return
 
-                        else:
-                            self.menu_selection = dialog_info
-
-                    elif len(self.sequence)-1 <= self.index:
-                        self.index = 0
-                        self.current_state = None
-                        self._result = False
-                        self._as.set_succeeded(result=self._result)
-                        return
-
-                    self.index = self.index+1
-                    self._feedback.prev_state = self.current_state
-                    self.current_state = self.sequence[self.index]
-                    self._feedback.state = self.current_state
-                    self._as.publish_feedback(self._feedback)
-                    self.current_state.add_state_desires()   
+                        self.index = self.index+1
+                        self._feedback.prev_state = self.current_state
+                        self.current_state = self.sequence[self.index]
+                        self._feedback.state = self.current_state
+                        self._as.publish_feedback(self._feedback)
+                        self.current_state.add_state_desires()
+                    else:
+                        self._result.result = False
+                        self._as.set_aborted(result=self._result)
     
     def read_dialog_info(self,file_location):
         with open(file_location) as json_file:
@@ -101,7 +107,7 @@ class Scenario1Manager(ScenarioManagerAction):
         for desire in self.desires:
             self.rem_desires.call(desire)
         self.desires.clear()
-        self.current_state = "state_00"
+        self.current_state = self.state_00
         self._as.set_preempted()
         self.stopObserving()
 
