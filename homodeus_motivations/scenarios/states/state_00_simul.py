@@ -4,9 +4,9 @@ from hbba_msgs.msg import Desire, Event
 from state import StateBase
 
 class State00(StateBase):
-    def __init__(self, stateDict):
+    def __init__(self, stateDictn, name):
         StateBase.__init__(self, stateDict)
-
+        self.name = name
     def _set_id(self):
         return "state_00"
 

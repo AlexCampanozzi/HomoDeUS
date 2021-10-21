@@ -10,20 +10,24 @@ from states import state_00_simul, state_01_simul, state_02_simul, state_03_simu
 
 
 FILE_LOCATION = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))+'/homodeus_common/dialog_answer.json'
+
 class Scenario1Manager(ScenarioManagerAction):
     def __init__(self):
         ScenarioManagerAction.__init__(self, name="scenario_1_manager")
         self.desires = {}
         self.states = {}
-        self.current_state = None
+
         self.reaction_events = [Event.ACC_ON, Event.ACC_OFF, Event.IMP_ON, Event.IMP_OFF]
         self.rem_desires = rospy.ServiceProxy('remove_desires', RemoveDesires)
+        self.menu_selection = ''
         # Get and add all states
-        self.state_00 = state_00_simul()
-        self.state_01 = state_00_simul()
-        self.state_02 = state_00_simul()
-        self.state_03 = state_00_simul()
+        self.state_00 = state_00_simul('GoTo_Table')
+        self.state_01 = state_00_simul('Get_command')
+        self.state_02 = state_00_simul('GoTo_Kitchen')
+        self.state_03 = state_00_simul('Say_Command')
         self.sequence = [self.state_00,self.state_01,self.state_02,self.state_03]
+        self.index = 0
+        self.current_state = self.sequence[self.index]
         self._as.register_preempt_callback(self.canceled_cb)
         rospy.wait_for_service("remove_desires")
 
@@ -50,33 +54,31 @@ class Scenario1Manager(ScenarioManagerAction):
                 self.desires[event.desire] = event.type
 
                 success = self.states[self.current_state].react_to_event()
-
-                if success is True:
-                    self.states[self.current_state].cleanup()
+                self.states[self.current_state].cleanup()
+                if success:
                     if self.current_state.name == 'dialog':
                         dialog_info = self.read_dialog_info(FILE_LOCATION)
                         if dialog_info == 'nothing':
-                            
-                            self._as.set_aborted(result=scenario_result)
+                            self._result.result = False
+                            self._as.set_aborted(result=self._result)
+                            return
 
-                    if react_result == "Done":
-                        print("done")
-                        self._result.result = True
-                        self._as.set_succeeded(self._result)
+                        else:
+                            self.menu_selection = dialog_info
 
-                        self.current_state = "state_00"
-                        self.stopObserving()
-                        
-                    else:
-                        self._feedback.prev_state = self.current_state
-                        self.current_state = react_result
+                    elif len(self.sequence)-1 <= self.index:
+                        self.index = 0
+                        self.current_state = None
+                        self._result = False
+                        self._as.set_succeeded(result=self._result)
+                        return
 
-                        self._feedback.state = react_result
-                        self._as.publish_feedback(self._feedback)
-                        print(self._feedback.state)
-
-                        self.states[self.current_state].add_state_desires()
-    
+                    self.index = self.index+1
+                    self._feedback.prev_state = self.current_state
+                    self.current_state = self.sequence[self.index]
+                    self._feedback.state = self.current_state
+                    self._as.publish_feedback(self._feedback)
+                    self.current_state.add_state_desires()   
     
     def read_dialog_info(self,file_location):
         with open(file_location) as json_file:
@@ -87,37 +89,21 @@ class Scenario1Manager(ScenarioManagerAction):
     def execute_cb(self, goal):
         rospy.logdebug("---------------- scenario 1 has been called ----------------")
         if goal.execute is True:
-            self.current_state = self.state1
-            while not rospy.is_shutdown() and self.current_state is not None:
-                result = self.current_state.execute()
-                self.state_transition(result)
-            self.state_transition()
-            self.state1.execute() #goto table
-            self.state_transition()
-            self.state2.execute() #Dialogue
-            self.state3.execute() #GotoKitchen
-            self.state4.execute() #Talk
+            self.observe()
             # initial desire addition
+            self.current_state.add_state_desires()
         else:
             pass
             # no stuff
 
-    def state_transition(self,result):
-        rospy.loginfo("changing scenario 1 state")
-        feedback = scenario_managerFeedback()
-        scenario_result = scenario_managerResult()
-        if result == 'FAILED':
-            scenario_result.result = result
-            self._as.set_aborted(result=scenario_result)
-        else:
-            pass
-        
-        self._as.publish_feedback()
-
     def canceled_cb(self):
         print("cancelling scen")
-        self.current_sate.cancel()
+        for desire in self.desires:
+            self.rem_desires.call(desire)
+        self.desires.clear()
+        self.current_state = "state_00"
         self._as.set_preempted()
+        self.stopObserving()
 
 class Scenario1Tester:
     def __init__(self):
@@ -134,10 +120,9 @@ class Scenario1Tester:
 
 if __name__ == "__main__":
     try:
-        print(FILE_LOCATION)
-        #rospy.init_node("scenario_1_manager")
-        #node = Scenario1Manager()
-        #rospy.spin()
+        rospy.init_node("scenario_1_manager")
+        node = Scenario1Manager()
+        rospy.spin()
 
     except rospy.ROSInterruptException:
         pass
