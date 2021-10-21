@@ -19,13 +19,13 @@ int main(int argc, char **argv)
 
     bool success = false;
 
-    if (controlType.compare("j") == 0)
+    if (controlType.compare("joint") == 0)
     {
         ROS_INFO("arm_interface_node: will attempt to move the arm in joints space.");
         success = arm.moveToJoint(0.0, 2.7, 0.2, -2.1, 2.0, 1.0, -0.8, 0.0);
     }
 
-    else if (controlType.compare("c") == 0)
+    else if (controlType.compare("coords") == 0)
     {
         ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
         success = arm.moveToCartesian(0.4, -0.3, 0.26, -0.011, 1.57, 0.037);
