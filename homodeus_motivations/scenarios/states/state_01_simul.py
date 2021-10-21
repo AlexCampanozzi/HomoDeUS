@@ -8,18 +8,20 @@ class State01(StateBase):
         StateBase.__init__(self, stateDict)
 
     def _set_id(self):
-        return "state_00"
+        return "Get_Command"
 
     def add_state_desires(self):
-        print("00 init")
+        print("01 init")
         self.add("listen_for_menu", "Dialoguing",  params = "{context: 'menu_selection'}")
-        self.stateDict["move_to_table_00"] = Event.DES_ON
+        self.stateDict["listen_for_menu"] = Event.DES_ON
 
     def react_to_event(self):
         for desire in self.stateDict:
             if self.stateDict[desire] == Event.ACC_ON:
-                return "state_02_simul"
+                return True
+            elif self.stateDict[desire] == Event.ACC_OFF:
+                return False
 
     def cleanup(self):
-        self.remove("move_to_table_00")
-        self.stateDict.pop("move_to_table_00")
+        self.remove("listen_for_menu")
+        self.stateDict.pop("listen_for_menu")

@@ -11,11 +11,14 @@ hbba_conf:
 
 # Observers
 
+
 # Motivations
 - include: {pkg: 'homodeus_hbba_cfg', file: 'motv_scenario_selector.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'motv_scenario_1.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'goto_observer.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'gotoLandmark_observer.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'dialog_observer.yaml'}
+
 # - include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_motv_test_desire.yaml'}
 
 # Available resources:

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import rospy
+import time
 from hbba_msgs.msg import Desire, Event
 from hbba_msgs.srv import AddDesires, RemoveDesires
 from scenario_manager_action_server import ScenarioManagerAction
@@ -98,6 +99,10 @@ class Scenario1Manager(ScenarioManagerAction):
             self.observe()
             # initial desire addition
             self.current_state.add_state_desires()
+            print(self._as.is_active())
+            print("+++++++++++++++++++++++++++++++++++++++++")
+            while self._as.is_active():
+                time.sleep(2)
         else:
             pass
             # no stuff

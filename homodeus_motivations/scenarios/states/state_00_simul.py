@@ -4,11 +4,11 @@ from hbba_msgs.msg import Desire, Event
 from state import StateBase
 
 class State00(StateBase):
-    def __init__(self, stateDictn, name):
+    def __init__(self, stateDict):
         StateBase.__init__(self, stateDict)
-        self.name = name
+        
     def _set_id(self):
-        return "state_00"
+        return "GoTo_Table"
 
     def add_state_desires(self):
         print("00 init")
@@ -18,7 +18,9 @@ class State00(StateBase):
     def react_to_event(self):
         for desire in self.stateDict:
             if self.stateDict[desire] == Event.ACC_ON:
-                return "state_01_simul"
+                return True
+            elif self.stateDict[desire] == Event.ACC_OFF:
+                return False
 
     def cleanup(self):
         self.remove("move_to_table_00")

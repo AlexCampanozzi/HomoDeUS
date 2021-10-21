@@ -12,10 +12,10 @@ from yaml import safe_load
 # from ast import literal_eval
 from std_msgs.msg import String
 from hbba_msgs.msg import Desire, DesiresSet, Event
+import HomoDeUS_common_py.HomoDeUS_common_py as common
 
 FILE_LOCATION = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))+'/homodeus_common/dialog_answer.json'
 class dialogObserver:
-
     def __init__(self):
         self.eventPublisher = rospy.Publisher("events", Event)
         self.curDesireSet = DesiresSet()
@@ -26,7 +26,7 @@ class dialogObserver:
     def listenDesiresSetCB(self, desireSet):
         self.curDesireSet = desireSet
 
-    def listenGoToResult(self):
+    def listenDialogResult(self):
         self.dialogSubscriber = rospy.Subscriber("bhvr_output_res_dialRelevant", String, self.listenDialogCB)
 
     def listenDialogCB(self, relevant_infos):
@@ -62,19 +62,12 @@ class dialogObserver:
 
 if __name__ == "__main__":
     try:
-        dialogObserver().write_dialog_info('bonjour',FILE_LOCATION)
-        time.sleep(1)
-        dialogObserver().read_dialog_info(FILE_LOCATION)
+        rospy.init_node(common.get_file_name(__file__))
+        node = dialogObserver()
+        node.listenDesiresSet()
+        node.listenDialogResult()
 
-        dialogObserver().write_dialog_info('hola',FILE_LOCATION)
-        time.sleep(1)
-        dialogObserver().read_dialog_info(FILE_LOCATION)
-        # rospy.init_node("motv_goto_results_observer")
-        # node = dialogObserver()
-        # node.listenDesiresSet()
-        # node.listenGoToResult()
-
-        # rospy.spin()
+        rospy.spin()
 
     except rospy.ROSInterruptException:
         pass
