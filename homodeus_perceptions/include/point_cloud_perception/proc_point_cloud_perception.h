@@ -24,6 +24,11 @@
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl_ros/transforms.h>
 
+// Arm controller header
+#include <homodeus_arm_interface/ArmInterface.h>
+
+const std::string ref_frame = "base_footprint";
+
 typedef pcl::PointXYZ PointType;
 typedef pcl::PointCloud<PointType> PointCloud;
 
@@ -42,6 +47,8 @@ public:
     CloudObjectFinder(ros::NodeHandle& nh);
     // CloudObjectFinder();
     // virtual ~CloudObjectFinder();
+    inline const bool pick_pose_found(){return got_pick_pose;}
+    inline geometry_msgs::PoseStamped get_pick_pose(){return _pick_pose;}
 
 protected:
 
@@ -75,7 +82,10 @@ protected:
 
   bool got_cam_info = false;
 
+  bool got_pick_pose = false;
+
   image_geometry::PinholeCameraModel camera_model;
+  // ArmInterface arm_interface = ArmInterface(ref_frame);
   
   void detectionCallback(const darknet_ros_msgs::BoundingBoxesConstPtr& msg);
   void cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg);

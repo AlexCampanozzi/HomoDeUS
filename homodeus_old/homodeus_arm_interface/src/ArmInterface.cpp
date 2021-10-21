@@ -10,7 +10,32 @@ Inputs:         None
 
 Outputs:        None
 */
-ArmInterface::ArmInterface() : _moveGroup("arm_torso")
+ArmInterface::ArmInterface() : _moveGroup("arm_torso"), _ref_frame("base_footprint")
+{
+    // Using 5 seconds because it's a reasonable delay
+    _planningTime = 5.0;
+    _plannerId = "SBLkConfigDefault";
+
+    _moveGroup.setPlannerId(_plannerId);
+
+    _jointsNames = _moveGroup.getJoints();
+
+    // Using a factor of 1.0 at first, we'll see if this value needs to be changed
+    _moveGroup.setMaxVelocityScalingFactor(1.0);
+}
+
+/* ArmInterface: Alternative Constructor
+
+Description:    Initialize various parameters to communicate
+                with the arm and the torso through MoveIt,
+                specifying which tf frame to use for cartesian.
+
+Inputs:         ref_frame (type, std::string)
+                    The tf frame in which points are to be taken for cartesian movement
+
+Outputs:        None
+*/
+ArmInterface::ArmInterface(std::string ref_frame) : _moveGroup("arm_torso"), _ref_frame(ref_frame)
 {
     // Using 5 seconds because it's a reasonable delay
     _planningTime = 5.0;
@@ -142,13 +167,13 @@ Outputs:        success (type, bool):
 bool ArmInterface::moveToCartesian(double x, double y, double z, double roll, double pitch, double yaw)
 {
     geometry_msgs::PoseStamped goalPose;
-    goalPose.header.frame_id = "base_footprint";
+    goalPose.header.frame_id = _ref_frame;
     goalPose.pose.position.x = x;
     goalPose.pose.position.y = y;
     goalPose.pose.position.z = z;
     goalPose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
 
-    _moveGroup.setPoseReferenceFrame("base_footprint");
+    _moveGroup.setPoseReferenceFrame(_ref_frame);
     _moveGroup.setPoseTarget(goalPose);
 
     moveit::planning_interface::MoveGroupInterface::Plan cartesianPlan;
@@ -158,6 +183,10 @@ bool ArmInterface::moveToCartesian(double x, double y, double z, double roll, do
     {
         ROS_INFO("ArmInterface::moveTo(): No plan found!");
         return false;
+    }
+    else
+    {
+        ROS_INFO("ArmInterface::moveTo(): Plan found!");
     }
 
     _moveGroup.move();

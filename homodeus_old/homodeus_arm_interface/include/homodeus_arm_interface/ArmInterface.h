@@ -33,6 +33,7 @@ class ArmInterface
 {
     private:
         float _planningTime;
+        std::string _ref_frame;
         std::string _plannerId;
         std::vector<std::string> _jointsNames;
         moveit::planning_interface::MoveGroupInterface _moveGroup;
@@ -42,6 +43,7 @@ class ArmInterface
 
     public:
         ArmInterface();
+        ArmInterface(std::string ref_frame);
 
         void setPlanningTime(float value);
         void setPlannerId(std::string id);

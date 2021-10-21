@@ -31,8 +31,11 @@ int main(int argc, char **argv)
         success = arm.moveToCartesian(0.4, -0.3, 0.26, -0.011, 1.57, 0.037);
     }
 
-    else
-        ROS_ERROR("arm_interface_node: wrong control type! arm_interface_node only takes j for joints space or c for cartesian space!");
+    ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
+    success = arm.moveToCartesian(0.4, -0.3, 0.26, -0.011, 1.57, 0.037);
+
+    // else
+    //     ROS_ERROR("arm_interface_node: wrong control type! arm_interface_node only takes j for joints space or c for cartesian space!");
 
     if (success)
         ROS_INFO("arm_interface_node: succeeded!");

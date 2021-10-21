@@ -21,6 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf_conversions
   tf2_ros
   image_geometry
+  homodeus_arm_interface
 )
 find_package(OpenCV REQUIRED)
 
@@ -116,7 +117,7 @@ find_package(OpenCV REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES face_detection
-  CATKIN_DEPENDS roscpp rospy actionlib std_msgs actionlib_msgs message_runtime pcl_conversions pcl_ros rospy tf_conversions tf2_ros image_geometry
+  CATKIN_DEPENDS roscpp rospy actionlib std_msgs actionlib_msgs message_runtime pcl_conversions pcl_ros rospy tf_conversions tf2_ros image_geometry homodeus_arm_interface
 )
 
 ###########
