@@ -27,7 +27,7 @@
 // Arm controller header
 #include <homodeus_arm_interface/ArmInterface.h>
 
-const std::string ref_frame = "base_footprint";
+const std::string ref_frame = "base_link";
 
 typedef pcl::PointXYZ PointType;
 typedef pcl::PointCloud<PointType> PointCloud;
@@ -85,7 +85,7 @@ protected:
   bool got_pick_pose = false;
 
   image_geometry::PinholeCameraModel camera_model;
-  // ArmInterface arm_interface = ArmInterface(ref_frame);
+  ArmInterface arm_interface = ArmInterface(ref_frame);
   
   void detectionCallback(const darknet_ros_msgs::BoundingBoxesConstPtr& msg);
   void cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg);

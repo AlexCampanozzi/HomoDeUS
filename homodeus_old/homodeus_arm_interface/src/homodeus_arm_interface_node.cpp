@@ -1,6 +1,30 @@
 #include <homodeus_arm_interface/ArmInterface.h>
+#include <tf_conversions/tf_eigen.h>
 
-// Code to test the arm interface
+void poseCB(const geometry_msgs::PoseStampedConstPtr& posestamped)
+{
+    ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
+    tf::Quaternion quat;
+    tf::quaternionMsgToTF(posestamped->pose.orientation, quat);
+    double roll, pitch, yaw;
+    tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
+    auto x  = posestamped->pose.position.x;
+    auto y  = posestamped->pose.position.y;
+    auto z  = posestamped->pose.position.z;
+    
+    ArmInterface arm;
+    auto success = arm.moveToCartesian(0.4, -0.3, 0.26, -0.011, 1.57, 0.037);
+    // auto success = arm.moveToCartesian(x, y, z, roll, pitch, yaw);
+    
+
+    if (success)
+        ROS_INFO("arm_interface_node: succeeded!");
+
+    else
+        ROS_INFO("arm_interface_node: failed!");
+}
+
+// Code to use the arm interface
 int main(int argc, char **argv)
 {
     std::string controlType;
@@ -8,40 +32,12 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "arm_interface_node");
     ros::NodeHandle n("~");
 
-    ArmInterface arm;
+    ros::Subscriber pick_pose_sub = n.subscribe("/pick_point", 5, poseCB);
 
     ROS_INFO("arm_interface_node is now running!");
 
     ros::AsyncSpinner spinner(1);
     spinner.start();
-
-    n.getParam("control_type", controlType);
-
-    bool success = false;
-
-    if (controlType.compare("j") == 0)
-    {
-        ROS_INFO("arm_interface_node: will attempt to move the arm in joints space.");
-        success = arm.moveToJoint(0.0, 2.7, 0.2, -2.1, 2.0, 1.0, -0.8, 0.0);
-    }
-
-    else if (controlType.compare("c") == 0)
-    {
-        ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
-        success = arm.moveToCartesian(0.4, -0.3, 0.26, -0.011, 1.57, 0.037);
-    }
-
-    ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
-    success = arm.moveToCartesian(0.4, -0.3, 0.26, -0.011, 1.57, 0.037);
-
-    // else
-    //     ROS_ERROR("arm_interface_node: wrong control type! arm_interface_node only takes j for joints space or c for cartesian space!");
-
-    if (success)
-        ROS_INFO("arm_interface_node: succeeded!");
-
-    else
-        ROS_INFO("arm_interface_node: failed!");
 
     ros::waitForShutdown();
     return 0;

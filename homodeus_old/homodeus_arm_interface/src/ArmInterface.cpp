@@ -10,7 +10,7 @@ Inputs:         None
 
 Outputs:        None
 */
-ArmInterface::ArmInterface() : _moveGroup("arm_torso"), _ref_frame("base_footprint")
+ArmInterface::ArmInterface() : _moveGroup("arm_torso"), _ref_frame("base_link")
 {
     // Using 5 seconds because it's a reasonable delay
     _planningTime = 5.0;

@@ -11,6 +11,8 @@ CloudObjectFinder::CloudObjectFinder(ros::NodeHandle& nh): _nh(nh)
     noplane_pub = _nh.advertise<sensor_msgs::PointCloud2>("/noplane_cloud", 5);
     filtered_pub = _nh.advertise<sensor_msgs::PointCloud2>("/filtered_cloud", 5);
     pick_point_pub = _nh.advertise<geometry_msgs::PoseStamped>("/pick_point", 5);
+
+
 }
 
 void CloudObjectFinder::imageInfoCallback(const sensor_msgs::CameraInfoConstPtr& info)
@@ -75,7 +77,6 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     ROS_INFO("Cloud now has %lu points", scene_cloud.size());
     ROS_INFO("Cloud is now dense: %d", scene_cloud.is_dense);
 
-    // TODO: passthrough here depending on the position of the object detected in the image (may need head angle as input to do something clean?)
     // Put through passthrough filter to conserve only the points in the general region where we expect the target to be
     auto detectedXpix = (latest_detection.xmax + latest_detection.xmin)/2;
     auto detectedYpix = (latest_detection.ymax + latest_detection.ymin)/2;
@@ -89,6 +90,7 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     // auto detectedZ = latest_detection.pose.position.z;
 
     // Define a box around the detection in which we keep information 
+    // TODO: passthrough here depending on the dimensions instead of center position
     float box_half_width = 0.1;
     float box_half_height = 0.2;
 
@@ -115,8 +117,8 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
 
     pcl::toROSMsg(point_cloud_filtered, _filtered_cloud);
     _filtered_cloud.header.frame_id = "xtion_rgb_optical_frame";
-    ros::Timer filtered_timer = _nh.createTimer(ros::Duration(2), &CloudObjectFinder::filteredTimerCallback, this);
-    filtered_timer.start();
+    // ros::Timer filtered_timer = _nh.createTimer(ros::Duration(2), &CloudObjectFinder::filteredTimerCallback, this);
+    // filtered_timer.start();
     filtered_pub.publish(_filtered_cloud);
     ROS_INFO("Cloud now has %lu points", point_cloud_filtered.size());
 
@@ -190,8 +192,8 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
 
     pcl::io::savePCDFile("noplane.pcd", *noPlane);
     pcl::toROSMsg(*noPlane, _noplane_cloud);
-    ros::Timer noplane_timer = _nh.createTimer(ros::Duration(2), &CloudObjectFinder::noplaneTimerCallback, this);
-    noplane_timer.start();
+    // ros::Timer noplane_timer = _nh.createTimer(ros::Duration(2), &CloudObjectFinder::noplaneTimerCallback, this);
+    // noplane_timer.start();
     ROS_INFO("noplane final frame: %s", _noplane_cloud.header.frame_id.c_str());
     _noplane_cloud.header.frame_id = ref_frame;
     noplane_pub.publish(_noplane_cloud);
@@ -232,8 +234,8 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     _pick_pose = goal_pose;
     ROS_INFO("Pick pose found");
     std::cout << "pose: " << std::endl << _pick_pose << std::endl;
-    ros::Timer pickpoint_timer = _nh.createTimer(ros::Duration(2), &CloudObjectFinder::pickpointTimerCallback, this);
-    pickpoint_timer.start();
+    // ros::Timer pickpoint_timer = _nh.createTimer(ros::Duration(2), &CloudObjectFinder::pickpointTimerCallback, this);
+    // pickpoint_timer.start();
     pick_point_pub.publish(_pick_pose);
     got_pick_pose = true;
 
@@ -247,46 +249,6 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     //     ROS_INFO("Unable to move ");
     // }
     
-}
-
-int main(int argc, char **argv)
-{
-    ros::init(argc,argv,"homodeus_proc_point_cloud_perception_node");
-
-    ros::NodeHandle nh;
-
-    double frequency = 5;
-
-    ROS_INFO("Creating cloud object finder");
-
-    CloudObjectFinder finder(nh);
-    ArmInterface arm_interface(ref_frame);
-    ROS_INFO("Spinning to serve callbacks ...");
-
-    ros::Rate rate(frequency);
-    while ( ros::ok() && !finder.pick_pose_found() )
-    {
-        ros::spinOnce();
-        rate.sleep();
-    }
-
-    if(ros::ok())
-    {
-        auto position = finder.get_pick_pose().pose.position;
-        ROS_INFO("arm_interface will attempt to move the arm in cartesian space.");
-        auto success = arm_interface.moveToCartesian(position.x-0.2, position.y, position.z, -0.011, 1.57, 0.037);
-        if (success)
-            ROS_INFO("arm_interface_node: succeeded!");
-
-        else
-            ROS_INFO("arm_interface_node: failed!");
-
-
-        ros::waitForShutdown();   
-    }
-     
-
-    return 0;
 }
 
 void CloudObjectFinder::noplaneTimerCallback(const ros::TimerEvent&)
@@ -303,4 +265,50 @@ void CloudObjectFinder::pickpointTimerCallback(const ros::TimerEvent&)
 {
     ROS_INFO("Publishing pose");
     pick_point_pub.publish(_pick_pose);
+}
+
+
+int main(int argc, char **argv)
+{
+    ros::init(argc,argv,"homodeus_proc_point_cloud_perception_node");
+
+    ros::NodeHandle nh;
+
+    double frequency = 5;
+
+    ROS_INFO("Creating cloud object finder");
+
+    CloudObjectFinder finder(nh);
+    // ArmInterface arm_interface(ref_frame);
+    ROS_INFO("Spinning to serve callbacks ...");
+
+    ros::AsyncSpinner spinner(1);
+    spinner.start();
+
+    // ros::Rate rate(frequency);
+    // while ( ros::ok() && !finder.pick_pose_found() )
+    // {
+    //     ros::spinOnce();
+    //     rate.sleep();
+    // }
+
+    // if(ros::ok())
+    // {
+    //     auto position = finder.get_pick_pose().pose.position;
+    //     ROS_INFO("arm_interface will attempt to move the arm in cartesian space.");
+    //     auto success = arm_interface.moveToCartesian(position.x-0.2, position.y, position.z, 0, 0, 0);
+    //     if (success)
+    //         ROS_INFO("arm_interface_node: succeeded!");
+
+    //     else
+    //         ROS_INFO("arm_interface_node: failed!");
+
+
+    //     ros::waitForShutdown();   
+    // }
+
+    ros::waitForShutdown();
+     
+
+    return 0;
 }
