@@ -15,23 +15,24 @@ int main(int argc, char **argv)
     ros::AsyncSpinner spinner(1);
     spinner.start();
 
-    n.getParam("control_type", controlType);
+    
+    // n.getParam("control_type", controlType);
 
     bool success = false;
 
-    if (controlType.compare("j") == 0)
-    {
-        ROS_INFO("arm_interface_node: will attempt to move the arm in joints space.");
-        success = arm.moveToJoint(0.0, 2.7, 0.2, -2.1, 2.0, 1.0, -0.8, 0.0);
-    }
+    // if (controlType.compare("j") == 0)
+    // {
+    //     ROS_INFO("arm_interface_node: will attempt to move the arm in joints space.");
+    //     success = arm.moveToJoint(0.0, 2.7, 0.2, -2.1, 2.0, 1.0, -0.8, 0.0);
+    // }
 
-    else if (controlType.compare("c") == 0)
-    {
-        ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
-        success = arm.moveToCartesian(0.4, -0.3, 0.26, -0.011, 1.57, 0.037);
-    }
+    // else if (controlType.compare("c") == 0)
+    // {
+    //     ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
+    //     success = arm.moveToCartesian(0.4, -0.3, 0.26, -0.011, 1.57, 0.037);
+    // }
 
-    ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
+    ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space!");
     success = arm.moveToCartesian(0.4, -0.3, 0.26, -0.011, 1.57, 0.037);
 
     // else
@@ -42,6 +43,14 @@ int main(int argc, char **argv)
 
     else
         ROS_INFO("arm_interface_node: failed!");
+
+    // double frequency = 5;
+    // ros::Rate rate(frequency);
+    // while ( ros::ok())
+    // {
+    //     ros::spinOnce();
+    //     rate.sleep();
+    // }
 
     ros::waitForShutdown();
     return 0;

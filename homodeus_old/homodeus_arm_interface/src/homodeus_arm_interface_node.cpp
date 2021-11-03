@@ -1,9 +1,10 @@
 #include <homodeus_arm_interface/ArmInterface.h>
 #include <tf_conversions/tf_eigen.h>
+#include <std_msgs/String.h>
 
-void poseCB(const geometry_msgs::PoseStampedConstPtr& posestamped)
+void poseCB(const geometry_msgs::PoseStampedConstPtr posestamped)
 {
-    ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
+    bool success = false;
     tf::Quaternion quat;
     tf::quaternionMsgToTF(posestamped->pose.orientation, quat);
     double roll, pitch, yaw;
@@ -13,8 +14,10 @@ void poseCB(const geometry_msgs::PoseStampedConstPtr& posestamped)
     auto z  = posestamped->pose.position.z;
     
     ArmInterface arm;
-    auto success = arm.moveToCartesian(0.4, -0.3, 0.26, -0.011, 1.57, 0.037);
-    // auto success = arm.moveToCartesian(x, y, z, roll, pitch, yaw);
+    ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
+    // auto success = arm.moveToCartesian(0.4, -0.3, 0.26, -0.011, 1.57, 0.037);
+    success = arm.moveToCartesian(x-0.4, y, z, roll, pitch, yaw);
+    success = arm.moveToCartesian(x, y, z, roll, pitch, yaw);
     
 
     if (success)
@@ -38,6 +41,18 @@ int main(int argc, char **argv)
 
     ros::AsyncSpinner spinner(1);
     spinner.start();
+
+    double frequency = 5;
+    ros::Rate rate(frequency);
+    while ( ros::ok())
+    {
+        ros::spinOnce();
+        rate.sleep();
+    }
+
+    // ArmInterface arm;
+    // ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
+    // auto success = arm.moveToCartesian(0.4, -0.3, 0.26, -0.011, 1.57, 0.037);
 
     ros::waitForShutdown();
     return 0;

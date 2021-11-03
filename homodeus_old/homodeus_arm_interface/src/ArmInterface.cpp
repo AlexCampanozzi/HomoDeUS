@@ -69,10 +69,9 @@ bool ArmInterface::planTrajectory(moveit::planning_interface::MoveGroupInterface
     _moveGroup.setStartStateToCurrentState();
     _moveGroup.setPlanningTime(_planningTime);
 
-    bool success = static_cast<bool>(_moveGroup.plan(plan));
+    auto success = _moveGroup.plan(plan);
 
-
-    return success;
+    return bool(success);
 }
 
 
@@ -174,10 +173,14 @@ bool ArmInterface::moveToCartesian(double x, double y, double z, double roll, do
     goalPose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
 
     _moveGroup.setPoseReferenceFrame(_ref_frame);
+    ROS_INFO("ArmInterface::moveToCartesian(): Frame set");
     _moveGroup.setPoseTarget(goalPose);
+    ROS_INFO("ArmInterface::moveToCartesian(): Target pose set");
 
     moveit::planning_interface::MoveGroupInterface::Plan cartesianPlan;
+    ROS_INFO("ArmInterface::moveToCartesian(): Plan created");
     bool success = planTrajectory(cartesianPlan);
+    ROS_INFO("ArmInterface::moveToCartesian(): Plan computed");
 
     if (!success)
     {
