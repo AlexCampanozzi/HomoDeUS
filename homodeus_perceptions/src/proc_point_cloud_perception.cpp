@@ -223,6 +223,7 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     // TODO: find a way to decide orientation of pick point, either from shape, object identity, or both
 
     geometry_msgs::PoseStamped goal_pose;
+    // offsets in x and y because we move the wirst, not the hand: needed for alignment
     goal_pose.pose.position.x = average_point.x - 0.1;
     goal_pose.pose.position.y = average_point.y - 0.1;
     goal_pose.pose.position.z = average_point.z;
