@@ -6,8 +6,13 @@
 #include <map>
 
 #include <ros/ros.h>
+
 #include <moveit/move_group_interface/move_group_interface.h>
+#include <moveit/planning_scene_interface/planning_scene_interface.h>
+
 #include <tf/transform_broadcaster.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+
 
 
 /* ArmInterface
@@ -37,9 +42,11 @@ class ArmInterface
         std::string _plannerId;
         std::vector<std::string> _jointsNames;
         moveit::planning_interface::MoveGroupInterface _moveGroup;
+        moveit::planning_interface::PlanningSceneInterface _planningScene;
 
         bool planTrajectory(moveit::planning_interface::MoveGroupInterface::Plan &plan);
         bool planTrajectoryJ(moveit::planning_interface::MoveGroupInterface::Plan &plan);
+        bool addCollisionObjects();
 
     public:
         ArmInterface();
@@ -49,6 +56,9 @@ class ArmInterface
         void setPlannerId(std::string id);
         bool moveToCartesian(double x, double y, double z, double roll, double pitch, double yaw);
         bool moveToJoint(double torso, double j1, double j2, double j3, double j4, double j5, double j6, double j7);
+        bool pick(geometry_msgs::PoseStamped object_pose);
+        bool place(geometry_msgs::PoseStamped drop_pose);
+        void closeHand();
 };
 
 #endif

@@ -209,23 +209,30 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     float avgX = 0;
     float avgY = 0;
     float avgZ = 0;
+    float miny = 9999;
 
+    // we pick up objects from the right with hey5, so find rightmost point of object and standof from there
     for (auto point : noPlane->points)
         {
             avgX += point.x;
             avgY += point.y;
             avgZ += point.z;
             numpoints += 1;
+            if(point.y < miny)
+            {
+                miny = point.y;
+            }
         }
+    average_point = pcl::PointXYZ(avgX/numpoints, miny, avgZ/numpoints);
 
-    average_point = pcl::PointXYZ(avgX/numpoints, avgY/numpoints, avgZ/numpoints);
+    // average_point = pcl::PointXYZ(avgX/numpoints, avgY/numpoints, avgZ/numpoints);
 
     // TODO: find a way to decide orientation of pick point, either from shape, object identity, or both
 
     geometry_msgs::PoseStamped goal_pose;
     // offsets in x and y because we move the wirst, not the hand: needed for alignment
     goal_pose.pose.position.x = average_point.x - 0.1;
-    goal_pose.pose.position.y = average_point.y - 0.1;
+    goal_pose.pose.position.y = average_point.y - 0.06;
     goal_pose.pose.position.z = average_point.z;
 
     // TODO: insert orientation here
