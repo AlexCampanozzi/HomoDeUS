@@ -21,3 +21,4 @@ hbba_conf:
     modules:
         - bhvr_dialoguing
     custom_bringup: "pubString('/bhvr_input_goal_dialContext', params.context);"
+    custom_bringdn: "pubBoolean('/bhvr_dialog_interrupt', true);"

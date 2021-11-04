@@ -27,7 +27,7 @@ class Talking_module:
         self.talking_text = text
         # Goal input
         self.input_bhvr_goal = rospy.Subscriber("/bhvr_input_goal_talking",data_class=String,callback=self.action_Cb,queue_size=10)
-
+        self.input_bhvr_interrupt = rospy.Subscriber("/bhvr_talking_interrupt",data_class=Bool,callback=self.interrupt_cb,queue_size=5)
 
         #look if being test on robot or computer 
         #param_name = rospy.search_param('on_robot')
@@ -82,6 +82,11 @@ class Talking_module:
         This method publishes a confirmation the goal received was achieved
         """
         self.output_bhvr_result.publish(True)
+
+    def interrupt_cb(self,interrupt):
+        rospy.logwar("Interrupting talking bhvr")
+        if interrupt.data:
+            self.output_bhvr_command.cancel_all_goals()
 
     def node_shutdown(self):
         """

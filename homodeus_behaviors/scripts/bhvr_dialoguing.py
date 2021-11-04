@@ -40,6 +40,7 @@ class Dialoguing_module:
         self.repeat = 0     
         self.relevant_info = ""
         self.reach_deadline = False
+        self.interrupt = False
         self.timer = None
         self.dialoguing_now = False
         self.dialog_state = Dialog_state.begin
@@ -51,7 +52,10 @@ class Dialoguing_module:
         
 
         # Goal input
-        self.input_bhvr_goal_context = rospy.Subscriber("/bhvr_input_goal_dialContext",data_class=String, callback=self.set_context_Cb,queue_size=10)
+        self.input_bhvr_goal_context = rospy.Subscriber("/bhvr_input_goal_dialContext",data_class = String, callback=self.set_context_Cb,queue_size=10)
+
+        # Interrupt method
+        self.input_bhvr_interrupt = rospy.Subscriber("/bhvr_dialog_interrupt", data_class = Bool, callback=self.interrupt_cb, queue_size=5)
         
         # Output
         self.output_bhvr_result = rospy.Publisher("/bhvr_output_res_dialBool", Bool, queue_size=10)
@@ -74,7 +78,7 @@ class Dialoguing_module:
 
         # wait for the action server to come up
         while(not self.output_bhvr_command.wait_for_server(rospy.Duration.from_sec(5.0)) and not rospy.is_shutdown()):
-            rospy.loginfo("Waiting for the action server to come up")
+            rospy.logwarn("Waiting for the action server to come up")
 
     def set_context_Cb(self,context):
         """
@@ -86,8 +90,9 @@ class Dialoguing_module:
             the context to use when surfing in the XML file
         """
         # the new context is ignored if a dialog is happening right now
+        rospy.logwarn("--------------NEW CONTEXT-----------------")
         if not self.dialoguing_now:
-            self._reset_value()
+            self._reset_values()
             if self.dialog_context.getiterator(context.data):
                 self.selected_context = context.data
                 self.dialoguing()
@@ -142,9 +147,9 @@ class Dialoguing_module:
             goal.lang_id = self.language
             goal.text = TtsText
 
-            self.output_bhvr_command.send_goal_and_wait(goal=goal)
+        self.output_bhvr_command.send_goal_and_wait(goal=goal)
 
-        rospy.loginfo(TtsText)
+        rospy.logwarn(TtsText)
 
     def dialoguing(self):
         """
@@ -157,7 +162,7 @@ class Dialoguing_module:
         self.dialoguing_now = True
 
         # dialog should run until reaching state done
-        while self.dialog_state != Dialog_state.done:
+        while self.dialog_state != Dialog_state.done and not self.interrupt:
             if self.dialog_state == Dialog_state.begin:
                 self.talking(self._select_talking_text(self.selected_context,self.dialog_state.name))
                 self._increasing_state()
@@ -174,16 +179,22 @@ class Dialoguing_module:
             relevant_infos = self._get_relevant_info(context,listen_text)
         
             talking_state = self._update_talking_state(relevant_infos[0])
+            if not self.interrupt:
+                self._answer_client(context, talking_state, relevant_infos)
 
-            self._answer_client(context, talking_state, relevant_infos)
+                self._update_dialog_state(talking_state,relevant_infos[0])
 
-            self._update_dialog_state(talking_state,relevant_infos[0])
-
-        #what happens once the dialog done
-        self._send_relevant_info(self.relevant_info) 
-        self._reset_value()
-        self._set_timer(0)
+        if not self.interrupt:
+            #what happens once the dialog done
+            self._send_relevant_info(self.relevant_info) 
+        else:
+            self.talking("Sorry, it seems like I have urgent buisness to attend. Have a great day!")
+            self._send_relevant_info("interruption")
+            self.interrupt = False
+        self._reset_values()
         self.dialoguing_now = False
+        self.selected_context = ""
+        
 
 
     def _get_relevant_info(self,context,client_answer):
@@ -276,7 +287,7 @@ class Dialoguing_module:
         if talking_state == 'feedback':
             if self.dialog_state == Dialog_state.confirmation:
                 if 'negative' in relevant_info:
-                    self._reset_value()
+                    self._reset_values()
                 else:
                     self._increasing_state()
             else:
@@ -289,13 +300,15 @@ class Dialoguing_module:
             self.dialog_state = Dialog_state.done
             self.relevant_info = ""
 
-    def _reset_value(self):
+    def _reset_values(self):
         """ 
         This method is used to reset the value related to the dialog state
         """
         self.dialog_state = Dialog_state.begin
         self.repeat = 0
         self.reach_deadline = False
+        self._set_timer(0)
+        self.relevant_info = ""
 
     def _increasing_state(self):
         """ 
@@ -327,7 +340,7 @@ class Dialoguing_module:
             if context == 'confirmation' and 'negative' in relevant_infos[0]:
                 return
             talking_text = self._select_talking_text(context,talking_state) + \
-                 relevant_infos[1] + rel_info + relevant_infos[2] 
+                relevant_infos[1] + rel_info + relevant_infos[2] 
         else:
             talking_text = self._select_talking_text(context,talking_state)
         self.talking(talking_text)
@@ -363,6 +376,14 @@ class Dialoguing_module:
         global_context_iter = self.dialog_context.getiterator(global_context)
         outlist = global_context_iter[0].findall("./"+specific_context+"/*")
         return outlist[rand.randint(0,(len(outlist)-1))].text
+
+    def interrupt_cb(self,interrupt):
+        rospy.logwarn("Dialog being interrupted")
+        if self.dialoguing_now and interrupt.data:
+            self.interrupt = True
+
+
+                
 
     def node_shutdown(self):
         """

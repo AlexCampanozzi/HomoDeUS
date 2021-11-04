@@ -29,7 +29,7 @@ class Scenario_Selector:
         self.actual_scenario = ""
 
         self.on_robot = rospy.get_param('on_robot',False)
-
+        self.current_desire = None
         # desire called in this motv
         #self.desire_pause_id = "pause_for_keyword"
         self.desire_dialoguing_id = "listen_for_task"
@@ -38,6 +38,7 @@ class Scenario_Selector:
         # ajout de desire
         common.add_desire(self,desire_id=self.desire_keyword_id,desire_type="Keyword_detection",desire_utility=8, \
             desire_intensity=50, desire_params = "{value: 'robot'}")
+        self.current_desire = self.desire_keyword_id
 
         rospy.loginfo('--------------BOOT SEQUENCE COMPLETED----------------------')
 
@@ -59,6 +60,7 @@ class Scenario_Selector:
             common.add_desire(self,desire_id=self.desire_dialoguing_id, desire_type= "Dialoguing", desire_utility=5.0, \
                 desire_intensity=100.0, desire_params = "{context: 'scenario_selection'}")
             self.rem_desires_service([self.desire_keyword_id])
+            self.current_desire = self.desire_dialoguing_id
             self.do_not_restart = True
 
     def listen_dialog_cb(self,speechText):
@@ -71,6 +73,9 @@ class Scenario_Selector:
         speechText: String()
             what informations the robot got from it's dialog bhvr
         """
+        if self.current_desire != self.desire_dialoguing_id:
+            return
+
         if 'scenario' in str(speechText.data):
             self.startScenario(speechText.data)
 
@@ -80,6 +85,7 @@ class Scenario_Selector:
         self.rem_desires_service.call([self.desire_dialoguing_id])
         common.add_desire(self,desire_id=self.desire_keyword_id,desire_type="Keyword_detection",desire_utility=8, \
             desire_intensity=50, desire_params = "{value: 'robot'}")
+        self.current_desire = self.desire_keyword_id
 
     def cancel_scenario(self):
         """
