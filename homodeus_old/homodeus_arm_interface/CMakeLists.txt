@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_ros_move_group
   moveit_ros_visualization
   moveit_simple_controller_manager
+  play_motion
   robot_state_publisher
   roscpp
   xacro

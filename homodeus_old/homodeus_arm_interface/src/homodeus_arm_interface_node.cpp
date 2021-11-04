@@ -1,6 +1,8 @@
 #include <homodeus_arm_interface/ArmInterface.h>
 #include <tf_conversions/tf_eigen.h>
 #include <std_msgs/String.h>
+#include <play_motion_msgs/PlayMotionAction.h>
+#include <play_motion_msgs/PlayMotionGoal.h>
 
 bool rdy2close = false;
 
@@ -56,8 +58,19 @@ int main(int argc, char **argv)
     close_fingers.points[0].positions[1] = 1.60;
     close_fingers.points[0].positions[2] = 0.85;
     close_fingers.points[0].time_from_start = ros::Duration(0.5);
+    
 
+    actionlib::SimpleActionClient<play_motion_msgs::PlayMotionAction> ac("/play_motion", true);
+    ac.waitForServer();
+    
     ROS_INFO("arm_interface_node is now running!");
+
+    //Prepare grasp
+    play_motion_msgs::PlayMotionGoal goal;
+    goal.motion_name = "prepare_grasp";
+    ac.sendGoal(goal);
+    ac.waitForResult(ros::Duration(45.0));
+    ROS_INFO("Ready to take object");
 
     ros::AsyncSpinner spinner(1);
     spinner.start();
@@ -83,3 +96,4 @@ int main(int argc, char **argv)
     ros::waitForShutdown();
     return 0;
 }
+
