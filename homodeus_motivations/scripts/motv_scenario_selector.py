@@ -2,7 +2,7 @@
 import traceback
 import actionlib
 import rospy
-from std_msgs.msg import Bool, String
+from std_msgs.msg import Bool, String, UInt16
 from hbba_msgs.msg import Desire, DesiresSet, Event
 from hbba_msgs.srv import AddDesires, RemoveDesires
 from custom_msgs.msg import scenario_managerAction, scenario_managerGoal, scenario_managerResult, ttsActionAction,ttsActionGoal
@@ -22,6 +22,8 @@ class Scenario_Selector:
         # The input of the module
         self.input_motv_keyword = rospy.Subscriber("/proc_output_keywordDetect", Bool, self.listen_Keyword_cb, queue_size=10)
         self.input_motv_dialog_relevant = rospy.Subscriber("/bhvr_output_res_dialRelevant", String,self.listen_dialog_cb, queue_size=10)
+        self.input_scenario_selection = rospy.Subscriber("/god_mode_scenario_selection", UInt16, self.scenario_selector_cb, queue_size=10)
+
         rospy.wait_for_service('add_desires')
         self.add_desires_service = rospy.ServiceProxy('add_desires', AddDesires)
         self.rem_desires_service = rospy.ServiceProxy('remove_desires', RemoveDesires)
@@ -63,7 +65,7 @@ class Scenario_Selector:
             self.current_desire = self.desire_dialoguing_id
             self.do_not_restart = True
 
-    def listen_dialog_cb(self,speechText):
+    def listen_dialog_cb(self, speechText):
         """
         This method receive the information send from the dialogue bhvr and starts a scenario or cancel the actual one
         if needed
@@ -86,6 +88,14 @@ class Scenario_Selector:
         common.add_desire(self,desire_id=self.desire_keyword_id,desire_type="Keyword_detection",desire_utility=8, \
             desire_intensity=50, desire_params = "{value: 'robot'}")
         self.current_desire = self.desire_keyword_id
+
+    def scenario_selector_cb(self, scenario_number):
+        scenario_number = scenario_number.data
+        if scenario_number > 4 or scenario_number < 1:
+            rospy.logwarn("there is currently no scenario of this number")
+            return
+        scenario_name = "scenario_" + str(scenario_number)
+        self.startScenario(scenario_name)
 
     def cancel_scenario(self):
         """
