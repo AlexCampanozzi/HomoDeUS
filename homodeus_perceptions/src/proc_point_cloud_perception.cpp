@@ -211,7 +211,6 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     float avgZ = 0;
     float miny = 9999;
 
-    // we pick up objects from the right with hey5, so find rightmost point of object and standof from there
     for (auto point : noPlane->points)
         {
             avgX += point.x;
@@ -223,19 +222,34 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
                 miny = point.y;
             }
         }
-    average_point = pcl::PointXYZ(avgX/numpoints, miny, avgZ/numpoints);
+    // Hey5: we pick up objects from the right with hey5, so find rightmost point of object and standoff from there
+    // average_point = pcl::PointXYZ(avgX/numpoints, miny, avgZ/numpoints);
+
+    // Gripper: we pick at the center w/ gripper, so use all averages
+    average_point = pcl::PointXYZ(avgX/numpoints, avgY/numpoints, avgZ/numpoints);
 
     // average_point = pcl::PointXYZ(avgX/numpoints, avgY/numpoints, avgZ/numpoints);
 
     // TODO: find a way to decide orientation of pick point, either from shape, object identity, or both
 
     geometry_msgs::PoseStamped goal_pose;
-    // offsets in x and y because we move the wirst, not the hand: needed for alignment
-    goal_pose.pose.position.x = average_point.x - 0.1;
-    goal_pose.pose.position.y = average_point.y - 0.06;
+    // Hey5: offsets in x and y because we move the wirst, not the hand: needed for alignment
+    // goal_pose.pose.position.x = average_point.x - 0.1;
+    // goal_pose.pose.position.y = average_point.y - 0.04;
+
+    // Gripper: no offsets other than wrist to tool, we want the object to be in the middle
+    goal_pose.pose.position.x = average_point.x - 0.15;
+    goal_pose.pose.position.y = average_point.y;
+
     goal_pose.pose.position.z = average_point.z;
 
     // TODO: insert orientation here
+
+    // Gripper
+    goal_pose.pose.orientation.x = 1;
+    goal_pose.pose.orientation.y = 0;
+    goal_pose.pose.orientation.z = 0;
+    goal_pose.pose.orientation.w = 1;
 
     goal_pose.header.frame_id = ref_frame;
     goal_pose.header.stamp = ros::Time::now();
