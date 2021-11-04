@@ -2,10 +2,10 @@
 import traceback
 import actionlib
 import rospy
-from std_msgs.msg import Bool, String
+from std_msgs.msg import Bool, String, UInt16
 from hbba_msgs.msg import Desire, DesiresSet, Event
 from hbba_msgs.srv import AddDesires, RemoveDesires
-from custom_actions.msg import ScenarioSelectorActivatedAction, ScenarioSelectorActivatedGoal
+from custom_msgs.msg import scenario_managerAction, scenario_managerGoal, scenario_managerResult, ttsActionAction,ttsActionGoal
 
 import HomoDeUS_common_py.HomoDeUS_common_py as common
 
@@ -16,11 +16,13 @@ class Scenario_Selector:
     """
     def __init__(self):
         #initialise scenario_client so it can be modified later
-        self.scenario_client = actionlib.SimpleActionClient("Empty",ScenarioSelectorActivatedAction)
+        self.scenario_client = None
+
 
         # The input of the module
         self.input_motv_keyword = rospy.Subscriber("/proc_output_keywordDetect", Bool, self.listen_Keyword_cb, queue_size=10)
         self.input_motv_dialog_relevant = rospy.Subscriber("/bhvr_output_res_dialRelevant", String,self.listen_dialog_cb, queue_size=10)
+        self.input_scenario_selection = rospy.Subscriber("/god_mode_scenario_selection", UInt16, self.scenario_selector_cb, queue_size=10)
 
         rospy.wait_for_service('add_desires')
         self.add_desires_service = rospy.ServiceProxy('add_desires', AddDesires)
@@ -28,15 +30,19 @@ class Scenario_Selector:
 
         self.actual_scenario = ""
 
+        self.on_robot = rospy.get_param('on_robot',False)
+        self.current_desire = None
         # desire called in this motv
-        self.desire_pause_id = "pause_for_keyword"
+        #self.desire_pause_id = "pause_for_keyword"
         self.desire_dialoguing_id = "listen_for_task"
         self.desire_keyword_id = "hear_his_name"
-        
+        self.do_not_restart = False
         # ajout de desire
         common.add_desire(self,desire_id=self.desire_keyword_id,desire_type="Keyword_detection",desire_utility=8, \
-            desire_intensity=50, desire_params = "{value: 'roberto'}")
-       
+            desire_intensity=50, desire_params = "{value: 'robot'}")
+        self.current_desire = self.desire_keyword_id
+
+        rospy.loginfo('--------------BOOT SEQUENCE COMPLETED----------------------')
 
     def listen_Keyword_cb(self, detection):
         """
@@ -47,13 +53,19 @@ class Scenario_Selector:
         detection: Bool()
             if the robot heard or not it's name
         """
-        if detection.data:
+        if self.do_not_restart:
+            self.do_not_restart = False
+            return
+        if detection.data and not self.do_not_restart:
+            rospy.logwarn("------------------------")
             # self.add_desire(desire_id=self.desire_pause_id,desire_type="pause",desire_utility=5.0,desire_intensity=100.00)
             common.add_desire(self,desire_id=self.desire_dialoguing_id, desire_type= "Dialoguing", desire_utility=5.0, \
                 desire_intensity=100.0, desire_params = "{context: 'scenario_selection'}")
             self.rem_desires_service([self.desire_keyword_id])
+            self.current_desire = self.desire_dialoguing_id
+            self.do_not_restart = True
 
-    def listen_dialog_cb(self,speechText):
+    def listen_dialog_cb(self, speechText):
         """
         This method receive the information send from the dialogue bhvr and starts a scenario or cancel the actual one
         if needed
@@ -63,14 +75,27 @@ class Scenario_Selector:
         speechText: String()
             what informations the robot got from it's dialog bhvr
         """
+        if self.current_desire != self.desire_dialoguing_id:
+            return
+
         if 'scenario' in str(speechText.data):
             self.startScenario(speechText.data)
 
         if 'cancel' in str(speechText.data):
             self.cancel_scenario()
-        self.rem_desires_service.call([self.desire_pause_id, self.desire_dialoguing_id])
+
+        self.rem_desires_service.call([self.desire_dialoguing_id])
         common.add_desire(self,desire_id=self.desire_keyword_id,desire_type="Keyword_detection",desire_utility=8, \
-            desire_intensity=50, desire_params = "{value: 'roberto'}")
+            desire_intensity=50, desire_params = "{value: 'robot'}")
+        self.current_desire = self.desire_keyword_id
+
+    def scenario_selector_cb(self, scenario_number):
+        scenario_number = scenario_number.data
+        if scenario_number > 4 or scenario_number < 1:
+            rospy.logwarn("there is currently no scenario of this number")
+            return
+        scenario_name = "scenario_" + str(scenario_number)
+        self.startScenario(scenario_name)
 
     def cancel_scenario(self):
         """
@@ -91,13 +116,14 @@ class Scenario_Selector:
         """
         if self.actual_scenario is not "":
             self.cancel_scenario()
-        
-        self.scenario_client = actionlib.SimpleActionClient(scenario.split()[0],ScenarioSelectorActivatedAction)
+        action_name = scenario.split()[0]+"_manager"
+        rospy.loginfo(action_name)
+        self.scenario_client = actionlib.SimpleActionClient(action_name,scenario_managerAction)
 
         self.scenario_client.wait_for_server()
         
-        goal = ScenarioSelectorActivatedGoal()
-        goal.start_scenario = True
+        goal = scenario_managerGoal()
+        goal.execute = True
         self.scenario_client.send_goal(goal)
 
         self.actual_scenario = scenario

@@ -4,13 +4,22 @@
 
         To use it, only type :
         import HomoDeUS_common_py.HomoDeUS_common_py as common  
-""" 
+"""
 import os
 import re
 import rospy
+import unicodedata
+
+
 from ctypes import *
 from contextlib import contextmanager
 from hbba_msgs.msg import Desire
+
+try:
+    import httplib
+except:
+    import http.client as httplib
+
 
 def convert_char_array_to_string(char_array):
     """
@@ -21,12 +30,13 @@ def convert_char_array_to_string(char_array):
         ---------
         char_array: cstring or an array of chararcter 
             such as 'h','e','l','l','o',' ', 'w','o','r','l','d'
-    """   
-    str=""
+    """
+    str = ""
     try:
         return str.join(char_array)
     except:
         return "Error occured: variable non string"
+
 
 def get_file_name(file):
     """
@@ -37,8 +47,9 @@ def get_file_name(file):
         ---------
         file: string
             the absolute path usually get from __file__
-    """ 
+    """
     return os.path.splitext(os.path.basename(file))[0]
+
 
 def equalWithinTolerance(a, b, tol):
     """
@@ -53,8 +64,9 @@ def equalWithinTolerance(a, b, tol):
             The second value
         tol: int or float
             the tolerance within which the difference between the two value is considered non relevant.
-    """ 
-    return abs(a-b) <= tol
+    """
+    return abs(a - b) <= tol
+
 
 def no_caps_and_ponctuation(text):
     """
@@ -108,16 +120,17 @@ def loginfo(origin, text=""):
             should be the value telling from where rospy.logxxx was called
         text: string
             the information to log
-    """ 
+    """
     try:
-        if not isinstance(origin,(basestring,int, float, list)):
-            #should be a class instance
-            rospy.loginfo(origin.__class__.__name__ +": " + text)
+        if not isinstance(origin, (basestring, int, float, list)):
+            # should be a class instance
+            rospy.loginfo(origin.__class__.__name__ + ": " + text)
         else:
-            #should usually be the file name
+            # should usually be the file name
             rospy.loginfo(get_file_name(str(origin)) + ": " + text)
     except Exception:
         rospy.logfatal("There was a problem in the common library")
+
 
 def logerr(origin, text=""):
     """
@@ -131,16 +144,17 @@ def logerr(origin, text=""):
             should be the value telling from where rospy.logxxx was called
         text: string
             the information to log
-    """ 
+    """
     try:
-        if not isinstance(origin,(basestring,int, float, list)):
-            #should be a class instance
-            rospy.logerr(origin.__class__.__name__ +": " + text)
+        if not isinstance(origin, (basestring, int, float, list)):
+            # should be a class instance
+            rospy.logerr(origin.__class__.__name__ + ": " + text)
         else:
-            #should usually be the file name
+            # should usually be the file name
             rospy.logerr(get_file_name(str(origin)) + ": " + text)
     except Exception:
         rospy.logfatal("There was a problem in the common library")
+
 
 def logdebug(origin, text=""):
     """
@@ -154,16 +168,17 @@ def logdebug(origin, text=""):
             should be the value telling from where rospy.logxxx was called
         text: string
             the information to log
-    """ 
+    """
     try:
-        if not isinstance(origin,(basestring,int, float, list)):
-            #should be a class instance
-            rospy.logdebug(origin.__class__.__name__ +": " + text)
+        if not isinstance(origin, (basestring, int, float, list)):
+            # should be a class instance
+            rospy.logdebug(origin.__class__.__name__ + ": " + text)
         else:
-            #should usually be the file name
+            # should usually be the file name
             rospy.logdebug(get_file_name(str(origin)) + ": " + text)
     except Exception:
         rospy.logfatal("There was a problem in the common library")
+
 
 def logwarn(origin, text=""):
     """
@@ -177,16 +192,17 @@ def logwarn(origin, text=""):
             should be the value telling from where rospy.logxxx was called
         text: string
             the information to log
-    """ 
+    """
     try:
-        if not isinstance(origin,(basestring,int, float, list)):
-            #should be a class instance
-            rospy.logwarn(origin.__class__.__name__ +": " + text)
+        if not isinstance(origin, (basestring, int, float, list)):
+            # should be a class instance
+            rospy.logwarn(origin.__class__.__name__ + ": " + text)
         else:
-            #should usually be the file name
+            # should usually be the file name
             rospy.logwarn(get_file_name(str(origin)) + ": " + text)
     except Exception:
         rospy.logfatal("There was a problem in the common library")
+
 
 def logfatal(origin, text=""):
     """
@@ -200,69 +216,73 @@ def logfatal(origin, text=""):
             should be the value telling from where rospy.logxxx was called
         text: string
             the information to log
-    """ 
+    """
     try:
-        if not isinstance(origin,(basestring,int, float, list)):
-            #should be a class instance
-            rospy.logfatal(origin.__class__.__name__ +": " + text)
+        if not isinstance(origin, (basestring, int, float, list)):
+            # should be a class instance
+            rospy.logfatal(origin.__class__.__name__ + ": " + text)
         else:
-            #should usually be the file name
+            # should usually be the file name
             rospy.logfatal(get_file_name(str(origin)) + ": " + text)
     except Exception:
         rospy.logfatal("There was a problem in the common library")
 
+
 class PID:
-	def __init__(self, ref, K_P = 1.0, K_I = 1.0, K_D = 1.0):
-		self.ref = ref
+    def __init__(self, ref, K_P=1.0, K_I=1.0, K_D=1.0):
+        self.ref = ref
 
-		self.K_P = K_P
-		self.K_I = K_I
-		self.K_D = K_D
+        self.K_P = K_P
+        self.K_I = K_I
+        self.K_D = K_D
 
-		self.sum = 0.
+        self.sum = 0.
 
-		self.last_timestamp = rospy.get_time()
+        self.last_timestamp = rospy.get_time()
 
-		self.last_error = 0.
+        self.last_error = 0.
+
+    def get_next_command(self, pos, epsilon=1e-20):
+        err = pos - self.ref
+
+        now = rospy.get_time()
+        dT = now - self.last_timestamp
+
+        # Proportial term
+        P = self.K_P * err
+
+        # Integration term
+        self.sum += err * dT
+
+        I = self.K_I * self.sum
+
+        # Derivative term
+        dErr = (err - self.last_error) / (dT + epsilon)
+
+        D = self.K_D * dErr
+
+        cmd = P + I + D
+
+        self.last_timestamp = now
+
+        return cmd
+
+    def set_coefficients(self,K_P, K_I, K_D):
+        self.K_P = K_P
+        self.K_I = K_I
+        self.K_D = K_D
 
 
-  	def get_next_command(self, pos, epsilon = 1e-20):
-		err = pos - self.ref
-
-		now = rospy.get_time()
-		dT = now - self.last_timestamp
-
-		# Proportial term
-		P = self.K_P * err
-
-		# Integration term
-		self.sum += err * dT
-
-		I = self.K_I * self.sum
-
-		# Derivative term
-		dErr = (err - self.last_error) / (dT + epsilon)
-
-		D = self.K_D * dErr
-
-		cmd = P + I + D
-
-		self.last_timestamp = now
-
-		return cmd
-
-	def set_coefficients(K_P, K_I, K_D):
-		self.K_P = K_P
-		self.K_I = K_I
-		self.K_D = K_D
-
-#To hide ALSA Lib error message so it doesn't polute our log
+# To hide ALSA Lib error message so it doesn't polute our log
 ERROR_HANDLER_FUNC = CFUNCTYPE(None, c_char_p, c_int, c_char_p, c_int, c_char_p)
+
 
 def py_error_handler(filename, line, function, err, fmt):
     pass
 
+
 c_error_handler = ERROR_HANDLER_FUNC(py_error_handler)
+
 
 @contextmanager
 def noalsaerr():
@@ -270,3 +290,20 @@ def noalsaerr():
     asound.snd_lib_error_set_handler(c_error_handler)
     yield
     asound.snd_lib_error_set_handler(None)
+
+
+def check_connection():
+    conn = httplib.HTTPConnection("www.google.com", timeout=1)
+    try:
+        conn.request("HEAD", "/")
+        conn.close()
+        return True
+    except:
+        conn.close()
+        return False
+
+def remove_accents(input_str):
+    unicode_string = input_str.decode("utf-8")
+    nfkd_form = unicodedata.normalize('NFKD', unicode_string)
+    only_ascii = nfkd_form.encode('ASCII', 'ignore')
+    return only_ascii

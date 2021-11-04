@@ -1,0 +1,6 @@
+string lang_id
+string text
+---
+bool success
+---
+string feedback
