@@ -4,8 +4,9 @@ from geometry_msgs.msg import Twist
 from custom_msgs.msg import FacePositions, FacePosition
 from sensor_msgs.msg import LaserScan
 import HomoDeUS_common_py as common
+from sensor_msgs.msg import CameraInfo
 
-class ClientApproach(self):
+class ApproachClient():
     def __init__(self):
         self.vel_publisher = rospy.Publisher("/mobile_base/cmd_vel", Twist, queue_size=5)
         self.target_box_size = 80000 # actual number TBD
@@ -60,7 +61,7 @@ class ClientApproach(self):
                 main_face_width = face.width
                 main_face_height = face.height
 
-        face_size = main_face_width x main_face_width
+        face_size = main_face_width * main_face_width
 
         if common.equalWithinTolerance(face_size, self.target_box_size, self.tolerance):
             # Then we are within tolerance and don't need to do anything
@@ -107,7 +108,21 @@ class ClientApproach(self):
             self.max_range = 0
             self.min_range = 25 #The max range as start value since we look for lower 
             for i in range(midway_point - half_third, midway_point + half_third):
-                self.max_range = scan.ranges[i] if scan.ranges[i] > self.max_range
-                self.min_range = scan.ranges[i] if scan.ranges[i] < self.min_range
+
+                if scan.ranges[i] > self.max_range:
+                    self.max_range = scan.ranges[i] 
+                else: # if scan.ranges[i] < self.min_range
+                    self.min_range = scan.ranges[i]
 
             # TODO: some algo to decide what is a person vs not
+
+if __name__ == "__main__":
+
+    try:
+        rospy.init_node('approachClient', anonymous=False)
+        approachClient = ApproachClient()
+        rospy.spin()
+
+    except rospy.ROSInterruptException:
+        print("except")
+        pass
