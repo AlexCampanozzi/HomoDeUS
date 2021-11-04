@@ -1,0 +1,8 @@
+<launch>
+  <include file="$(find tiago_gazebo)/launch/tiago_gazebo.launch">
+		<arg name="world" value="homodeus_office"/>
+  </include>
+  <include file="$(find homodeus_hbba_cfg)/launch/conf_nav_simul.launch"></include>
+  <!--<include file="$(find usb_cam)/launch/usb_cam-test.launch"></include>-->
+  <include file="$(find homodeus_hbba_cfg)/hbba_cfg_out/homodeus.launch"></include>
+</launch>

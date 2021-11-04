@@ -1,0 +1,3 @@
+<launch>
+    <node name="obs_dialoguing" pkg="homodeus_motivations" type="obs_dialoguing.py" output="screen"/>
+</launch>

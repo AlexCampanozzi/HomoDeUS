@@ -1,0 +1,8 @@
+hbba_conf:
+- motivation:
+    name: dialog_observer
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/obs_dialoguing.launch"}
+    input:
+        - bhvr_output_res_dialRelevant
+    output:
+        - events
