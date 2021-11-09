@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 import rospy
+import json
 
 from base_navigation.scripts.navigator import Navigator
 from geometry_msgs.msg import PoseStamped
@@ -9,13 +10,16 @@ from tf.transformations import quaternion_from_euler, euler_from_quaternion
 
 class HBBA_nav_listener(Navigator):
     def __init__(self):
-        print "initing nav_listener"
         Navigator.__init__(self)
+
         self.registerLandmark("testPoint", 1, 0, 0)
+
         self.registerLandmark("origin")
+
         self.result_pub = rospy.Publisher("bhvr_output_res_nav_result", GoToResult, queue_size=5)
         self.add_landmark_result_pub = rospy.Publisher("bhvr_output_nav_added_landmark", String, queue_size=5)
         self.curLandmark = ""
+        rospy.loginfo("bhvr_nav init")
 
     def gotoCallback(self, data):
         self.cancelAllGoto()
@@ -26,6 +30,7 @@ class HBBA_nav_listener(Navigator):
         self.cancelAllGoto()
         self.curLandmark = data.data
         self.gotoLandmark(data.data)
+
 
     def doneCB(self, status):
         # Publish out the result of the goto action, along with current coordinates, called by parent class

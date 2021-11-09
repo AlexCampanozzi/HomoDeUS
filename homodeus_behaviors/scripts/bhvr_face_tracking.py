@@ -40,6 +40,7 @@ class FaceTracking:
         self.pid_y = common.PID(self.img_center_y, K_P=-0.0010, K_I=-0.0001, K_D=-0.00005)
 
     def _head_callback(self, detections):
+        rospy.loginfo("face detected face tracking")
         main_face_x = 0
         main_face_y = 0
         main_face_dist = 1000000

@@ -20,3 +20,4 @@ hbba_conf:
     modules:
         - bhvr_talking
     custom_bringup: "pubString('/bhvr_input_goal_talking',params.TtsText);"
+    custom_bringdn: "pubBoolean('/bhvr_talking_interrupt', true);"

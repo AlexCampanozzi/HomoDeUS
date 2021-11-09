@@ -5,15 +5,16 @@
             <question>What can I do for you?</question>
             <question>I am listening</question>
             <question>What do you need?</question>
-            <question>You want something dog?</question>
+            <!--<question>You want something dog?</question>-->
             <question>Listening to your needs</question>
         </begin>
         <listen>
             <answer rel_info="scenario_1" prefix="do ">scenario one</answer>
             <answer rel_info="scenario_1" prefix="do ">first scenario</answer>
             <answer rel_info="scenario_1" prefix="do ">take order</answer>
-            <answer rel_info="scenario_1" prefix="do ">take command</answer>
+            <!--<answer rel_info="scenario_1" prefix="do ">take the order</answer>-->
             <answer rel_info="scenario_1" prefix="do ">see client</answer>
+            <!--<answer rel_info="scenario_1" prefix="do ">see the client</answer>-->
             <answer rel_info="scenario_1" prefix="do ">script one</answer>
             
             <answer rel_info="scenario_2" prefix="do ">scenario two</answer>
@@ -68,11 +69,12 @@
             <answer> Sorry, I'm not sure I understood, could you repeat?</answer>
             <answer> I'm not sure I can help, could you repeat to be sure?</answer>
             <answer> Hmmm, what?</answer>
-            <answer> Sorry, my ears must have oil in it, could speak louder?</answer>
-            <answer> Daddy did not hear right, could you repeat boss?</answer>
+            <answer> Sorry, my ears must have oil in them, could you speak louder?</answer>
+            <!--<answer> Daddy did not hear right, could you repeat boss?</answer>-->
         </repeat>
         <deadline>
             <answer> Sorry, I don't think I can help, have a great day</answer>
+            <answer> It seems like I can't help, maybe ask another waiter</answer>
             <answer> It seems like I can't help, maybe ask to an other waiter</answer>
             <answer> I should go back to what I was doing, Goodbye </answer>
             <answer> Ain't nobody got time for that!</answer>
@@ -80,7 +82,7 @@
         <nothing>
             <answer> I will be happy to help you when you will need it!</answer>
             <answer> Okay, have a nice day! </answer>
-            <answer> No problemo mi amigo, Goodbye!</answer>
+            <answer> No problemo me amigo, Goodbye!</answer>
             <answer> I understand. If you need something later, call my name</answer>
             <answer> All right, I'll go back to what I was doing</answer>
             <answer> Goodbye</answer>
@@ -89,7 +91,7 @@
             <question>If I understood well, you want me to </question>
             <question>So I should </question>
             <question>Correct me if I am wrong, but I have to </question>
-            <question>Hey Big shot, please confirm me that I have to </question>
+            <!--<question>Hey Big shot, please confirm me that I have to </question>-->
         </feedback>
     </scenario_selection>
     <menu_selection timer="20">

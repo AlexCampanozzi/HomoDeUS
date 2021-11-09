@@ -7,11 +7,16 @@ from actionlib_msgs.msg import *
 from geometry_msgs.msg import Point, Pose
 import tf_lookup.srv
 from tf.transformations import quaternion_from_euler, euler_from_quaternion
-
+import json 
+import os 
 class Navigator:
     def __init__(self):
         self.landmarks = {}
-        
+        landmarks_file = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))+'/homodeus_common/landmarks.json'
+
+        with open(landmarks_file) as json_file:
+            self.landmarks = json.load(json_file)
+
         # define a client to send goal requests to the move_base server through a SimpleActionClient
         self.ac = actionlib.SimpleActionClient("move_base", MoveBaseAction)
 
@@ -37,6 +42,7 @@ class Navigator:
 
     def gotoGoal(self, goal):
         rospy.loginfo("Sending goal location ...")
+
         self.ac.send_goal(goal, self.gotoDoneCB)
 
         # Old way of doing it, we non-blocking now
@@ -53,9 +59,10 @@ class Navigator:
                 self.doneCB(False)
 
     def goalToLandmark(self, goal):
+        goal = MoveBaseGoal()
         position = goal.target_pose.pose.position
         orientation = goal.target_pose.pose.orientation
-        orientation  = euler_from_quaternion(orientation.x, orientation.y, orientation.z, orientation.w)[2]
+        orientation  = euler_from_quaternion((orientation.x, orientation.y, orientation.z, orientation.w))[2]
         landmark = [position.x, position.y, 0, 0, 0, orientation]
         return landmark
 
@@ -66,7 +73,11 @@ class Navigator:
 
         goal  =  MoveBaseGoal()
         goal.target_pose.pose.position = Point(x, y, 0)
-        goal.target_pose.pose.orientation = quaternion_from_euler(0, 0, yaw)
+        orientation_list = quaternion_from_euler(0, 0, yaw)
+        goal.target_pose.pose.orientation.x = orientation_list[0]
+        goal.target_pose.pose.orientation.y = orientation_list[1]
+        goal.target_pose.pose.orientation.z = orientation_list[2]
+        goal.target_pose.pose.orientation.w = orientation_list[3]
         goal.target_pose.header.frame_id = "map"
         goal.target_pose.header.stamp = rospy.Time(0)
         return goal
@@ -82,8 +93,11 @@ class Navigator:
             # landmarkGoal.target_pose.pose.orientation.w += 3.1415
         else:
             landmarkGoal.target_pose.pose.position = Point(x, y, 0)
-            landmarkGoal.target_pose.pose.orientation = quaternion_from_euler(0, 0, yaw)
-        
+            orientation_list = quaternion_from_euler(0, 0, yaw)
+            landmarkGoal.target_pose.pose.orientation.x = orientation_list[0]
+            landmarkGoal.target_pose.pose.orientation.y = orientation_list[1]
+            landmarkGoal.target_pose.pose.orientation.z = orientation_list[2]
+            landmarkGoal.target_pose.pose.orientation.w = orientation_list[3]
         landmarkGoal.target_pose.header.frame_id = "map"
         #Time will have to be overwritten before actually sending the goal
         landmarkGoal.target_pose.header.stamp = rospy.Time(0)
@@ -94,6 +108,7 @@ class Navigator:
             rospy.loginfo("Name does not correspond to any known landmark")
             return
         goal = self.landmarkToGoal(self.landmarks[name])
+
         goal.target_pose.header.stamp = rospy.Time(0)
         self.gotoGoal(goal)
 
@@ -111,4 +126,5 @@ class Navigator:
         pose = Pose()
         pose.position = response.transform.transform.translation
         pose.orientation = response.transform.transform.rotation
+        print(self.landmarks)
         return pose

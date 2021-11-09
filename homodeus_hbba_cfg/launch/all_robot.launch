@@ -1,0 +1,3 @@
+<launch>
+  <include file="$(find homodeus_hbba_cfg)/hbba_cfg_out/homodeus.launch"></include>
+</launch>

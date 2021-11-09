@@ -9,6 +9,7 @@ import random as rand
 from threading import Timer
 import speech_recognizer.SpeechRecognizer as sr
 import pal_interaction_msgs.msg
+from custom_msgs.msg import ttsActionAction, ttsActionGoal
 import xml.etree.ElementTree as ET
 from enum import Enum
 from std_msgs.msg import String, Bool
@@ -26,7 +27,8 @@ class Dialoguing_module:
     """
     This class provides a sort of chatbot so the robot can have fluid interaction with people
     """
-    def __init__(self, language = "en_GB"):
+
+    def __init__(self, language = "en-GB"):
 
         dialog_context_xml_path=os.path.join(os.path.dirname(__file__), '../../homodeus_external/xml_folder/dialog_context.xml') 
         self.dialog_context = ET.parse(dialog_context_xml_path).getroot()
@@ -38,25 +40,29 @@ class Dialoguing_module:
         self.repeat = 0     
         self.relevant_info = ""
         self.reach_deadline = False
+        self.interrupt = False
         self.timer = None
         self.dialoguing_now = False
         self.dialog_state = Dialog_state.begin
 
         # the code works differently if it's run on the robot or not
-        param_name = rospy.search_param('on_robot')
-        self.on_robot = rospy.get_param(param_name,False)
+        #param_name = rospy.search_param('on_robot')
+        self.on_robot = rospy.get_param('on_robot',False)
+
         
 
         # Goal input
-        self.input_bhvr_goal_context = rospy.Subscriber("/bhvr_input_goal_dialContext",data_class=String, callback=self.set_context_Cb,queue_size=10)
+        self.input_bhvr_goal_context = rospy.Subscriber("/bhvr_input_goal_dialContext",data_class = String, callback=self.set_context_Cb,queue_size=10)
+
+        # Interrupt method
+        self.input_bhvr_interrupt = rospy.Subscriber("/bhvr_dialog_interrupt", data_class = Bool, callback=self.interrupt_cb, queue_size=5)
         
         # Output
         self.output_bhvr_result = rospy.Publisher("/bhvr_output_res_dialBool", Bool, queue_size=10)
         self.output_bhvr_relevant = rospy.Publisher("/bhvr_output_res_dialRelevant", String, queue_size=10)
 
         # dialog only use tts_server when it's run on the robot
-        if self.on_robot:
-            self.connect_to_tts_server()
+        self.connect_to_tts_server()
         
         self.speech_recognizer = sr.SpeechRecognizer()
         
@@ -65,11 +71,14 @@ class Dialoguing_module:
         """
         This method connects the node to the tts_server so it can later send sentence to be pronounce by the robot
         """
-        self.output_bhvr_command = actionlib.SimpleActionClient("tts", pal_interaction_msgs.msg.TtsAction)
+        if self.on_robot:
+            self.output_bhvr_command = actionlib.SimpleActionClient("tts", pal_interaction_msgs.msg.TtsAction)
+        else:
+            self.output_bhvr_command = actionlib.SimpleActionClient("tts", ttsActionAction)
 
         # wait for the action server to come up
         while(not self.output_bhvr_command.wait_for_server(rospy.Duration.from_sec(5.0)) and not rospy.is_shutdown()):
-            rospy.loginfo("Waiting for the action server to come up")
+            rospy.logwarn("Waiting for the action server to come up")
 
     def set_context_Cb(self,context):
         """
@@ -81,8 +90,9 @@ class Dialoguing_module:
             the context to use when surfing in the XML file
         """
         # the new context is ignored if a dialog is happening right now
+        rospy.logwarn("--------------NEW CONTEXT-----------------")
         if not self.dialoguing_now:
-            self._reset_value()
+            self._reset_values()
             if self.dialog_context.getiterator(context.data):
                 self.selected_context = context.data
                 self.dialoguing()
@@ -132,10 +142,14 @@ class Dialoguing_module:
             goal = pal_interaction_msgs.msg.TtsGoal()
             goal.rawtext.lang_id = self.language
             goal.rawtext.text = TtsText
+        else:
+            goal = ttsActionGoal()
+            goal.lang_id = self.language
+            goal.text = TtsText
 
-            self.output_bhvr_command.send_goal_and_wait(goal=goal)
+        self.output_bhvr_command.send_goal_and_wait(goal=goal)
 
-        rospy.loginfo(TtsText)
+        rospy.logwarn(TtsText)
 
     def dialoguing(self):
         """
@@ -148,13 +162,13 @@ class Dialoguing_module:
         self.dialoguing_now = True
 
         # dialog should run until reaching state done
-        while self.dialog_state != Dialog_state.done:
+        while self.dialog_state != Dialog_state.done and not self.interrupt:
             if self.dialog_state == Dialog_state.begin:
                 self.talking(self._select_talking_text(self.selected_context,self.dialog_state.name))
                 self._increasing_state()
                 context =self.selected_context
+                # set a timer so the discussion does not wander
                 self._set_timer(self.dialog_context.getiterator(context)[0].get('timer'))
-
             listen_text = common.no_caps_and_ponctuation(self.speech_recognizer.speech_to_text())
             rospy.logdebug(listen_text)
 
@@ -165,16 +179,22 @@ class Dialoguing_module:
             relevant_infos = self._get_relevant_info(context,listen_text)
         
             talking_state = self._update_talking_state(relevant_infos[0])
+            if not self.interrupt:
+                self._answer_client(context, talking_state, relevant_infos)
 
-            self._answer_client(context, talking_state, relevant_infos)
+                self._update_dialog_state(talking_state,relevant_infos[0])
 
-            self._update_dialog_state(talking_state,relevant_infos[0])
-
-        #what happens once the dialog done
-        self._send_relevant_info(self.relevant_info) 
-        self._reset_value()
-        self._set_timer(0)
+        if not self.interrupt:
+            #what happens once the dialog done
+            self._send_relevant_info(self.relevant_info) 
+        else:
+            self.talking("Sorry, it seems like I have urgent buisness to attend. Have a great day!")
+            self._send_relevant_info("interruption")
+            self.interrupt = False
+        self._reset_values()
         self.dialoguing_now = False
+        self.selected_context = ""
+        
 
 
     def _get_relevant_info(self,context,client_answer):
@@ -267,7 +287,7 @@ class Dialoguing_module:
         if talking_state == 'feedback':
             if self.dialog_state == Dialog_state.confirmation:
                 if 'negative' in relevant_info:
-                    self._reset_value()
+                    self._reset_values()
                 else:
                     self._increasing_state()
             else:
@@ -280,13 +300,15 @@ class Dialoguing_module:
             self.dialog_state = Dialog_state.done
             self.relevant_info = ""
 
-    def _reset_value(self):
+    def _reset_values(self):
         """ 
         This method is used to reset the value related to the dialog state
         """
         self.dialog_state = Dialog_state.begin
         self.repeat = 0
         self.reach_deadline = False
+        self._set_timer(0)
+        self.relevant_info = ""
 
     def _increasing_state(self):
         """ 
@@ -313,9 +335,12 @@ class Dialoguing_module:
         if talking_state == "feedback":       
             if self.selected_context == "menu_selection":
                 rel_info = rel_info.replace(" "," and ")
-           
+            if self.selected_context == "scenario_selection":
+                rel_info = rel_info.replace("_"," ")
+            if context == 'confirmation' and 'negative' in relevant_infos[0]:
+                return
             talking_text = self._select_talking_text(context,talking_state) + \
-                 relevant_infos[1] + rel_info + relevant_infos[2] 
+                relevant_infos[1] + rel_info + relevant_infos[2] 
         else:
             talking_text = self._select_talking_text(context,talking_state)
         self.talking(talking_text)
@@ -351,6 +376,14 @@ class Dialoguing_module:
         global_context_iter = self.dialog_context.getiterator(global_context)
         outlist = global_context_iter[0].findall("./"+specific_context+"/*")
         return outlist[rand.randint(0,(len(outlist)-1))].text
+
+    def interrupt_cb(self,interrupt):
+        rospy.logwarn("Dialog being interrupted")
+        if self.dialoguing_now and interrupt.data:
+            self.interrupt = True
+
+
+                
 
     def node_shutdown(self):
         """

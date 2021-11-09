@@ -33,19 +33,19 @@ class SpeechRecognizer:
         """
         with common.noalsaerr():
             with sr.Microphone() as source:
-                self.speech_recognizer.adjust_for_ambient_noise(source, duration=1) 
+                self.speech_recognizer.adjust_for_ambient_noise(source, duration=0.5) 
                 rospy.loginfo("Listening...")
                 audio = self.speech_recognizer.listen(source)
 
                 try:
-                    #rospy.loginfo("------------------GoogleAPI-------------------")
+                    rospy.loginfo("------------------GoogleAPI-------------------")
                     speech = self.speech_recognizer.recognize_google(audio, language=self.language)
                     return speech
 
                 except LookupError:
-                    #rospy.loginfo("------------------LookupError-------------------")
+                    rospy.loginfo("------------------LookupError-------------------")
                     return ""
 
                 except sr.UnknownValueError:
-                    #rospy.loginfo("------------------UnknownValue---------------------")
+                    rospy.loginfo("------------------UnknownValue---------------------")
                     return ""

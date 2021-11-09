@@ -1,3 +1,0 @@
-<launch>
-    <node name="motv_keyword_detection_observer" pkg="homodeus_motivations" type="motv_keyword_detection_observer.py" output="screen"/>
-</launch>
