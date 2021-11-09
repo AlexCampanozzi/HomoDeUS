@@ -37,6 +37,20 @@ trajectory_msgs::JointTrajectory closedGripper()
     return close_fingers;
 }
 
+trajectory_msgs::JointTrajectory openedGripper()
+{
+    trajectory_msgs::JointTrajectory open_fingers;
+    open_fingers.joint_names.resize(2);
+    open_fingers.joint_names[0] = "gripper_left_finger_joint";
+    open_fingers.joint_names[1] = "gripper_right_finger_joint";
+    open_fingers.points.resize(1);
+    open_fingers.points[0].positions.resize(2);
+    open_fingers.points[0].positions[0] = 0.04;
+    open_fingers.points[0].positions[1] = 0.04;
+    open_fingers.points[0].time_from_start = ros::Duration(0.5);
+    return open_fingers;
+}
+
 void poseCB(const geometry_msgs::PoseStampedConstPtr posestamped)
 {
     pick_point = *posestamped;
@@ -86,30 +100,51 @@ int main(int argc, char **argv)
 
     // gripper
     auto close_effector = closedGripper();
-    auto controller_topic = "/gripper_controller/command";
+    auto open_effector = openedGripper();
 
-    ros::Publisher finger_pub = n.advertise<trajectory_msgs::JointTrajectory>(controller_topic, 5);
-
+    actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> aac("/arm_controller/follow_joint_trajectory", true);
     actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction> gac("/gripper_controller/follow_joint_trajectory", true);
+    aac.waitForServer();
     gac.waitForServer();
 
     control_msgs::FollowJointTrajectoryGoal close_gripper_goal;
     close_gripper_goal.trajectory = close_effector;
+
+    control_msgs::FollowJointTrajectoryGoal open_gripper_goal;
+    open_gripper_goal.trajectory = open_effector;
 
     ROS_INFO("arm_interface_node is now running!");
 
     ros::AsyncSpinner spinner(1);
     spinner.start();
 
+    // Go to approach pose right away when node is launched
+    // TODO make that happen in callback instead to avoid breaking in hbba
+    // ROS_INFO("Going to grasp preparation pose");
+    ArmInterface arm;
+    bool success;
+    success = arm.moveToJoint(0.34, 0.20, 0.79, 0.01, 2.10, -1.5, 1.37, 0.0);
+    success = arm.moveToJoint(0.34, 0.20, 0.79, -1.50, 1.60, -1.20, 1.37, 0.0);
+    success = arm.moveToJoint(0.34, 0.20, 0.79, -1.50, 1.60, -1.20, 0.14, 0.0);
+    gac.sendGoalAndWait(open_gripper_goal, ros::Duration(2));
+
+    if (success)
+    {
+        ROS_INFO("Now at grasp preparation pose");
+    }
+    else
+    {
+        ROS_INFO("Failed to go to grasp preparation pose in time");
+    }
+
     double frequency = 5;
     ros::Rate rate(frequency);
-    while ( ros::ok())
+    while ( ros::ok() )
     {
         ros::spinOnce();
         rate.sleep();
         if(rdy2close)
         {
-            finger_pub.publish(close_effector);
             gac.sendGoal(close_gripper_goal);
             ROS_INFO("Closing fingers");
             rdy2close = false;
