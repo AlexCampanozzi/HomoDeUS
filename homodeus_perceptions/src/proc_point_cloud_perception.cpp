@@ -11,6 +11,8 @@ CloudObjectFinder::CloudObjectFinder(ros::NodeHandle& nh): _nh(nh)
     noplane_pub = _nh.advertise<sensor_msgs::PointCloud2>("/noplane_cloud", 5);
     filtered_pub = _nh.advertise<sensor_msgs::PointCloud2>("/filtered_cloud", 5);
     pick_point_pub = _nh.advertise<geometry_msgs::PoseStamped>("/pick_point", 5);
+
+
 }
 
 void CloudObjectFinder::imageInfoCallback(const sensor_msgs::CameraInfoConstPtr& info)
@@ -75,7 +77,6 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     ROS_INFO("Cloud now has %lu points", scene_cloud.size());
     ROS_INFO("Cloud is now dense: %d", scene_cloud.is_dense);
 
-    // TODO: passthrough here depending on the position of the object detected in the image (may need head angle as input to do something clean?)
     // Put through passthrough filter to conserve only the points in the general region where we expect the target to be
     auto detectedXpix = (latest_detection.xmax + latest_detection.xmin)/2;
     auto detectedYpix = (latest_detection.ymax + latest_detection.ymin)/2;
@@ -89,6 +90,7 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     // auto detectedZ = latest_detection.pose.position.z;
 
     // Define a box around the detection in which we keep information 
+    // TODO: passthrough here depending on the dimensions instead of center position
     float box_half_width = 0.1;
     float box_half_height = 0.2;
 
@@ -115,30 +117,21 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
 
     pcl::toROSMsg(point_cloud_filtered, _filtered_cloud);
     _filtered_cloud.header.frame_id = "xtion_rgb_optical_frame";
-    ros::Timer filtered_timer = _nh.createTimer(ros::Duration(2), &CloudObjectFinder::filteredTimerCallback, this);
-    filtered_timer.start();
+    // ros::Timer filtered_timer = _nh.createTimer(ros::Duration(2), &CloudObjectFinder::filteredTimerCallback, this);
+    // filtered_timer.start();
     filtered_pub.publish(_filtered_cloud);
     ROS_INFO("Cloud now has %lu points", point_cloud_filtered.size());
-
-    // Detection will be from a 2D image: no info on depth, and therefore we keep all of it
-    // NOTE: could map point to depth seen at that pixel in depth image to get z info
-    // pcl::PassThrough<pcl::PointXYZ> passz;
-    // passz.setInputCloud(point_cloud_xyfiltered.makeShared());
-    // passz.setFilterFieldName("z");
-    // passz.setFilterLimits(-2, 3);
-    // //pass.setFilterLimitsNegative (true);
-    // passz.filter(point_cloud_filtered);
 
 
     // Put the worked cloud in the robot's frame so operation directions make sense to us
     auto curTime = ros::Time::now();
-    auto curTransform = tfBuffer.lookupTransform("base_link", scene_cloud.header.frame_id, curTime, ros::Duration(10));
-    // pcl_ros::transformPointCloud("base_link", curTime, scene_cloud, scene_cloud.header.frame_id, scene_cloud, tfBuffer);
-    pcl_ros::transformPointCloud("base_link", curTime, point_cloud_filtered, scene_cloud.header.frame_id, point_cloud_filtered, tfBuffer);
+    auto curTransform = tfBuffer.lookupTransform(ref_frame, scene_cloud.header.frame_id, curTime, ros::Duration(10));
+    // pcl_ros::transformPointCloud(ref_frame, curTime, scene_cloud, scene_cloud.header.frame_id, scene_cloud, tfBuffer);
+    pcl_ros::transformPointCloud(ref_frame, curTime, point_cloud_filtered, scene_cloud.header.frame_id, point_cloud_filtered, tfBuffer);
 
 
     // pcl::toROSMsg(scene_cloud, _filtered_cloud);
-    // _filtered_cloud.header.frame_id = "base_link";
+    // _filtered_cloud.header.frame_id = ref_frame;
     // filtered_pub.publish(_filtered_cloud);
 
     ROS_INFO("Moved to base_link frame");
@@ -169,24 +162,40 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     // Make new cloud with inliers only
     pcl::copyPointCloud(point_cloud_filtered, *inliers, planeCloud);
 
-    // Make new cloud with outliers: without the plane
+    // Old: Make new cloud with outliers: without the plane
     pcl::PointCloud<pcl::PointXYZ>::Ptr noPlane(new pcl::PointCloud<pcl::PointXYZ>);
     ROS_INFO("noplane initial frame: %s", noPlane->header.frame_id.c_str());
-    noPlane->header.frame_id = "base_link";
-    pcl::ExtractIndices<pcl::PointXYZ> extract;
-    extract.setInputCloud(point_cloud_filtered.makeShared());
-    extract.setIndices(inliers);
-    extract.setNegative(true);
-    extract.filter(*noPlane);
+    noPlane->header.frame_id = ref_frame;
+    // pcl::ExtractIndices<pcl::PointXYZ> extract;
+    // extract.setInputCloud(point_cloud_filtered.makeShared());
+    // extract.setIndices(inliers);
+    // extract.setNegative(true);
+    // extract.filter(*noPlane);
 
-    // TODO?: add passthrough in z to remove anything below top of table if plane extraction alone is not enough
+    // New: Passthrough in z to remove anything below top of table
+
+    float maxz = -999;
+    for (auto point : planeCloud)
+    {
+        if(point.z > maxz)
+        {
+            maxz = point.z;
+        }
+    }
+
+    pcl::PassThrough<pcl::PointXYZ> passz;
+    passz.setInputCloud(point_cloud_filtered.makeShared());
+    passz.setFilterFieldName("z");
+    passz.setFilterLimits(-999, maxz);
+    passz.setFilterLimitsNegative (true);
+    passz.filter(*noPlane);
 
     pcl::io::savePCDFile("noplane.pcd", *noPlane);
     pcl::toROSMsg(*noPlane, _noplane_cloud);
-    ros::Timer noplane_timer = _nh.createTimer(ros::Duration(2), &CloudObjectFinder::noplaneTimerCallback, this);
-    noplane_timer.start();
+    // ros::Timer noplane_timer = _nh.createTimer(ros::Duration(2), &CloudObjectFinder::noplaneTimerCallback, this);
+    // noplane_timer.start();
     ROS_INFO("noplane final frame: %s", _noplane_cloud.header.frame_id.c_str());
-    _noplane_cloud.header.frame_id = "base_link";
+    _noplane_cloud.header.frame_id = ref_frame;
     noplane_pub.publish(_noplane_cloud);
 
     ROS_INFO("Removed plane");
@@ -200,6 +209,7 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     float avgX = 0;
     float avgY = 0;
     float avgZ = 0;
+    float miny = 9999;
 
     for (auto point : noPlane->points)
         {
@@ -207,57 +217,60 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
             avgY += point.y;
             avgZ += point.z;
             numpoints += 1;
+            if(point.y < miny)
+            {
+                miny = point.y;
+            }
         }
+    // Hey5: we pick up objects from the right with hey5, so find rightmost point of object and standoff from there
+    // average_point = pcl::PointXYZ(avgX/numpoints, miny, avgZ/numpoints);
 
+    // Gripper: we pick at the center w/ gripper, so use all averages
     average_point = pcl::PointXYZ(avgX/numpoints, avgY/numpoints, avgZ/numpoints);
+
+    // average_point = pcl::PointXYZ(avgX/numpoints, avgY/numpoints, avgZ/numpoints);
 
     // TODO: find a way to decide orientation of pick point, either from shape, object identity, or both
 
     geometry_msgs::PoseStamped goal_pose;
-    goal_pose.pose.position.x = average_point.x;
+    // Hey5: offsets in x and y because we move the wirst, not the hand: needed for alignment
+    // goal_pose.pose.position.x = average_point.x - 0.1;
+    // goal_pose.pose.position.y = average_point.y - 0.04;
+
+    // Gripper: no offsets other than wrist to tool, we want the object to be in the middle
+    goal_pose.pose.position.x = average_point.x - 0.15;
     goal_pose.pose.position.y = average_point.y;
+
     goal_pose.pose.position.z = average_point.z;
 
     // TODO: insert orientation here
 
-    goal_pose.header.frame_id = "base_link";
+    // Gripper
+    goal_pose.pose.orientation.x = 1;
+    goal_pose.pose.orientation.y = 0;
+    goal_pose.pose.orientation.z = 0;
+    goal_pose.pose.orientation.w = 1;
+
+    goal_pose.header.frame_id = ref_frame;
     goal_pose.header.stamp = ros::Time::now();
     _pick_pose = goal_pose;
     ROS_INFO("Pick pose found");
-    ros::Timer pickpoint_timer = _nh.createTimer(ros::Duration(2), &CloudObjectFinder::pickpointTimerCallback, this);
-    pickpoint_timer.start();
+    std::cout << "pose: " << std::endl << _pick_pose << std::endl;
+    // ros::Timer pickpoint_timer = _nh.createTimer(ros::Duration(2), &CloudObjectFinder::pickpointTimerCallback, this);
+    // pickpoint_timer.start();
     pick_point_pub.publish(_pick_pose);
+    got_pick_pose = true;
 
-}
-
-int main(int argc, char **argv)
-{
-  ros::init(argc,argv,"homodeus_proc_point_cloud_perception_node");
-
-  ros::NodeHandle nh;
-
-  double frequency = 5;
-
-  ROS_INFO("Creating cloud object finder");
-
-  CloudObjectFinder finder(nh);
-  ROS_INFO("Spinning to serve callbacks ...");
-
-//   ros::Rate rate(frequency);
-//   while ( ros::ok() )
-//   {
-//     ros::spinOnce();
-//     rate.sleep();
-//   }
-
-    while ( ros::ok() )
-  {
-    ros::spin();
-  }
-
-  
-
-  return 0;
+    // Feed pos directly into arm controller for initial testing approach
+    // if(arm_interface.moveToCartesian(goal_pose.pose.position.x, goal_pose.pose.position.y, goal_pose.pose.position.z, 0, 0, 0))
+    // {
+    //     ROS_INFO("Succesfully moved to pose");
+    // }
+    // else
+    // {
+    //     ROS_INFO("Unable to move ");
+    // }
+    
 }
 
 void CloudObjectFinder::noplaneTimerCallback(const ros::TimerEvent&)
@@ -274,4 +287,50 @@ void CloudObjectFinder::pickpointTimerCallback(const ros::TimerEvent&)
 {
     ROS_INFO("Publishing pose");
     pick_point_pub.publish(_pick_pose);
+}
+
+
+int main(int argc, char **argv)
+{
+    ros::init(argc,argv,"homodeus_proc_point_cloud_perception_node");
+
+    ros::NodeHandle nh;
+
+    double frequency = 5;
+
+    ROS_INFO("Creating cloud object finder");
+
+    CloudObjectFinder finder(nh);
+    // ArmInterface arm_interface(ref_frame);
+    ROS_INFO("Spinning to serve callbacks ...");
+
+    ros::AsyncSpinner spinner(1);
+    spinner.start();
+
+    // ros::Rate rate(frequency);
+    // while ( ros::ok() && !finder.pick_pose_found() )
+    // {
+    //     ros::spinOnce();
+    //     rate.sleep();
+    // }
+
+    // if(ros::ok())
+    // {
+    //     auto position = finder.get_pick_pose().pose.position;
+    //     ROS_INFO("arm_interface will attempt to move the arm in cartesian space.");
+    //     auto success = arm_interface.moveToCartesian(position.x-0.2, position.y, position.z, 0, 0, 0);
+    //     if (success)
+    //         ROS_INFO("arm_interface_node: succeeded!");
+
+    //     else
+    //         ROS_INFO("arm_interface_node: failed!");
+
+
+    //     ros::waitForShutdown();   
+    // }
+
+    ros::waitForShutdown();
+     
+
+    return 0;
 }
