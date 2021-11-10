@@ -6,9 +6,12 @@ from sensor_msgs.msg import LaserScan
 import HomoDeUS_common_py as common
 from sensor_msgs.msg import CameraInfo
 
+from geometry_msgs.msg import PoseStamped
+
 class ApproachClient():
     def __init__(self):
         self.vel_publisher = rospy.Publisher("/mobile_base/cmd_vel", Twist, queue_size=5)
+        self.pub = rospy.Publisher('tiago_head_controller', PoseStamped, queue_size=5)
         self.target_box_size = 80000 # actual number TBD
         self.tolerance = 500 # actual number TBD
         # We are looking to be around 1.6-2m from the client
@@ -31,8 +34,19 @@ class ApproachClient():
 
         # To make getting scan params a one-shot
         self.got_scan_params = False
-
         self.too_close = False
+
+        poseStamped = PoseStamped()
+
+        x = -30
+        y = 0
+
+        poseStamped.pose.position.x = x
+        poseStamped.pose.position.y = y
+
+        #rospy.loginfo("sent pose")
+
+        self.pub.publish(poseStamped)
 
     def approach(self):
         self.boxes_listener = rospy.Subscriber('bhvr_input_faces', FacePositions, self.facesCB)
