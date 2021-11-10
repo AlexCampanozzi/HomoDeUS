@@ -78,7 +78,7 @@ class Dialoguing_module:
 
         # wait for the action server to come up
         while(not self.output_bhvr_command.wait_for_server(rospy.Duration.from_sec(5.0)) and not rospy.is_shutdown()):
-            rospy.logwarn("Waiting for the action server to come up")
+            rospy.loginfo("Waiting for the action server to come up")
 
     def set_context_Cb(self,context):
         """
@@ -90,7 +90,6 @@ class Dialoguing_module:
             the context to use when surfing in the XML file
         """
         # the new context is ignored if a dialog is happening right now
-        rospy.logwarn("--------------NEW CONTEXT-----------------")
         if not self.dialoguing_now:
             self._reset_values()
             if self.dialog_context.getiterator(context.data):
@@ -149,7 +148,7 @@ class Dialoguing_module:
 
         self.output_bhvr_command.send_goal_and_wait(goal=goal)
 
-        rospy.logwarn(TtsText)
+        rospy.loginfo(TtsText)
 
     def dialoguing(self):
         """
