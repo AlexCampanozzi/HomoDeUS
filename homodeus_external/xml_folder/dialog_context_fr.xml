@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<context>
+    <scenario_selection timer="15">
+        <begin>
+            <question>Que puis-je faire pour vous servir?</question>
+            <question>Je suis à l'écoute</question>
+            <question>De quoi avez-vous besoin?</question>
+            <question>Comment puis-je vous aider?</question>
+        </begin>
+        <listen>
+            <answer rel_info="scenario_1" prefix="do ">premier sénario</answer>
+            <answer rel_info="scenario_1" prefix="do ">scénario un</answer>
+            <answer rel_info="scenario_1" prefix="do ">prendre la commande</answer>
+            <answer rel_info="scenario_1" prefix="do ">situation un</answer>
+            <answer rel_info="scenario_1" prefix="do ">première situation</answer>
+            
+            <answer rel_info="scenario_2" prefix="do ">scénario deux</answer>
+            <answer rel_info="scenario_2" prefix="do ">deuxième scenario</answer>
+            <answer rel_info="scenario_2" prefix="do ">apporter commande</answer>
+            <answer rel_info="scenario_2" prefix="do ">servir client</answer>
+            <answer rel_info="scenario_2" prefix="do ">apporter plats</answer>
+            <answer rel_info="scenario_2" prefix="do ">apporter nouriture</answer>
+            <answer rel_info="scenario_2" prefix="do ">deuxième situation</answer>
+            
+            <answer rel_info="scenario_3" prefix="do ">scénario trois</answer>
+            <answer rel_info="scenario_3" prefix="do ">troisième scénario</answer>
+            <answer rel_info="scenario_3" prefix="do ">prendre plats</answer>
+            <answer rel_info="scenario_3" prefix="do ">vider table</answer>
+            <answer rel_info="scenario_3" prefix="do ">troisième situation</answer>
+            
+            <answer rel_info="scenario_4" prefix="do ">scénario quatre</answer>
+            <answer rel_info="scenario_4" prefix="do ">quatrième scénario</answer>
+            <answer rel_info="scenario_4" prefix="do ">remplir lave-vaisselle</answer>
+            <answer rel_info="scenario_4" prefix="do ">laver vaisselle</answer>
+            <answer rel_info="scenario_4" prefix="do ">quatrième situation</answer>
+
+            
+            <answer rel_info="cancel" suffix = " what I am doing">stop</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">cancel</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">pause</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">arrête</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">arrêt</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">éteindre</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">break off</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">bouge pas</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">prendre pause</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">reste ici</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">attend ici</answer>
+            <answer rel_info="cancel" suffix = " what I am doing">attend</answer>
+
+            <answer rel_info="nothing">continue</answer>
+            <answer rel_info="nothing">poursuivre</answer>
+            <answer rel_info="nothing">fausse alarme</answer>
+            <answer rel_info="nothing">oublie ça</answer>
+            <answer rel_info="nothing">no</answer>
+            <answer rel_info="nothing">nope</answer>
+            <answer rel_info="nothing">non</answer>
+            <answer rel_info="nothing">negatif</answer>
+            <answer rel_info="nothing">pas du tout</answer>
+            <answer rel_info="nothing">rien</answer>
+            <answer rel_info="nothing">nothing</answer>
+        </listen>
+        <repeat>
+            <answer> Pardon, Je n'ai pas compris, pourriez vous répéter?</answer>
+            <answer> Je ne peut pas faire ça, pourriez vous répéter pour vérifier?</answer>
+            <answer> Hmmm, Pardon?</answer>
+            <answer> Pardon, Je dois avoir de l'huile dans l'oreille, Pourriez-vous parler plus fort?</answer>
+        </repeat>
+        <deadline>
+            <answer> Pardon, je ne pense pas pouvoir vous aider, Passez une bonne journée</answer>
+            <answer> Il semble que je ne peut vous aider, veuiller demander à un serveur</answer>
+            <answer> Pardon, Il semble que je ne peut vous aider, Je retourne à mon travail, Au revoir</answer>
+        </deadline>
+        <nothing>
+            <answer> Il me fera plaisir de vous aider lorsque vous en aurez besoins!</answer>
+            <answer> Okay, Passez une bonne journée! </answer>
+            <answer> Je comprend, Si vous avez besoins de mon aide plus tard, appelez moi.</answer>
+            <answer> D'accrod, je retourne à mon travail.</answer>
+            <answer> D'accord, à plus tard.</answer>
+            <answer> No problemo amigo, à plus tard.</answer>
+        </nothing>
+        <feedback>
+            <question>Si j'ai bien compris, je dois</question>
+            <question>Je dois donc</question>
+            <question>Corrigez moi au besoins mais je dois</question>
+        </feedback>
+    </scenario_selection>
+    <menu_selection timer="20">
+        <begin>
+            <question>Puis-je prendre votre commande?</question>
+            <question>Que voulez-vous manger?</question>
+            <question>Qu'est-ce qui satisferait votre appéti?</question>
+            <question>Vous avez faim?, je vais prendre votre commande.</question>
+        </begin>
+        <listen>
+            <answer rel_info="apple">pomme</answer>
+            <answer rel_info="apple">pommes</answer>
+            <answer rel_info="banana">banane</answer>
+            <answer rel_info="banana">bananes</answer>
+            <answer rel_info="orange">orange</answer>
+            <answer rel_info="orange">oranges</answer>
+            <answer rel_info="cheese">fromage</answer>
+            <answer rel_info="pringles">pringles</answer>
+            <answer rel_info="pringles">chips</answer>
+            <answer rel_info="pringles">croustilles</answer>
+            <answer rel_info="pepsi">pepsi</answer>
+            <answer rel_info="hamburger">hamburger</answer>
+            <answer rel_info="hotdog">hotdog</answer>
+            <answer rel_info="pizza"> pizza</answer>
+            <answer rel_info="salad">salade</answer>
+
+            <answer rel_info="nothing">pas pret</answer>
+            <answer rel_info="nothing">rien</answer>
+            <answer rel_info="nothing">non</answer>
+            <answer rel_info="nothing">occupé</answer>
+            <answer rel_info="nothing">plus tard</answer>
+            <answer rel_info="nothing">pas faim</answer>
+        </listen>
+        <repeat>
+            <answer> Pardon, pourriez vous répéter?</answer>
+            <answer> Il semble que votre choix ne soit pas valide, voudriez-vous autre chose?</answer>
+            <answer> Notre restaurant ne semble pas offrir ce plat, voudriez-vous autre chose?</answer>
+            <answer> Je n'ai pas bien entendu, pourriez-vous répéter?</answer>
+        </repeat>
+        <deadline>
+            <answer> Pardon, je ne pense pas pouvoir vous aider, Passez une bonne journée</answer>
+            <answer> Il semble que je ne peut vous aider, veuiller demander à un serveur</answer>
+            <answer> Pardon, Il semble que je ne peut vous aider, Je retourne à mon travail, Au revoir</answer>
+        </deadline>
+        <nothing>
+            <answer> Nous servons de très bon plats alors n'hésiter pas si vous voulez quelque chose.</answer>
+            <answer> D'accord, Passez une belle journée! </answer>
+            <answer> No problemo mi amigo, À plus tard!</answer>
+            <answer> Je comprend, Si vous avez besoins de mon aide plus tard, appelez moi.</answer>
+            <answer> D'accrod, je retourne à mon travail.</answer>
+            <answer> D'accord, à plus tard.</answer>
+        </nothing>
+        <feedback>
+            <question>Pour être sur, vous avez commandé </question>
+            <question>Ai-je bien noté votre commande?,  </question>
+            <question>Corriger moi si je me trompe, vous avez commandé </question>
+        </feedback>
+    </menu_selection>
+    <confirmation timer="20">
+        <listen>
+            <answer rel_info='affirmative'>absolument</answer>
+            <answer rel_info='affirmative'>accept</answer>
+            <answer rel_info='affirmative'>affirmatif</answer>
+            <answer rel_info='affirmative'>approuve</answer>
+            <answer rel_info='affirmative'>d'accord</answer>
+            <answer rel_info='affirmative'>confirme</answer>
+            <answer rel_info='affirmative'>confirmer</answer>
+            <answer rel_info='affirmative'>ok</answer>
+            <answer rel_info='affirmative'>parfait</answer>
+            <answer rel_info='affirmative'>certainement</answer>
+            <answer rel_info='affirmative'>oui</answer>
+            <answer rel_info='affirmative'>ouais</answer>
+            <answer rel_info='affirmative'>ouaip</answer>
+            <answer rel_info='affirmative'>ca marche</answer>
+            <answer rel_info='affirmative'>exactement</answer>
+            <answer rel_info='affirmative'>correct</answer>
+            <answer rel_info='affirmative'>tout a fait</answer>
+            <answer rel_info='affirmative'>définitivement</answer>
+            <answer rel_info='affirmative'>c'est ca</answer>
+            <answer rel_info='affirmative'>avec plaisirs</answer>
+            <answer rel_info='affirmative'>en effet</answer>
+            <answer rel_info='affirmative'>evidemment</answer>
+            <answer rel_info='affirmative'>okay</answer>
+            <answer rel_info='affirmative'>ok</answer>
+            <answer rel_info='affirmative'>okie dokie</answer>
+            <answer rel_info='affirmative'>totalement</answer>
+            <answer rel_info='affirmative'>yah</answer>
+            <answer rel_info='affirmative'>yeah</answer>
+            <answer rel_info='affirmative'>yes</answer>
+            <answer rel_info='affirmative'>yep</answer>
+            <answer rel_info='affirmative'>yup</answer>
+
+            <answer rel_info='negative'>decline</answer>
+            <answer rel_info='negative'>désapprouve</answer>
+            <answer rel_info='negative'>oublie ca</answer>
+            <answer rel_info='negative'>nah</answer>
+            <answer rel_info='negative'>nay</answer>
+            <answer rel_info='negative'>negatif</answer>
+            <answer rel_info='negative'>jamais</answer>
+            <answer rel_info='negative'>no</answer>
+            <answer rel_info='negative'>nope</answer>
+            <answer rel_info='negative'>non</answer>
+            <answer rel_info='negative'>refuse</answer>
+            <answer rel_info='negative'>pas du tout</answer>            
+            <answer rel_info='negative'>absolument pas</answer>
+            <answer rel_info='negative'>pas tout à fait</answer>
+            <answer rel_info='negative'>pas vraiment</answer>
+            <answer rel_info='negative'>certainement pas</answer>
+        </listen>
+        <feedback>
+            <answer>D'accord, c'est </answer>
+            <answer>Noté, C'est </answer>
+            <answer>Okay, C'est </answer>
+        </feedback>
+        <repeat>
+            <answer>oui or non?</answer>
+            <answer>Etes-vous d'accord ou pas?</answer>
+            <answer>Donc, est-ce un oui?</answer>
+        </repeat>
+        <deadline>
+            <answer> Il semble que je ne puisse pas vous comprendre, Veuillez demander de l'assiatnce.</answer>
+            <answer> Mon microphone doit avoir des problèmes, je ne peut pas vous comprendre, désolé, je retourne donc à mon travail.</answer>
+            <answer> Je suis trop embarassé pour vous demander de répéter de nouveau, Veuiller demander de l'assiatance, passer une bonne journée.</answer>
+        </deadline>
+    </confirmation>
+</context>
