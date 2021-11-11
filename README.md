@@ -16,6 +16,7 @@ Admin password:palroot
 ## Network
 If you are in a VM it is possible that you have no internet connection.
 To fix the problem, edit /etc/netplan/01-netcfg.yaml to add this:
+
 	network:
 		version: 2
 		renderer: NetworkManager
@@ -24,9 +25,11 @@ To fix the problem, edit /etc/netplan/01-netcfg.yaml to add this:
 		        dhcp4: true
 
 verify that the edits worked with
+
 	sudo netplan apply
 
 then restart the server
+
 	sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
 
 Depending on your network configuration, it may be ens33 instead of enp0s3 that you have to put in the file
@@ -41,10 +44,12 @@ Procedure here: https://docs.github.com/en/authentication/connecting-to-github-w
 
 ## Clone HomoDeUS
 then clone the repo in src
+
 	git clone git@github.com:AlexCampanozzi/HomoDeUS.git
 
 ### Clone HBBA
 To make the project work you will also need HBBA. Complete documentation is at https://github.com/introlab/HBBA
+
 	git clone git@github.com:introlab/HBBA.git
 	cd iw_translator/or_tools/
 	./generate_dpkg.sh
