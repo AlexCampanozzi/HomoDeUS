@@ -9,4 +9,7 @@
   <param name="on_robot" type="bool" value="False" />
   <!--<include file="$(find usb_cam)/launch/usb_cam-test.launch"></include>-->
   <include file="$(find homodeus_hbba_cfg)/hbba_cfg_out/homodeus.launch"></include>
+
+  <!--include file="$(find homodeus_hbba_cfg)/launch/proc_face_detection.launch"></include>-->
+
 </launch>

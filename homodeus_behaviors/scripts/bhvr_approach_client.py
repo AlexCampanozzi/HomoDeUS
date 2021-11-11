@@ -12,6 +12,7 @@ class ApproachClient():
     def __init__(self):
         self.vel_publisher = rospy.Publisher("/mobile_base/cmd_vel", Twist, queue_size=5)
         self.pub = rospy.Publisher('tiago_head_controller', PoseStamped, queue_size=5)
+        
         self.target_box_size = 80000 # actual number TBD
         self.tolerance = 500 # actual number TBD
         # We are looking to be around 1.6-2m from the client
@@ -22,7 +23,10 @@ class ApproachClient():
 
         # Copied from face tracking
         #camera_info = rospy.wait_for_message("/usb_cam/camera_info", CameraInfo)
+        rospy.Subscriber('/proc_output_face_positions', FacePositions, self._head_callback, queue_size=5)
         camera_info = rospy.wait_for_message("/xtion/rgb/camera_info", CameraInfo)
+
+        
 
         self.img_height = camera_info.height
         self.img_width = camera_info.width
@@ -38,7 +42,7 @@ class ApproachClient():
 
         poseStamped = PoseStamped()
 
-        x = -30
+        x = 0
         y = 0
 
         poseStamped.pose.position.x = x
@@ -129,6 +133,10 @@ class ApproachClient():
                     self.min_range = scan.ranges[i]
 
             # TODO: some algo to decide what is a person vs not
+
+
+    def _head_callback(self, detections):
+        rospy.loginfo("face detected face tracking")
 
 if __name__ == "__main__":
 
