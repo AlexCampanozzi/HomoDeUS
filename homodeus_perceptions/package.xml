@@ -66,7 +66,6 @@
   <build_depend>tf_conversions</build_depend>
   <build_depend>tf2_ros</build_depend>
   <build_depend>image_geometry</build_depend>
-  <build_depend>homodeus_arm_interface</build_depend>
 
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>rospy</build_export_depend>
@@ -88,7 +87,6 @@
   <exec_depend>tf_conversions</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
   <exec_depend>image_geometry</exec_depend>
-  <exec_depend>homodeus_arm_interface</exec_depend>
   
   <!-- The export tag contains other, unspecified, tags -->
   <export>
