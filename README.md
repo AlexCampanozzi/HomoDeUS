@@ -2,19 +2,19 @@ Welcome to the repository for the HomoDeUS project created by seven students in 
 Here are the steps to build the project from scratch.
 
 ## Create an ubuntu environment with PAL Robotics packages
-You should have access to a .iso file containing installation file for the PAL Robotics environment
-Select Install Development TIAGo 82 during booting to create a permament environment.
+You should have access to a .iso file containing installation file for the PAL Robotics environment  
+Select Install Development TIAGo 82 during booting to create a permament environment.  
 Select Run to have a temporary environment without it taking place in you hard drive
 
 ### Credentials
-Username:pal
-Password:pal
+Username: pal  
+Password: pal  
 
-Admin username:root
-Admin password:palroot
+Admin username: root  
+Admin password: palroot
 
 ## Network
-If you are in a VM it is possible that you have no internet connection.
+If you are in a VM it is possible that you have no internet connection.  
 To fix the problem, edit /etc/netplan/01-netcfg.yaml to add this:
 
 	network:
@@ -39,7 +39,7 @@ Depending on your network configuration, it may be ens33 instead of enp0s3 that 
 	cd catkin_ws/src
 
 ### Setup your SSH keys
-Before being able to use git you have to generate SSH keys for your new environment:
+Before being able to use git you have to generate SSH keys for your new environment:  
 Procedure here: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 
 ## Clone HomoDeUS
