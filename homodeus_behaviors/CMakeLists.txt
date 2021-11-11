@@ -148,12 +148,6 @@ add_executable(arm_interface_node
 
 target_link_libraries(arm_interface_node ${catkin_LIBRARIES})
 
-# add_executable(arm_interface_node_old
-#   src/homodeus_arm_interface_node_old.cpp
-#   src/ArmInterface.cpp
-# )
-# target_link_libraries(arm_interface_node_old ${catkin_LIBRARIES} ${Libraries})
-
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
