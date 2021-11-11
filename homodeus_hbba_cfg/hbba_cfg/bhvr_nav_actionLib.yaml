@@ -2,7 +2,7 @@ hbba_conf:
 
 - behavior:
     name: tiago_nav
-    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/tiago_bhvr_nav_actionLib.launch'}
+    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/bhvr_nav_actionLib.launch'}
     priority: 10
     input:
         - bhvr_input_goal_nav_goal: {src: hbba_nav_goal, filtered: false}

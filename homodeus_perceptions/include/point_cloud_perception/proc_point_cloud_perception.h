@@ -50,7 +50,6 @@ public:
 protected:
 
   ros::NodeHandle _nh;
-  ros::Publisher _pub;
 
   // for debug
   sensor_msgs::PointCloud2 _filtered_cloud;

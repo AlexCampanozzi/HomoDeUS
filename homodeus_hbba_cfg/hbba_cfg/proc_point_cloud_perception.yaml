@@ -6,6 +6,8 @@ hbba_conf:
     input:
         - /object_detections
         - /xtion/depth_registered/points
+        # TODO: Remap this to future output of object tracking
+        - /darknet_ros/bounding_boxes
     output:
         - /pick_position
 
