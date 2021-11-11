@@ -55,6 +55,31 @@ To make the project work you will also need HBBA. Complete documentation is at h
 	./generate_dpkg.sh
 	sudo dpkg -i or-tools_ubuntu-18.04_v7.1.6720.deb
 
+## Install Pip
+Since the project is on ROS Melodic, it is in Python 2.7 by default. Pip deprecated support for Python 2.7 so it can't be installed directly. You will have to install it from the source directly.
 
+	cd ~
+	sudo apt-get install curl
+	curl https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.py
+	python get-pip.py 
+
+This will install the last compatible version of pip.
+
+## Install dependencies
+
+	cd ~/catkin_ws/src/HomoDeUS
+	./install_dependencies.sh
 	
+
+# Initialize git submodules for HBBA
+	
+	cd ~/catkin_ws/src//HBBA
+	git submodule init
+	git submodule update
+
+# Build the project
+
+	cd ~/catkin_ws
+	source devel/setup.bash
+	catkin_make
 
