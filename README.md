@@ -42,18 +42,27 @@ Depending on your network configuration, it may be ens33 instead of enp0s3 that 
 Before being able to use git you have to generate SSH keys for your new environment:  
 Procedure here: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 
+### Clone repos
 ## Clone HomoDeUS
 then clone the repo in src
 
 	git clone git@github.com:AlexCampanozzi/HomoDeUS.git
 
-### Clone HBBA
+## Clone HBBA
 To make the project work you will also need HBBA. Complete documentation is at https://github.com/introlab/HBBA
 
 	git clone git@github.com:introlab/HBBA.git
 	cd iw_translator/or_tools/
 	./generate_dpkg.sh
 	sudo dpkg -i or-tools_ubuntu-18.04_v7.1.6720.deb
+
+## Clone darknet_ros
+You will also need to clone YOLO. Complete documentation at https://github.com/leggedrobotics/darknet_ros
+
+	cd ~/catkin_ws/src
+	git clone --recursive git@github.com:leggedrobotics/darknet_ros.git
+	cd ../
+	catkin_make -DCMAKE_BUILD_TYPE=Release
 
 ## Install Pip
 Since the project is on ROS Melodic, it is in Python 2.7 by default. Pip deprecated support for Python 2.7 so it can't be installed directly. You will have to install it from the source directly.
