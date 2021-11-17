@@ -1,20 +1,21 @@
 hbba_conf:
 
+- remap: {from: 'points', to: '/xtion/depth_registered/points'}
+- remap: {from: 'bounding_boxes', to: '/darknet_ros/bounding_boxes'}
+
 - procmodule:
     name: proc_point_cloud_perception
     launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/proc_point_cloud_perception.launch'}
     input:
-        - /object_detections
-        - /xtion/depth_registered/points
+        - points
         # TODO: Remap this to future output of object tracking
-        - /darknet_ros/bounding_boxes
+        - bounding_boxes
     output:
-        - /pick_position
+        - pick_position
 
 - strat:
     name: ScanCloudForObjectOnDetection
-    class: point_cloud_perception
-    utility: 10
-    costs: {microphone: 1}
+    class: PointCloudPerception
+    utility: 8
     modules:
         - proc_point_cloud_perception

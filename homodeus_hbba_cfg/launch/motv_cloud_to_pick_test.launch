@@ -1,0 +1,3 @@
+<launch>
+    <node name="motv_detect_to_pick_test" pkg="homodeus_motivations" type="motv_detect_to_pick_test.py" output="screen"/>
+</launch>

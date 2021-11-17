@@ -2,7 +2,7 @@
 
 CloudObjectFinder::CloudObjectFinder(ros::NodeHandle& nh): _nh(nh)
 {
-    _detection_sub = _nh.subscribe("/darknet_ros/bounding_boxes", 5, &CloudObjectFinder::detectionCallback, this);
+    _detection_sub = _nh.subscribe("bounding_boxes", 5, &CloudObjectFinder::detectionCallback, this);
     image_info_sub  = _nh.subscribe("/xtion/rgb/camera_info", 5, &CloudObjectFinder::imageInfoCallback, this);
     desired_object_sub  = _nh.subscribe("/desired_object", 5, &CloudObjectFinder::desiredObjectCallback, this);
     tfListenerPtr = new tf2_ros::TransformListener(tfBuffer);
@@ -46,7 +46,7 @@ void CloudObjectFinder::detectionCallback(const darknet_ros_msgs::BoundingBoxesC
     {
         // Stop taking detections into account while we process this one
         _detection_sub.shutdown();
-        _cloud_sub = _nh.subscribe("/xtion/depth_registered/points", 5, &CloudObjectFinder::cloudCallback, this);
+        _cloud_sub = _nh.subscribe("points", 5, &CloudObjectFinder::cloudCallback, this);
     }
 }
 
@@ -251,7 +251,7 @@ void CloudObjectFinder::resetSearch()
 {
     ROS_INFO("CloudObjectFinder: Resetting, will need to be told what to look for again");
     desired_object_type = "";
-    _detection_sub = _nh.subscribe("/darknet_ros/bounding_boxes", 5, &CloudObjectFinder::detectionCallback, this);
+    _detection_sub = _nh.subscribe("bounding_boxes", 5, &CloudObjectFinder::detectionCallback, this);
 }
 
 int main(int argc, char **argv)
