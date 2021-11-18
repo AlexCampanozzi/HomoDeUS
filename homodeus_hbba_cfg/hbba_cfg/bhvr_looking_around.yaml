@@ -1,0 +1,18 @@
+# SLAM Planner can be used either GMapping or static maps as they both provide
+# SLAM strategies, see the related proc modules configurations.
+hbba_conf:
+
+- behavior:
+    name: bhvr_looking_around
+    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/bhvr_looking_around.launch'}
+    priority: 5
+    output:
+        - head_command
+            
+- strat:
+    name: looking_around
+    class: Look
+    utility: 8
+    modules:
+        - bhvr_looking_around
+    custom_bringdn: "pubEmpty('/head_home_reset');"
