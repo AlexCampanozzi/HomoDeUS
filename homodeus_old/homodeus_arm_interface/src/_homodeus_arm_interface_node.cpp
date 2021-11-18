@@ -4,7 +4,7 @@ ArmInterfaceNode::ArmInterfaceNode(ros::NodeHandle n):
 nh{n}, 
 gac("/gripper_controller/follow_joint_trajectory", true)
 {
-    pick_pose_sub = nh.subscribe("/pick_point", 5, &ArmInterfaceNode::poseCB, this);
+    pick_pose_sub = nh.subscribe("/pick_point", 5, &ArmInterfaceNode::pickPoseCB, this);
     close_gripper_goal.trajectory = closedGripper();
     open_gripper_goal.trajectory = openedGripper();
     gac.waitForServer();
@@ -71,7 +71,7 @@ trajectory_msgs::JointTrajectory ArmInterfaceNode::openedGripper()
     return open_fingers;
 }
 
-void ArmInterfaceNode::poseCB(const geometry_msgs::PoseStampedConstPtr posestamped)
+void ArmInterfaceNode::pickPoseCB(const geometry_msgs::PoseStampedConstPtr posestamped)
 {
     pick_point = *posestamped;
     got_pick_pose = true;
