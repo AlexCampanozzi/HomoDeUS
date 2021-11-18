@@ -22,9 +22,17 @@ class CloudProcManager:
         des.utility     = 2.0
         des.intensity   = 1.0
 
+        pick_des = Desire()
+        pick_des.id          = "test_pickListenBhvr"
+        pick_des.type        = "ListenForPick"
+        pick_des.utility     = 2.0
+        pick_des.intensity   = 1.0
+
         rospy.sleep(5)
         rospy.logwarn("Adding PointCloudPerception desire")
         self.add_desires.call([des])
+        rospy.logwarn("Adding ListenForPick desire")
+        self.add_desires.call([pick_des])
         rospy.sleep(5)
         rospy.logwarn("Publishing desired_object")
         pub = rospy.Publisher("/desired_object", String, queue_size=5)

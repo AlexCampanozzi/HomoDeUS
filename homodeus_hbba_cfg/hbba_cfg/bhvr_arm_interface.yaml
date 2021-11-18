@@ -5,10 +5,12 @@ hbba_conf:
     launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/bhvr_arm_interface.launch'}
     priority: 10
     input:
-        - pick_point
+        - /pick_point
         - gripper_controller/follow_joint_trajectory: {src: gripper_controller/follow_joint_trajectory, filtered: false}
-        - execute_trajectory: {src: execute_trajectory, filtered: false}
-        - move_group: {src: move_group, filtered: false}
+        - /tiago_arm_interface/execute_trajectory: {src: /execute_trajectory, filtered: false}
+        - /tiago_arm_interface/move_group: {src: /move_group, filtered: false}
+        - /tiago_arm_interface/pickup: {src: /pickup, filtered: false}
+        - /tiago_arm_interface/place: {src: /place, filtered: false}
     output:
         - dummy
       
