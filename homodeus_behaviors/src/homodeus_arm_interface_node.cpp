@@ -4,10 +4,14 @@ ArmInterfaceNode::ArmInterfaceNode(ros::NodeHandle n):
 nh{n}, 
 gac("/gripper_controller/follow_joint_trajectory", true)
 {
+    ROS_INFO("Node init strated");
     pick_pose_sub = nh.subscribe("/pick_point", 5, &ArmInterfaceNode::poseCB, this);
     close_gripper_goal.trajectory = closedGripper();
     open_gripper_goal.trajectory = openedGripper();
+    ROS_INFO("Waiting for gripper joint controller server...");
     gac.waitForServer();
+    ROS_INFO("Found  gripper joint controller server");
+    ROS_INFO("Node init done");
 }
 
 // UNUSED: Use these instead of the gripper ones for Hey5 hand
@@ -163,8 +167,6 @@ int main(int argc, char **argv)
     ros::NodeHandle n("~"); 
 
     ArmInterfaceNode arm_node(n);
-
-    ROS_INFO("arm_interface_node is now running!");
 
     ros::AsyncSpinner spinner(1);
     spinner.start();

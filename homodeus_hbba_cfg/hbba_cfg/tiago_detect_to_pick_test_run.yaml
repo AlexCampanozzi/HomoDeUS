@@ -1,0 +1,21 @@
+# Basic tiago detect & pick demo in HBBA.
+
+hbba_conf:
+
+- include: {pkg: 'hbba_synth',         file: 'common.yaml'}
+
+# Behaviors:
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_arm_interface.yaml'}
+
+# Perceptions
+- include: {pkg: 'homodeus_hbba_cfg', file: 'proc_point_cloud_perception.yaml'}
+
+# Available resources:
+- resources:
+    CPU: 100
+
+- motivation:
+    name: cloud_proc_tester
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/motv_cloud_to_pick_test.launch"}
+    input:
+        - events
