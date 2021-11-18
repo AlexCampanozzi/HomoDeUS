@@ -9,6 +9,7 @@ import tf_lookup.srv
 from tf.transformations import quaternion_from_euler, euler_from_quaternion
 import json 
 import os 
+
 class Navigator:
     def __init__(self):
         self.landmarks = {}
