@@ -12,6 +12,7 @@ import os
 class Navigator:
     def __init__(self):
         self.landmarks = {}
+        #self.doneCB = False
         landmarks_file = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))+'/homodeus_common/landmarks.json'
 
         with open(landmarks_file) as json_file:
@@ -128,3 +129,6 @@ class Navigator:
         pose.orientation = response.transform.transform.rotation
         print(self.landmarks)
         return pose
+
+    def doneCB(self, bool):
+        pass
