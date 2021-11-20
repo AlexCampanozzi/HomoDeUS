@@ -22,4 +22,4 @@ sudo apt-get install libportaudio2
 sudo apt-get install libportaudiocpp0
 pip2 install PyAudio
 sudo apt-get install python-sphinxbase
-
+sudo apt-get install python-pocketsphinx

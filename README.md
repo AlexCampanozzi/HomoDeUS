@@ -1,12 +1,13 @@
 Welcome to the repository for the HomoDeUS project created by seven students in robotics and software engineering at the Université de Sherbrooke.
-Here are the steps to build the project from scratch.
+Here are the steps to build the project from scratch. You can also run the script 
+### Prepare the environment
 
 ## Create an ubuntu environment with PAL Robotics packages
 You should have access to a .iso file containing installation file for the PAL Robotics environment  
 Select Install Development TIAGo 82 during booting to create a permament environment.  
 Select Run to have a temporary environment without it taking place in you hard drive
 
-### Credentials
+## Credentials
 Username: pal  
 Password: pal  
 
@@ -38,17 +39,17 @@ Depending on your network configuration, it may be ens33 instead of enp0s3 that 
 	mkdir -p ~/catkin_ws/src
 	cd catkin_ws/src
 
-### Setup your SSH keys
+## Setup your SSH keys
 Before being able to use git you have to generate SSH keys for your new environment:  
 Procedure here: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 
-### Clone repos
-## Clone HomoDeUS
+## Clone repos
+# Clone HomoDeUS
 then clone the repo in src
 
 	git clone git@github.com:AlexCampanozzi/HomoDeUS.git
 
-## Clone HBBA
+# Clone HBBA
 To make the project work you will also need HBBA. Complete documentation is at https://github.com/introlab/HBBA
 
 	git clone git@github.com:introlab/HBBA.git
@@ -56,7 +57,7 @@ To make the project work you will also need HBBA. Complete documentation is at h
 	./generate_dpkg.sh
 	sudo dpkg -i or-tools_ubuntu-18.04_v7.1.6720.deb
 
-## Clone darknet_ros
+# Clone darknet_ros
 You will also need to clone YOLO. Complete documentation at https://github.com/leggedrobotics/darknet_ros
 
 	cd ~/catkin_ws/src
@@ -64,8 +65,9 @@ You will also need to clone YOLO. Complete documentation at https://github.com/l
 	cd ../
 	catkin_make -DCMAKE_BUILD_TYPE=Release
 
-## Install Pip
-Since the project is on ROS Melodic, it is in Python 2.7 by default. Pip deprecated support for Python 2.7 so it can't be installed directly. You will have to install it from the source directly.
+## Install the necessary packages and modules
+# Install Pip
+Since the project is on ROS Melodic, it is in Python 2.7 by default. Pip deprecated support for Python 2.7 so it can't be installed directly. You will have to install it manually from the source.
 
 	cd ~
 	sudo apt-get install curl
@@ -74,21 +76,27 @@ Since the project is on ROS Melodic, it is in Python 2.7 by default. Pip depreca
 
 This will install the last compatible version of pip.
 
-## Install dependencies
+# Install dependencies
 
 	cd ~/catkin_ws/src/HomoDeUS
 	./install_dependencies.sh
-	
 
 # Initialize git submodules for HBBA
 	
-	cd ~/catkin_ws/src//HBBA
+	cd ~/catkin_ws/src/HBBA
 	git submodule init
 	git submodule update
 
-# Build the project
+## Create the Gazebo world
+
+To be able to save changes, the Gazebo world used for the project is in a folder on the GitHub, you will have to copy it to your computer's folder to be able to use it in Gazebo
+
+	sudo cp ~/catkin_ws/src/HomoDeUS/homodeus_common/worlds/homodeus_office.world /opt/pal/ferrum/share/pal_gazebo_worlds/worlds
+
+## Build the project
 
 	cd ~/catkin_ws
 	source devel/setup.bash
 	catkin_make
+
 
