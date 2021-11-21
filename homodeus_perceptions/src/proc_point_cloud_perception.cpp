@@ -10,6 +10,7 @@ CloudObjectFinder::CloudObjectFinder(ros::NodeHandle& nh): _nh(nh)
     noplane_pub = _nh.advertise<sensor_msgs::PointCloud2>("/noplane_cloud", 5);
     filtered_pub = _nh.advertise<sensor_msgs::PointCloud2>("/filtered_cloud", 5);
     pick_point_pub = _nh.advertise<geometry_msgs::PoseStamped>("/pick_point", 5);
+    object_height_pub = _nh.advertise<std_msgs::Float32>("/object_pick_height", 1);
 }
 
 void CloudObjectFinder::imageInfoCallback(const sensor_msgs::CameraInfoConstPtr& info)
@@ -171,6 +172,7 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
             maxz = point.z;
         }
     }
+    float table_z = maxz;
 
     pcl::PassThrough<pcl::PointXYZ> passz;
     passz.setInputCloud(point_cloud_filtered.makeShared());
@@ -243,6 +245,11 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     std::cout << "pose: " << std::endl << _pick_pose << std::endl;
     pick_point_pub.publish(_pick_pose);
     got_pick_pose = true;
+
+    ROS_INFO("Publishing object pick height from table");
+    std_msgs::Float32 object_pick_height;
+    object_pick_height.data = average_point.z - table_z;
+    object_height_pub.publish(object_pick_height);
 
     resetSearch();
 }
