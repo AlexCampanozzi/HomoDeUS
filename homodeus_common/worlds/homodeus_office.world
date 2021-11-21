@@ -189,6 +189,12 @@
         <enable_wind>0</enable_wind>
       </link>
     </model>
+   <!-- Add female 02 -->
+    <include>
+      <name>female02</name>
+      <uri>model://citizen_extras_female_02</uri>
+      <pose>-1 -8 0.01 0.01 0.02 3</pose>
+    </include>
     <model name='wall_3_model'>
       <pose frame=''>-5 -5.5 1 0 -0 0</pose>
       <static>1</static>
@@ -2591,55 +2597,7 @@
       </link>
       <pose frame=''>-3.41849 -7 0 0 -0 0</pose>
     </model>
-    <model name='male03'>
-      <link name='link'>
-        <inertial>
-          <mass>20</mass>
-          <inertia>
-            <ixx>0</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>0</iyy>
-            <iyz>0</iyz>
-            <izz>0</izz>
-          </inertia>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-        </inertial>
-        <collision name='collision'>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <geometry>
-            <mesh>
-              <uri>model://citizen_extras_male_03/meshes/mesh.dae</uri>
-            </mesh>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <visual name='visual'>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <geometry>
-            <mesh>
-              <uri>model://citizen_extras_male_03/meshes/mesh.dae</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <self_collide>0</self_collide>
-        <enable_wind>0</enable_wind>
-        <kinematic>0</kinematic>
-      </link>
-      <pose frame=''>-1 -7 0 0 -0 0</pose>
-    </model>
+    
     <model name='table_0'>
       <static>1</static>
       <link name='link'>
@@ -4727,16 +4685,6 @@
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
-      <model name='male03'>
-        <pose frame=''>-1.00001 -7.99995 0.010908 0.012565 0.002324 3.0007</pose>
-        <scale>1 1 1</scale>
-        <link name='link'>
-          <pose frame=''>-1.00001 -7.99995 0.010908 0.012565 0.002324 3.0007</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 -9.81 0 -0 0</acceleration>
-          <wrench>0 0 -196.2 0 -0 0</wrench>
         </link>
       </model>
       <model name='pringles_clone'>
