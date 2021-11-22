@@ -4,18 +4,18 @@ DropSpotFinder::DropSpotFinder(ros::NodeHandle& nh): _nh(nh)
 {
     image_info_sub  = _nh.subscribe("/xtion/rgb/camera_info", 5, &DropSpotFinder::imageInfoCallback, this);
     object_height_sub = _nh.subscribe("/object_pick_height", 1, &DropSpotFinder::objectHeightCallback, this);
-    // _cloud_sub = _nh.subscribe("/xtion/depth_registered/points", 5, &DropSpotFinder::cloudCallback, this);
-    trigger_sub = _nh.subscribe("/proc_drop_point_trigger", 1, &DropSpotFinder::triggerCallback, this);
+    _cloud_sub = _nh.subscribe("points", 5, &DropSpotFinder::cloudCallback, this);
+    // trigger_sub = _nh.subscribe("/proc_drop_point_trigger", 1, &DropSpotFinder::triggerCallback, this);
     tfListenerPtr = new tf2_ros::TransformListener(tfBuffer);
 
     drop_point_pub = _nh.advertise<geometry_msgs::PoseStamped>("/drop_point", 5);
     plane_cloud_pub = _nh.advertise<sensor_msgs::PointCloud2>("/drop_plane_cloud", 5);
 }
 
-void DropSpotFinder::triggerCallback(const std_msgs::EmptyConstPtr& nothing)
-{
-    _cloud_sub = _nh.subscribe("/xtion/depth_registered/points", 5, &DropSpotFinder::cloudCallback, this);
-}
+// void DropSpotFinder::triggerCallback(const std_msgs::EmptyConstPtr& nothing)
+// {
+//     _cloud_sub = _nh.subscribe("/xtion/depth_registered/points", 5, &DropSpotFinder::cloudCallback, this);
+// }
 
 void DropSpotFinder::imageInfoCallback(const sensor_msgs::CameraInfoConstPtr& info)
 {
@@ -96,7 +96,8 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
     ROS_INFO("noplane initial frame: %s", noPlane->header.frame_id.c_str());
     noPlane->header.frame_id = ref_frame;
 
-    // New: Passthrough in z to remove anything below top of table, and find extremities while we're going through cloud
+
+    // find extremities while we're going through cloud
 
     float maxz = -999;
     float miny = 9999;

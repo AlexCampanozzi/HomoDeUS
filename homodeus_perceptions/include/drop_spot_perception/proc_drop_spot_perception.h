@@ -76,8 +76,8 @@ protected:
   ros::Subscriber desired_object_sub;
 
   // Temp, for use outside HHBA
-  ros::Subscriber trigger_sub;
-  void triggerCallback(const std_msgs::EmptyConstPtr& nothing);
+  // ros::Subscriber trigger_sub;
+  // void triggerCallback(const std_msgs::EmptyConstPtr& nothing);
 
   ros::Subscriber object_height_sub;
   // height at which we picked the objet, default value to avoid collisions
