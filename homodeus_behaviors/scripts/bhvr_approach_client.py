@@ -13,7 +13,6 @@ from std_msgs.msg import String
 from base_navigation.scripts.navigator import Navigator
 from cv_bridge import CvBridge, CvBridgeError
 import tf
-import tf2_ros
 
 import numpy as np
 
@@ -26,8 +25,7 @@ class ApproachClient():
         self.approach_dist = 1.6
         self.navigator = Navigator()
 
-        self.tfListener = tf.TransformListener()
-
+        self.tf_listener = tf.TransformListener()
 
         rospy.Subscriber('/proc_output_face_positions', FacePositions, self._face_callback, queue_size=5)
         rospy.Subscriber('/xtion/depth_registered/image_raw', Image, self._camera_callback, queue_size=5)
@@ -57,64 +55,39 @@ class ApproachClient():
 
 
     def _face_callback(self, detections):
-        
-        if self.value == 2:
-            self.value = 2
 
-            if self.depth_image is not None:
-                # rospy.loginfo((detections.faces))
-                # rospy.loginfo((detections.faces[0].x))
-                # rospy.loginfo((detections.faces[0].y))
-                # rospy.loginfo((detections.faces[0].width))
-                # rospy.loginfo((detections.faces[0].height))
-                # rospy.loginfo(detections)
+        if self.depth_image is not None:
 
-                face_depth_view = self.depth_image[detections.faces[0].y: detections.faces[0].y + detections.faces[0].height, 
-                                                detections.faces[0].x: detections.faces[0].x + detections.faces[0].width]
+            face_depth_view = self.depth_image[detections.faces[0].y: detections.faces[0].y + detections.faces[0].height, 
+                                            detections.faces[0].x: detections.faces[0].x + detections.faces[0].width]
 
-                face_dist = np.nanmin(face_depth_view)
+            face_dist = np.nanmin(face_depth_view)
 
-                rospy.loginfo(face_dist)
+            rospy.loginfo(face_dist)
 
-                if np.nanmin(face_depth_view) > self.approach_dist:
+            if face_dist > self.approach_dist and not np.isnan(face_dist):
 
-                    tf_listener = tf.TransformListener()
+                # considering that the face is centered in the optical frame
+                face_point = np.array([0, 0, face_dist])
+                dist_to_approach = face_dist - self.approach_dist
+                approach_point = np.array([0, 0, dist_to_approach])
 
-                    # considering that the face is centered in the optical frame
-                    face_point = np.array([0, 0, face_dist])
-                    dist_to_approach = face_dist - self.approach_dist
-                    approach_point = np.array([0, 0, dist_to_approach])
+                point = PointStamped()
+                point.point.x = approach_point[0]
+                point.point.y = approach_point[1]
+                point.point.z = approach_point[2]
+                point.header.stamp = rospy.Time(0)
+                point.header.frame_id = "/xtion_rgb_optical_frame"
 
-                    # rospy.loginfo(tf_listener.canTransform("/map", "/xtion_rgb_optical_frame", rospy.Duration(4.0)))
+                map_point = self.tf_listener.transformPoint("/map", point)
+                trans, rot = self.tf_listener.lookupTransform("/map", "/base_link", rospy.Time(0))
+                
 
-                    # if tf_listener.canTransform("/map", "/xtion_rgb_optical_frame",rospy.Duration(4.0)):
-
-                    # tf_listener.waitForTransform("/map", "/xtion_rgb_optical_frame", rospy.Time(0), rospy.Duration(4.0))
-                    # essayer avec null et le timestamp du message
-
-                    point = PointStamped()
-                    point.point.x = approach_point[0]
-                    point.point.y = approach_point[1]
-                    point.point.z = approach_point[2]
-                    point.header.stamp = rospy.Time.now()
-                    point.header.frame_id = "/xtion_rgb_optical_frame"
-
-                    map_point = tf_listener.transformPoint("/map", point)
-                    # self.navigator.goto(map_point[0], map_point[1], map_point[2])
-
-                    # rospy.loginfo(trans)
-                    # rospy.loginfo(rot)
-                    # rospy.loginfo(tranformation_matrix)
-                    rospy.loginfo(approach_point)
+                if self.value == 2:
+                    self.navigator.goto(map_point.point.x, map_point.point.y, np.pi-np.arctan(map_point.point.x/map_point.point.y))
+                    self.value = 3
+                    # rospy.loginfo("goto sent")
                     rospy.loginfo(map_point)
-
-
-
-
-                    
-
-                # dist_
-                # rospy.loginfo(np.nanmean(face_depth_view))
 
 
     def _camera_callback(self, image):
