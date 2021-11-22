@@ -7,6 +7,7 @@
 #include <ros/package.h>
 #include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
+#include <std_msgs/Empty.h>
 #include <std_msgs/Float32.h>
 #include <darknet_ros_msgs/BoundingBoxes.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -67,10 +68,16 @@ protected:
   sensor_msgs::PointCloud2 filtered_cloud;
   geometry_msgs::PoseStamped _drop_pose;
   ros::Publisher drop_point_pub;
+  ros::Publisher plane_cloud_pub;
+  sensor_msgs::PointCloud2 plane_cloud;
 
   ros::Subscriber _cloud_sub;
   ros::Subscriber image_info_sub;
   ros::Subscriber desired_object_sub;
+
+  // Temp, for use outside HHBA
+  ros::Subscriber trigger_sub;
+  void triggerCallback(const std_msgs::EmptyConstPtr& nothing);
 
   ros::Subscriber object_height_sub;
   // height at which we picked the objet, default value to avoid collisions

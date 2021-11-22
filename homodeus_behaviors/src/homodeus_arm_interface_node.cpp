@@ -70,8 +70,8 @@ trajectory_msgs::JointTrajectory ArmInterfaceNode::openedGripper()
     open_fingers.joint_names[1] = "gripper_right_finger_joint";
     open_fingers.points.resize(1);
     open_fingers.points[0].positions.resize(2);
-    open_fingers.points[0].positions[0] = 0.04;
-    open_fingers.points[0].positions[1] = 0.04;
+    open_fingers.points[0].positions[0] = 0.045;
+    open_fingers.points[0].positions[1] = 0.045;
     open_fingers.points[0].time_from_start = ros::Duration(0.5);
     return open_fingers;
 }
@@ -146,7 +146,7 @@ void ArmInterfaceNode::dropPoseCB(const geometry_msgs::PoseStampedConstPtr poses
     }
     else
     {
-        ROS_INFO("Failed to go to drop preparation pose in time, will still attempt rest of pick sequence");
+        ROS_ERROR("Failed to go to drop preparation pose in time, will still attempt rest of pick sequence");
     }
 
     tf::Quaternion quat;
@@ -190,6 +190,9 @@ void ArmInterfaceNode::dropPoseCB(const geometry_msgs::PoseStampedConstPtr poses
 bool ArmInterfaceNode::goHome()
 {
     bool success;
+    success = moveToJoint(0.34, 0.20, 0.79, -1.50, 1.60, -1.20, 0.14, 0.0);
+    success = moveToJoint(0.34, 0.20, 0.79, -1.50, 1.60, -1.20, 1.37, 0.0);
+    success = moveToJoint(0.34, 0.20, 0.79, 0.01, 2.10, -1.5, 1.37, 0.0);
     success = moveToJoint(0.25, 0.20, -1.34, -0.20, 1.94, -1.57, 1.37, 0.0);
     return success;
 }

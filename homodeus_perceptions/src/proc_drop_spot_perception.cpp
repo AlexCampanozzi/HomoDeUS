@@ -4,10 +4,17 @@ DropSpotFinder::DropSpotFinder(ros::NodeHandle& nh): _nh(nh)
 {
     image_info_sub  = _nh.subscribe("/xtion/rgb/camera_info", 5, &DropSpotFinder::imageInfoCallback, this);
     object_height_sub = _nh.subscribe("/object_pick_height", 1, &DropSpotFinder::objectHeightCallback, this);
-    _cloud_sub = _nh.subscribe("points", 5, &DropSpotFinder::cloudCallback, this);
+    // _cloud_sub = _nh.subscribe("/xtion/depth_registered/points", 5, &DropSpotFinder::cloudCallback, this);
+    trigger_sub = _nh.subscribe("/proc_drop_point_trigger", 1, &DropSpotFinder::triggerCallback, this);
     tfListenerPtr = new tf2_ros::TransformListener(tfBuffer);
 
     drop_point_pub = _nh.advertise<geometry_msgs::PoseStamped>("/drop_point", 5);
+    plane_cloud_pub = _nh.advertise<sensor_msgs::PointCloud2>("/drop_plane_cloud", 5);
+}
+
+void DropSpotFinder::triggerCallback(const std_msgs::EmptyConstPtr& nothing)
+{
+    _cloud_sub = _nh.subscribe("/xtion/depth_registered/points", 5, &DropSpotFinder::cloudCallback, this);
 }
 
 void DropSpotFinder::imageInfoCallback(const sensor_msgs::CameraInfoConstPtr& info)
@@ -34,6 +41,7 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
         ROS_INFO("Did not have cam_info when attempting to process cloud, will try again on next CB");
         return;
     }
+    _cloud_sub.shutdown();
 
     pcl::fromROSMsg(*msg, scene_cloud);
     // Put the worked cloud in the robot's frame so operation directions make sense to us
@@ -42,6 +50,17 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
     pcl_ros::transformPointCloud(ref_frame, curTime, scene_cloud, scene_cloud.header.frame_id, scene_cloud, tfBuffer);
 
     ROS_INFO("Moved to base_link frame");
+
+    // Keep only points above floor
+    PointCloud scene_cloud_filtered;
+
+    pcl::PassThrough<pcl::PointXYZ> passx;
+    passx.setInputCloud(scene_cloud.makeShared());
+    passx.setFilterFieldName("z");
+    passx.setFilterLimits(0.2, 100);
+    // passx.setFilterLimitsNegative (true);
+    passx.filter(scene_cloud_filtered);
+    scene_cloud = scene_cloud_filtered;
 
     // Extract table plane
     pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients);
@@ -64,11 +83,14 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
 
     ROS_INFO("Segmented plane");
 
-    PointCloud planeCloud;
-
-
     // Make new cloud with inliers only
+    PointCloud planeCloud;
     pcl::copyPointCloud(scene_cloud, *inliers, planeCloud);
+
+    pcl::toROSMsg( planeCloud, plane_cloud);
+    plane_cloud.header.frame_id = ref_frame;
+    plane_cloud_pub.publish(plane_cloud);
+
 
     pcl::PointCloud<pcl::PointXYZ>::Ptr noPlane(new pcl::PointCloud<pcl::PointXYZ>);
     ROS_INFO("noplane initial frame: %s", noPlane->header.frame_id.c_str());
@@ -97,6 +119,7 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
         }
     }
     extremities table_zone(miny, maxy);
+    ROS_INFO("Table y-bounds: min: %f, mac: %f", miny, maxy);
     float table_edge_x = minx;
     float table_z = maxz;
 
@@ -159,6 +182,7 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
             }
         }
         object_zones.push_back(extremities(min, max));
+        ROS_INFO("Added object with y-bounds: min: %f, mac: %f", min, max);
     }
 
     // Generate a point in y ot drop the object
@@ -182,6 +206,7 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
         }
         if (search_is_whithin_object){
             search_count += 1;
+            ROS_INFO("Search count: %d", search_count);
             if(!table_zone.isWithin(initial_search_y + search_direction*search_count*search_step))
             {
                 if (search_direction < 0)
@@ -191,7 +216,9 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
                 }
                 else
                 {
+                    ROS_INFO("Changing search direction");
                     search_direction *= -1;
+                    search_count = 0;
                 }
             }
         }
@@ -206,7 +233,7 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
 
     // Gripper: no offsets other than wrist to tool, we want the object to be in the middle
     // edge - tool offset + depth to go to
-    goal_pose.pose.position.x = table_edge_x - 0.15 + 010;
+    goal_pose.pose.position.x = table_edge_x - 0.15 + 0.10;
     goal_pose.pose.position.y = drop_y;
 
     goal_pose.pose.position.z = table_z + object_height;
