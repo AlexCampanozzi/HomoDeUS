@@ -12,6 +12,11 @@ gac("/gripper_controller/follow_joint_trajectory", true)
     ROS_INFO("Waiting for gripper joint controller server...");
     gac.waitForServer();
     ROS_INFO("Found  gripper joint controller server");
+    
+    // HBBA observer topics
+    bhvr_output_pick_result = nh.advertise<std_msgs::Bool>("/bhvr_output_pick_result", 5);
+    bhvr_output_place_result = nh.advertise<std_msgs::Bool>("/bhvr_output_place_result", 5);
+
     ROS_INFO("Node init done");
 }
 
@@ -113,23 +118,28 @@ void ArmInterfaceNode::pickPoseCB(const geometry_msgs::PoseStampedConstPtr poses
 
     if (success)
     {
-        ROS_INFO("arm_interface_node: successfully moved to pick point, clsing gripper...");
+        ROS_INFO("arm_interface_node: successfully moved to pick point, closing gripper...");
         gac.sendGoalAndWait(close_gripper_goal, ros::Duration(2));
         ROS_INFO("Closed!");
+        ROS_INFO("Retreating");
+        success = gotoRetreat();
     }
     else
         ROS_INFO("arm_interface_node: failed to go to pick point!");
 
-    success = gotoRetreat();
+    
     if (success)
     {
         ROS_INFO("arm_interface_node: successfully retreated from pick point.");
+        ROS_INFO("Going home");
+        success  = goHome();
     }
     else
         ROS_INFO("arm_interface_node: failed to retreat from pick point!");
 
-    ROS_INFO("Going home");
-    goHome();
+    std_msgs::Bool pick_success_msg;
+    pick_success_msg.data = success;
+    bhvr_output_pick_result.publish(pick_success_msg);
 }
 
 void ArmInterfaceNode::dropPoseCB(const geometry_msgs::PoseStampedConstPtr posestamped)
@@ -175,16 +185,24 @@ void ArmInterfaceNode::dropPoseCB(const geometry_msgs::PoseStampedConstPtr poses
     else
         ROS_INFO("arm_interface_node: failed to go to drop point!");
 
-    success = gotoRetreat();
+    if(success)
+    {
+        success = gotoRetreat();
+    }
+    
     if (success)
     {
         ROS_INFO("arm_interface_node: successfully retreated from drop point.");
+        ROS_INFO("Going home");
+        success = goHome();
     }
     else
         ROS_INFO("arm_interface_node: failed to retreat from drop point!");
 
-    ROS_INFO("Going home");
-    goHome();
+    std_msgs::Bool drop_success_msg;
+    drop_success_msg.data = success; 
+    bhvr_output_place_result.publish(drop_success_msg);
+    
 }
 
 bool ArmInterfaceNode::goHome()
