@@ -5,6 +5,7 @@
 
 #include <tf_conversions/tf_eigen.h>
 #include <std_msgs/String.h>
+#include <std_msgs/Bool.h>
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/client/action_client.h>
 #include <control_msgs/FollowJointTrajectoryAction.h>
@@ -36,6 +37,10 @@ class ArmInterfaceNode: ArmInterface
         // UNUSED ATM
         trajectory_msgs::JointTrajectory openedFingers();
         trajectory_msgs::JointTrajectory closedFingers();
+
+        // For observers
+        ros::Publisher bhvr_output_pick_result;
+        ros::Publisher bhvr_output_place_result;
 
     public:
         ArmInterfaceNode(ros::NodeHandle n);
