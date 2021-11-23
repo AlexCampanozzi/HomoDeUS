@@ -1,5 +1,5 @@
-#ifndef POINTCLOUDPERCEPTION_H
-#define POINTCLOUDPERCEPTION_H
+#ifndef DROPSPOTPERCEPTION_H
+#define DROPSPOTPERCEPTION_H
 
 
 // ROS headers
@@ -7,6 +7,7 @@
 #include <ros/package.h>
 #include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
+#include <std_msgs/Empty.h>
 #include <std_msgs/Float32.h>
 #include <darknet_ros_msgs/BoundingBoxes.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -24,14 +25,25 @@
 #include <pcl/filters/passthrough.h>
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl_ros/transforms.h>
+#include <pcl/segmentation/extract_clusters.h>
 
 const std::string ref_frame = "base_link";
 
 typedef pcl::PointXYZ PointType;
 typedef pcl::PointCloud<PointType> PointCloud;
 
-/* CloudObjectFinder
-Description:    This class analyses point clouds to get an object pose for picking
+struct extremities {
+  float min;
+  float max;
+  extremities(float min, float max) : min{min}, max{max} {}
+  bool isWithin(float val)
+  {
+    return (val > min && val < max);
+  }
+};
+
+/* DropSpotFinder
+Description:    This class analyses point clouds to get an object pose for droping
 Attributes:     _nh (type, ros::NodeHandle):
                     Necessary for the proper handling of a ROS node
 
@@ -39,37 +51,41 @@ Attributes:     _nh (type, ros::NodeHandle):
                     The topic to publish the coordinates on
                 
 */
-class CloudObjectFinder
+class DropSpotFinder
 {
 public:
-    CloudObjectFinder(ros::NodeHandle& nh);
-    // CloudObjectFinder();
-    // virtual ~CloudObjectFinder();
-    inline const bool pick_pose_found(){return got_pick_pose;}
-    inline geometry_msgs::PoseStamped get_pick_pose(){return _pick_pose;}
+    DropSpotFinder(ros::NodeHandle& nh);
+    // DropSpotFinder();
+    // virtual ~DropSpotFinder();
+    inline const bool drop_pose_found(){return got_drop_pose;}
+    inline geometry_msgs::PoseStamped get_drop_pose(){return _drop_pose;}
 
 protected:
 
   ros::NodeHandle _nh;
 
   // for debug
-  sensor_msgs::PointCloud2 _filtered_cloud;
-  sensor_msgs::PointCloud2 _noplane_cloud;
-  geometry_msgs::PoseStamped _pick_pose;
-  ros::Publisher filtered_pub;
-  ros::Publisher noplane_pub;
-  ros::Publisher pick_point_pub;
-  ros::Publisher object_height_pub;
+  sensor_msgs::PointCloud2 filtered_cloud;
+  geometry_msgs::PoseStamped _drop_pose;
+  ros::Publisher drop_point_pub;
+  ros::Publisher plane_cloud_pub;
+  sensor_msgs::PointCloud2 plane_cloud;
 
-  ros::Subscriber _detection_sub;
   ros::Subscriber _cloud_sub;
   ros::Subscriber image_info_sub;
   ros::Subscriber desired_object_sub;
 
+  // Temp, for use outside HHBA
+  ros::Subscriber trigger_sub;
+  void triggerCallback(const std_msgs::EmptyConstPtr& nothing);
+
+  ros::Subscriber object_height_sub;
+  // height at which we picked the objet, default value to avoid collisions
+  float object_height = 0.15;
+
   darknet_ros_msgs::BoundingBox latest_detection;
   PointCloud scene_cloud;
 
-  std::string desired_object_type;
   sensor_msgs::CameraInfo camera_info;
 
   tf2_ros::Buffer tfBuffer;
@@ -77,17 +93,13 @@ protected:
 
   bool got_cam_info = false;
 
-  bool got_pick_pose = false;
+  bool got_drop_pose = false;
 
   image_geometry::PinholeCameraModel camera_model;
   
-  void detectionCallback(const darknet_ros_msgs::BoundingBoxesConstPtr& msg);
   void cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg);
   void imageInfoCallback(const sensor_msgs::CameraInfoConstPtr& info);
-  void desiredObjectCallback(const std_msgs::StringConstPtr& type);
-
-  void resetSearch();
-
+  void objectHeightCallback(const std_msgs::Float32ConstPtr& height);
 };
 
 #endif

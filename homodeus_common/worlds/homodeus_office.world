@@ -189,6 +189,12 @@
         <enable_wind>0</enable_wind>
       </link>
     </model>
+   <!-- Add female 02 -->
+    <include>
+      <name>female02</name>
+      <uri>model://citizen_extras_female_02</uri>
+      <pose>-1 -8 0.01 0.01 0.02 3</pose>
+    </include>
     <model name='wall_3_model'>
       <pose frame=''>-5 -5.5 1 0 -0 0</pose>
       <static>1</static>

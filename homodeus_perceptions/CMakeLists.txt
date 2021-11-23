@@ -171,6 +171,11 @@ target_link_libraries(proc_point_cloud_perception ${catkin_LIBRARIES} ${Librarie
 add_dependencies(proc_point_cloud_perception ${catkin_EXPORTED_TARGETS})
 set_target_properties(proc_point_cloud_perception PROPERTIES OUTPUT_NAME "proc_point_cloud_perception")
 
+add_executable(proc_drop_spot_perception src/proc_drop_spot_perception.cpp)
+target_link_libraries(proc_drop_spot_perception ${catkin_LIBRARIES} ${Libraries})
+add_dependencies(proc_drop_spot_perception ${catkin_EXPORTED_TARGETS})
+set_target_properties(proc_drop_spot_perception PROPERTIES OUTPUT_NAME "proc_drop_spot_perception")
+
 #############
 ## Install ##
 #############
