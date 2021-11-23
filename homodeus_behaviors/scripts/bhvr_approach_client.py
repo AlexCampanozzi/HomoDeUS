@@ -29,13 +29,11 @@ class ApproachClient():
 
         rospy.Subscriber('/proc_output_face_positions', FacePositions, self._face_callback, queue_size=5)
         rospy.Subscriber('/xtion/depth_registered/image_raw', Image, self._camera_callback, queue_size=5)
-        self.value = 2
+        self.tolerance = 0.15
 
 
         self.vel_publisher = rospy.Publisher("/mobile_base/cmd_vel", Twist, queue_size=5)
         self.pub = rospy.Publisher('tiago_head_controller', PoseStamped, queue_size=5)
-
-
 
         ## movement test
 
@@ -47,16 +45,12 @@ class ApproachClient():
         poseStamped.pose.position.y = y
         self.pub.publish(poseStamped)
 
-        #navigator.gotoLandmark("wall")
         self.navigator.gotoLandmark("kitchenEntrance")
-        # navigator.goto(0, 0, 0)
-
-        # self.pubGoto.publish("table1")
 
 
     def _face_callback(self, detections):
 
-        if self.depth_image is not None:
+        if self.depth_image is not None and self.navigator.goalFinished:
 
             face_depth_view = self.depth_image[detections.faces[0].y: detections.faces[0].y + detections.faces[0].height, 
                                             detections.faces[0].x: detections.faces[0].x + detections.faces[0].width]
@@ -65,7 +59,7 @@ class ApproachClient():
 
             rospy.loginfo(face_dist)
 
-            if face_dist > self.approach_dist and not np.isnan(face_dist):
+            if face_dist > self.approach_dist + self.tolerance*self.approach_dist and not np.isnan(face_dist):
 
                 # considering that the face is centered in the optical frame
                 face_point = np.array([0, 0, face_dist])
@@ -83,21 +77,16 @@ class ApproachClient():
                 trans, rot = self.tf_listener.lookupTransform("/map", "/base_link", rospy.Time(0))
                 
 
-                if self.value == 2:
-                    self.navigator.goto(map_point.point.x, map_point.point.y, np.pi-np.arctan(map_point.point.x/map_point.point.y))
-                    self.value = 3
+                # if self.value == 2:
+                self.navigator.goto(map_point.point.x, map_point.point.y, np.pi-np.arctan(map_point.point.x/map_point.point.y))
+                    # self.value = 3
                     # rospy.loginfo("goto sent")
-                    rospy.loginfo(map_point)
+                rospy.loginfo(map_point)
 
 
     def _camera_callback(self, image):
 
         self.depth_image = self.bridge.imgmsg_to_cv2(image, "passthrough")
-        if self.value == 1:
-            self.value = 69
-            rospy.loginfo(self.depth_image.shape)
-            rospy.loginfo(np.max(self.depth_image))
-            rospy.loginfo(self.depth_image)
 
         
 

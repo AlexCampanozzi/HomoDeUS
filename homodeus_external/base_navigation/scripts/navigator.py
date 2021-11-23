@@ -25,6 +25,8 @@ class Navigator:
         while(not self.ac.wait_for_server(rospy.Duration.from_sec(5.0)) and not rospy.is_shutdown()):
             rospy.loginfo("Waiting for the move_base action server to come up")
 
+        self.goalFinished = True
+
     def goto(self, xGoal, yGoal, oriGoal):
         goal = MoveBaseGoal()
 
@@ -43,6 +45,7 @@ class Navigator:
 
     def gotoGoal(self, goal):
         rospy.loginfo("Sending goal location ...")
+        self.goalFinished = False
 
         self.ac.send_goal(goal, self.gotoDoneCB)
 
@@ -55,9 +58,12 @@ class Navigator:
         if(state == GoalStatus.SUCCEEDED):
                 rospy.loginfo("The robot reached the destination")
                 self.doneCB(True)
+                self.goalFinished = True
         else:
                 rospy.loginfo("The robot failed to reach the destination")
                 self.doneCB(False)
+                self.goalFinished = True
+
 
     def goalToLandmark(self, goal):
         goal = MoveBaseGoal()
