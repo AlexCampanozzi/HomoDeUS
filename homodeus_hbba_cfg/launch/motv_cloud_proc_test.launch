@@ -1,3 +1,0 @@
-<launch>
-    <node name="goto_test" pkg="homodeus_motivations" type="motv_goto_test.py" output="screen"/>
-</launch>
