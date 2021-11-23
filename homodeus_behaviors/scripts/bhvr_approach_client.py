@@ -74,14 +74,9 @@ class ApproachClient():
                 point.header.frame_id = "/xtion_rgb_optical_frame"
 
                 map_point = self.tf_listener.transformPoint("/map", point)
-                trans, rot = self.tf_listener.lookupTransform("/map", "/base_link", rospy.Time(0))
-                
 
-                # if self.value == 2:
                 self.navigator.goto(map_point.point.x, map_point.point.y, np.pi-np.arctan(map_point.point.x/map_point.point.y))
-                    # self.value = 3
-                    # rospy.loginfo("goto sent")
-                rospy.loginfo(map_point)
+                rospy.loginfo("approaching detected client")
 
 
     def _camera_callback(self, image):

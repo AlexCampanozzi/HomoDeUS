@@ -5,16 +5,13 @@
             <question>What can I do for you?</question>
             <question>I am listening</question>
             <question>What do you need?</question>
-            <!--<question>You want something dog?</question>-->
             <question>Listening to your needs</question>
         </begin>
         <listen>
             <answer rel_info="scenario_1" prefix="do ">scenario one</answer>
             <answer rel_info="scenario_1" prefix="do ">first scenario</answer>
             <answer rel_info="scenario_1" prefix="do ">take order</answer>
-            <!--<answer rel_info="scenario_1" prefix="do ">take the order</answer>-->
             <answer rel_info="scenario_1" prefix="do ">see client</answer>
-            <!--<answer rel_info="scenario_1" prefix="do ">see the client</answer>-->
             <answer rel_info="scenario_1" prefix="do ">script one</answer>
             
             <answer rel_info="scenario_2" prefix="do ">scenario two</answer>
@@ -68,16 +65,15 @@
         <repeat>
             <answer> Sorry, I'm not sure I understood, could you repeat?</answer>
             <answer> I'm not sure I can help, could you repeat to be sure?</answer>
-            <answer> Hmmm, what?</answer>
+            <answer> Sorry, what?</answer>
+            <answer> Excuse me, what?</answer>
             <answer> Sorry, my ears must have oil in them, could you speak louder?</answer>
-            <!--<answer> Daddy did not hear right, could you repeat boss?</answer>-->
         </repeat>
         <deadline>
             <answer> Sorry, I don't think I can help, have a great day</answer>
             <answer> It seems like I can't help, maybe ask another waiter</answer>
             <answer> It seems like I can't help, maybe ask to an other waiter</answer>
             <answer> I should go back to what I was doing, Goodbye </answer>
-            <answer> Ain't nobody got time for that!</answer>
         </deadline>
         <nothing>
             <answer> I will be happy to help you when you will need it!</answer>
@@ -91,7 +87,6 @@
             <question>If I understood well, you want me to </question>
             <question>So I should </question>
             <question>Correct me if I am wrong, but I have to </question>
-            <!--<question>Hey Big shot, please confirm me that I have to </question>-->
         </feedback>
     </scenario_selection>
     <menu_selection timer="20">
@@ -110,6 +105,8 @@
             <answer rel_info="organge">oranges</answer>
             <answer rel_info="cheese">cheese</answer>
             <answer rel_info="pepsi">pepsi</answer>
+            <answer rel_info="pringles">pringles</answer>
+            <answer rel_info="pringles">chips</answer>
             <answer rel_info="hamburger">hamburger</answer>
             <answer rel_info="hotdog">hotdog</answer>
             <answer rel_info="pizza"> pizza</answer>
@@ -132,7 +129,6 @@
             <answer> Sorry, I don't think I can help, have a great day</answer>
             <answer> It seems like I can't help, maybe ask to an other waiter</answer>
             <answer> I should go back to what I was doing, Goodbye </answer>
-            <answer> Ain't nobody got time for that!</answer>
         </deadline>
         <nothing>
             <answer> We serve really good food here, so do not hesitate if you change idea. Goodbye! </answer>
@@ -146,7 +142,6 @@
             <question>Just to be sure, you command </question>
             <question>Did I note your order well, you order </question>
             <question>Correct me if I am wrong, but you've ask for </question>
-            <question>With that order, your pants will not fit you anymore. Did you really ask for </question>
         </feedback>
     </menu_selection>
     <confirmation timer="20">
@@ -208,7 +203,6 @@
         </listen>
         <feedback>
             <answer>Alright it's </answer>
-            <answer>I hear you boss, it's </answer>
             <answer>Noted, it's </answer>
             <answer>Okay, it's </answer>
         </feedback>
@@ -218,7 +212,6 @@
             <answer>So... I'm not sure, is that an affirmative?</answer>
         </repeat>
         <deadline>
-            <answer> I have reached the limit of my patience. Have a good day!</answer>
             <answer> Okay, it seems like I really can not understand what you are saying. Please talk to someone else</answer>
             <answer> My microphones must have problems, but I can not hear what you are saying, I'll go back to work</answer>
             <answer> Okay Okay Okay, because I am now embarrassed to make you repeat one more time, I'll just stop this conversation. Goodbye</answer>

@@ -24,9 +24,6 @@
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl_ros/transforms.h>
 
-// Arm controller header
-#include <homodeus_arm_interface/ArmInterface.h>
-
 const std::string ref_frame = "base_link";
 
 typedef pcl::PointXYZ PointType;
@@ -53,7 +50,6 @@ public:
 protected:
 
   ros::NodeHandle _nh;
-  ros::Publisher _pub;
 
   // for debug
   sensor_msgs::PointCloud2 _filtered_cloud;
@@ -62,9 +58,6 @@ protected:
   ros::Publisher filtered_pub;
   ros::Publisher noplane_pub;
   ros::Publisher pick_point_pub;
-  void noplaneTimerCallback(const ros::TimerEvent&);
-  void filteredTimerCallback(const ros::TimerEvent&);
-  void pickpointTimerCallback(const ros::TimerEvent&);
 
   ros::Subscriber _detection_sub;
   ros::Subscriber _cloud_sub;
@@ -85,12 +78,13 @@ protected:
   bool got_pick_pose = false;
 
   image_geometry::PinholeCameraModel camera_model;
-  ArmInterface arm_interface = ArmInterface(ref_frame);
   
   void detectionCallback(const darknet_ros_msgs::BoundingBoxesConstPtr& msg);
   void cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg);
   void imageInfoCallback(const sensor_msgs::CameraInfoConstPtr& info);
   void desiredObjectCallback(const std_msgs::StringConstPtr& type);
+
+  void resetSearch();
 
 };
 

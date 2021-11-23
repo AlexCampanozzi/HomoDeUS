@@ -1,0 +1,3 @@
+<launch>
+    <node name="armInterface" pkg="homodeus_behaviors" type="arm_interface_node" output="screen"/>
+</launch>

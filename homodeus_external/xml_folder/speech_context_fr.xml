@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<context>
+    <yes_or_no timer="20">
+        <answer acc_type='ON'>absolument</answer>
+        <answer acc_type='ON'>accept</answer>
+        <answer acc_type='ON'>affirmatif</answer>
+        <answer acc_type='ON'>approuve</answer>
+        <answer acc_type='ON'>d'accord</answer>
+        <answer acc_type='ON'>confirme</answer>
+        <answer acc_type='ON'>confirmer</answer>
+        <answer acc_type='ON'>ok</answer>
+        <answer acc_type='ON'>parfait</answer>
+        <answer acc_type='ON'>certainement</answer>
+        <answer acc_type='ON'>oui</answer>
+        <answer acc_type='ON'>ouais</answer>
+        <answer acc_type='ON'>ouaip</answer>
+        <answer acc_type='ON'>ca marche</answer>
+        <answer acc_type='ON'>exactement</answer>
+        <answer acc_type='ON'>correct</answer>
+        <answer acc_type='ON'>tout a fait</answer>
+        <answer acc_type='ON'>définitivement</answer>
+        <answer acc_type='ON'>c'est ca</answer>
+        <answer acc_type='ON'>avec plaisirs</answer>
+        <answer acc_type='ON'>en effet</answer>
+        <answer acc_type='ON'>evidemment</answer>
+        <answer acc_type='ON'>okay</answer>
+        <answer acc_type='ON'>ok</answer>
+        <answer acc_type='ON'>okie dokie</answer>
+        <answer acc_type='ON'>totalement</answer>
+        <answer acc_type='ON'>yah</answer>
+        <answer acc_type='ON'>yeah</answer>
+        <answer acc_type='ON'>yes</answer>
+        <answer acc_type='ON'>yep</answer>
+        <answer acc_type='ON'>yup</answer>
+
+        <answer acc_type='OFF'>decline</answer>
+        <answer acc_type='OFF'>désapprouve</answer>
+        <answer acc_type='OFF'>oublie ca</answer>
+        <answer acc_type='OFF'>nah</answer>
+        <answer acc_type='OFF'>nay</answer>
+        <answer acc_type='OFF'>negatif</answer>
+        <answer acc_type='OFF'>jamais</answer>
+        <answer acc_type='OFF'>no</answer>
+        <answer acc_type='OFF'>nope</answer>
+        <answer acc_type='OFF'>non</answer>
+        <answer acc_type='OFF'>refuse</answer>
+        <answer acc_type='OFF'>pas du tout</answer>            
+        <answer acc_type='OFF'>absolument pas</answer>
+        <answer acc_type='OFF'>pas tout à fait</answer>
+        <answer acc_type='OFF'>pas vraiment</answer>
+        <answer acc_type='OFF'>certainement pas</answer>
+    </yes_or_no>
+    <menu timer="50">
+        <answer acc_type="ON">pomme</answer>
+        <answer acc_type="ON">pommes</answer>
+        <answer acc_type="ON">banane</answer>
+        <answer acc_type="ON">bananes</answer>
+        <answer acc_type="ON">orange</answer>
+        <answer acc_type="ON">oranges</answer>
+        <answer acc_type="ON">fromage</answer>
+        <answer acc_type="ON">pringles</answer>
+        <answer acc_type="ON">chips</answer>
+        <answer acc_type="ON">croustilles</answer>
+    </menu>
+    <continue_or_reset timer="20">
+        <answer acc_type="ON">continue</answer>
+        <answer acc_type="ON">lache pas</answer>
+        <answer acc_type="ON">poursuivre</answer>
+        <answer acc_type="ON">reprendre</answer>
+        <answer acc_type="ON">resume</answer>
+        <answer acc_type="OFF">reset</answer>
+        <answer acc_type="OFF">corrige</answer>
+        <answer acc_type="OFF">correction</answer>
+        <answer acc_type="OFF">révise</answer>
+        <answer acc_type="OFF">restart</answer>
+        <answer acc_type="OFF">recommence</answer>
+    </continue_or_reset>
+    <order_ready timer="60">
+        <answer acc_type="ON">ready</answer>
+        <answer acc_type="ON">pret</answer>
+        <answer acc_type="ON">prepare</answer>
+        <answer acc_type="ON">préparé</answer>
+        <answer acc_type="ON">commande prète</answer>
+        <answer acc_type="ON">vas y</answer>
+    </order_ready>
+</context>
+
