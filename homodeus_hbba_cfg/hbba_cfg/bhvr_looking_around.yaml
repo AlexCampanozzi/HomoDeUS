@@ -15,4 +15,4 @@ hbba_conf:
     utility: 8
     modules:
         - bhvr_looking_around
-    custom_bringdn: "pubEmpty('/head_home_reset');"
+    #custom_bringdn: "pubEmpty('/head_home_reset');"

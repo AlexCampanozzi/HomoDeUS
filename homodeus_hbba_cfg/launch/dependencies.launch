@@ -1,4 +1,3 @@
 <launch>
-  <node name="bhvr_looking_around_intermediate" pkg="homodeus_behaviors" type="inter_look_around.py"/>
   <node name="headAction" pkg="homodeus_external" type="headController.py" output="screen"/>
 </launch>

@@ -9,8 +9,10 @@ hbba_conf:
     input:
         - desired_object: {src: desired_object, filtered: true}
         - bounding_boxes
+        - move_base: {src: move_base, filtered: false}
     output:
         - head_command
+        - bhvr_output_trackingObject_boxes
             
 - strat:
     name: bhvr_tracking_object

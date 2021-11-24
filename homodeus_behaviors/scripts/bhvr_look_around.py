@@ -15,29 +15,26 @@ CENTER = 0.0
 MAX_REACHEABLE_HEIGHT = 0.0
 MAX_REACHEABLE_DOWN = -0.6
 SECURITY_FACTOR = 0.90
-MV_DURATION = 2
+MV_DURATION = 4
 
 
 class lookAround:
     def __init__(self):
-        self.head_controller = headController("head_command")
+        self.head_controller = headController(rate=0.1, head_control_topic="head_command")
         self.look_around()
-        rospy.loginfo("-------------- lookAround ready ---------------")
     
     def look_around(self):
         trajectory = self.get_trajectory()
         index = 0
-        while not rospy.is_shutdown() :
-            goal_position = deepcopy(trajectory[index])
-            divided_goals = self.get_divided_trajectory(goal_position,8)
-            for goal in divided_goals:
-                self.head_controller.GotoPosition(goal[0],goal[1],goal[2])
-                rospy.sleep(MV_DURATION)
+        rospy.logwarn("======================= lookAround ready =======================")
+        while not rospy.is_shutdown():
+            goal = trajectory[index]
+            self.head_controller.goto_position(True,goal[0],goal[1],MV_DURATION)
             if index < len(trajectory) -1 :
-                index = index + 1
+                index = index + 1   
             else:
                 index = 0
-            rospy.sleep(1)
+            rospy.sleep(MV_DURATION)
 
     def get_divided_trajectory(self,goal,divider):
         ratio = 1/divider
