@@ -7,7 +7,6 @@
   
   <node name="talking_action" pkg="homodeus_external" type="talking_action.py"/>
   <param name="on_robot" type="bool" value="False" />
-  <param name="use_sim_time" type="bool" value="True" />
   <!--<include file="$(find usb_cam)/launch/usb_cam-test.launch"></include>-->
   <include file="$(find homodeus_hbba_cfg)/hbba_cfg_out/homodeus.launch"></include>
 

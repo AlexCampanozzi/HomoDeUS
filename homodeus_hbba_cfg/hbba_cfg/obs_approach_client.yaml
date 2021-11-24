@@ -1,0 +1,5 @@
+hbba_conf:
+
+- motivation:
+    name: obs_approach_client
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/obs_approach_client.launch"}

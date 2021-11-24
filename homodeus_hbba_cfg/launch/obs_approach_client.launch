@@ -1,0 +1,3 @@
+<launch>
+  <node name="obs_approach_client" pkg="homodeus_motivations" type="obs_approach_client.py" output="screen"/>
+</launch>

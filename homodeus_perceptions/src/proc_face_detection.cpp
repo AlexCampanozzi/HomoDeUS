@@ -142,7 +142,7 @@ Outputs:        None
 */
 void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
-    ROS_INFO("face CB");
+    // ROS_INFO("face CB");
     cv::Mat img;
     cv::Rect r;
 
@@ -194,7 +194,7 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     {
       publishDetections(faces);
       observerMsg.data = true;
-      ROS_INFO("face detected");
+      // ROS_INFO("face detected");
     }
     else
     {

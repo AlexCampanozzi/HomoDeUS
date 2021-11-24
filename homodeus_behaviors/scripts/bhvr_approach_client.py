@@ -8,7 +8,7 @@ from sensor_msgs.msg import CameraInfo, Image, PointCloud2
 from image_geometry import StereoCameraModel
 
 from geometry_msgs.msg import PoseStamped, PointStamped
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool
 
 from base_navigation.scripts.navigator import Navigator
 from cv_bridge import CvBridge, CvBridgeError
@@ -33,19 +33,7 @@ class ApproachClient():
 
 
         self.vel_publisher = rospy.Publisher("/mobile_base/cmd_vel", Twist, queue_size=5)
-        self.pub = rospy.Publisher('tiago_head_controller', PoseStamped, queue_size=5)
-
-        ## movement test
-
-        poseStamped = PoseStamped()
-
-        x = 0
-        y = 0
-        poseStamped.pose.position.x = x
-        poseStamped.pose.position.y = y
-        self.pub.publish(poseStamped)
-
-        self.navigator.gotoLandmark("kitchenEntrance")
+        self.pubObserver = rospy.Publisher('approach_client_observer', Bool, queue_size=5)
 
 
     def _face_callback(self, detections):
@@ -56,8 +44,6 @@ class ApproachClient():
                                             detections.faces[0].x: detections.faces[0].x + detections.faces[0].width]
 
             face_dist = np.nanmin(face_depth_view)
-
-            rospy.loginfo(face_dist)
 
             if face_dist > self.approach_dist + self.tolerance*self.approach_dist and not np.isnan(face_dist):
 
@@ -75,15 +61,15 @@ class ApproachClient():
 
                 map_point = self.tf_listener.transformPoint("/map", point)
 
-                self.navigator.goto(map_point.point.x, map_point.point.y, np.pi-np.arctan(map_point.point.x/map_point.point.y))
+                # self.navigator.goto(map_point.point.x, map_point.point.y, np.pi-np.arctan(map_point.point.x/map_point.point.y))
+                # for megagenial only                
+                self.navigator.goto(map_point.point.x, map_point.point.y, -2.2)
                 rospy.loginfo("approaching detected client")
 
 
     def _camera_callback(self, image):
 
-        self.depth_image = self.bridge.imgmsg_to_cv2(image, "passthrough")
-
-        
+        self.depth_image = self.bridge.imgmsg_to_cv2(image, "passthrough")      
 
 
 if __name__ == "__main__":

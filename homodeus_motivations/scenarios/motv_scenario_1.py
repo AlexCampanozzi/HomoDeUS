@@ -9,7 +9,7 @@ from hbba_msgs.srv import AddDesires, RemoveDesires
 from scenario_manager_action_server import ScenarioManagerAction
 import actionlib
 from custom_msgs.msg import scenario_managerAction, scenario_managerResult, scenario_managerFeedback
-from states.scenario_1_states import state_00, state_01, state_02, state_03
+from states.scenario_1_states import state_00, state_01, state_02, state_03, state_04
 
 
 FILE_LOCATION = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))+'/homodeus_common/dialog_answer.json'
@@ -34,14 +34,18 @@ class Scenario1Manager(ScenarioManagerAction):
         self.state_02 = state_02.State02(self.desires)
         self.state_03 = state_03.State03(self.desires)
 
+        self.state_04 = state_04.State04(self.desires) # approach client
+
         # Add the states to the current states dict for the follow up
         self.add_state(self.state_00)
         self.add_state(self.state_01)
         self.add_state(self.state_02)
         self.add_state(self.state_03)
 
+        self.add_state(self.state_04)
+
         # Build the normal scenario_sequence (when everything goes as it should)
-        self.scenario_sequence = [self.state_00,self.state_01,self.state_02,self.state_03]
+        self.scenario_sequence = [self.state_00, self.state_04, self.state_01, self.state_02, self.state_03]
         self.index = 0
 
         self.current_state = self.scenario_sequence[self.index]
@@ -125,6 +129,8 @@ class Scenario1Manager(ScenarioManagerAction):
             self.current_state = self.state_02
         elif state_number == 3:
             self.current_state = self.state_03
+        elif state_number == 4:
+            self.current_state = self.state_04
 
         self._feedback.state = self.current_state.get_id()
         

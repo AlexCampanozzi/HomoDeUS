@@ -11,9 +11,10 @@ class State00(StateBase):
         return "GoTo_Table"
 
     def add_state_desires(self):
-        print("00 init")
-        self.add("move_to_table_00", "GoToLandmark",  params = "{name: 'kitchenEntrance'}")
-        self.stateDict["move_to_table_00"] = Event.DES_ON
+        print("04 init")
+
+        self.add("approach_client_00", "ApproachClient")
+        self.stateDict["approach_client_00"] = Event.DES_ON
 
     def react_to_event(self):
         for desire in self.stateDict:
@@ -25,5 +26,5 @@ class State00(StateBase):
                 return None
 
     def cleanup(self):
-        self.remove("move_to_table_00")
-        self.stateDict.pop("move_to_table_00")
+        self.remove("approach_client_00")
+        self.stateDict.pop("approach_client_00")
