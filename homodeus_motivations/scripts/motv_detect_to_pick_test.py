@@ -37,7 +37,7 @@ class CloudProcManager:
         rospy.logwarn("Publishing desired_object")
         pub = rospy.Publisher("/desired_object", String, queue_size=5)
         rospy.sleep(1)
-        pub.publish("bottle")
+        pub.publish("apple")
 
     def remove(self):
         self.rem_desires.call(["test_cloudProc"])
