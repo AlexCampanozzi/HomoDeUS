@@ -120,6 +120,7 @@ include_directories(
 add_hbba_cfg(homodeus hbba_cfg/homodeus.yaml)
 add_hbba_cfg(test hbba_cfg/test.yaml)
 add_hbba_cfg(tiago_detect_to_pick_test_run hbba_cfg/tiago_detect_to_pick_test_run.yaml)
+add_hbba_cfg(tiago_drop_test_run hbba_cfg/tiago_drop_test_run.yaml)
 
 #############
 ## Install ##

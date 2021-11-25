@@ -10,6 +10,7 @@ CloudObjectFinder::CloudObjectFinder(ros::NodeHandle& nh): _nh(nh)
     noplane_pub = _nh.advertise<sensor_msgs::PointCloud2>("/noplane_cloud", 5);
     filtered_pub = _nh.advertise<sensor_msgs::PointCloud2>("/filtered_cloud", 5);
     pick_point_pub = _nh.advertise<geometry_msgs::PoseStamped>("/pick_point", 5);
+    object_height_pub = _nh.advertise<std_msgs::Float32>("/object_pick_height", 1);
 }
 
 void CloudObjectFinder::imageInfoCallback(const sensor_msgs::CameraInfoConstPtr& info)
@@ -30,7 +31,7 @@ void CloudObjectFinder::desiredObjectCallback(const std_msgs::StringConstPtr& ty
 
 void CloudObjectFinder::detectionCallback(const darknet_ros_msgs::BoundingBoxesConstPtr& msg)
 {
-    ROS_INFO("In box callback");
+    // ROS_INFO("In box callback");
     bool found_object = false;
     for (auto box : msg->bounding_boxes)
     {
@@ -141,11 +142,11 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     // Mandatory
     seg.setModelType(pcl::SACMODEL_PLANE);
     seg.setMethodType(pcl::SAC_RANSAC);
-    seg.setDistanceThreshold(0.02);
+    seg.setDistanceThreshold(0.01);
     // Table should be perpendicular to the z axis (in the x-y plane)
     Eigen::Vector3f zAxis = Eigen::Vector3f(0,0,1);
     seg.setAxis(zAxis);
-    seg.setEpsAngle(0.2);
+    seg.setEpsAngle(0.1);
 
     seg.setInputCloud(point_cloud_filtered.makeShared());
     seg.segment(*inliers, *coefficients);
@@ -171,6 +172,7 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
             maxz = point.z;
         }
     }
+    float table_z = maxz;
 
     pcl::PassThrough<pcl::PointXYZ> passz;
     passz.setInputCloud(point_cloud_filtered.makeShared());
@@ -215,6 +217,9 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     // Gripper: we pick at the center w/ gripper, so use all averages
     average_point = pcl::PointXYZ(avgX/numpoints, avgY/numpoints, avgZ/numpoints);
 
+    // find offset between grasping fram and frame link moveit uses
+    auto grip_to_wrist_tf =  tfBuffer.lookupTransform("gripper_grasping_frame", "arm_tool_link", ros::Time(0));
+
     // TODO: find a way to decide orientation of pick point, either from shape, object identity, or both
 
     geometry_msgs::PoseStamped goal_pose;
@@ -223,18 +228,22 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     // goal_pose.pose.position.y = average_point.y - 0.04;
 
     // Gripper: no offsets other than wrist to tool, we want the object to be in the middle
-    goal_pose.pose.position.x = average_point.x - 0.15;
-    goal_pose.pose.position.y = average_point.y;
-
-    goal_pose.pose.position.z = average_point.z;
+    goal_pose.pose.position.x = average_point.x + grip_to_wrist_tf.transform.translation.x;
+    goal_pose.pose.position.y = average_point.y + grip_to_wrist_tf.transform.translation.y;
+    goal_pose.pose.position.z = average_point.z + grip_to_wrist_tf.transform.translation.z;
 
     // TODO: insert orientation here
 
     // Gripper
-    goal_pose.pose.orientation.x = 1;
-    goal_pose.pose.orientation.y = 0;
-    goal_pose.pose.orientation.z = 0;
-    goal_pose.pose.orientation.w = 1;
+    tf2::Quaternion quat, transform_quat;
+    tf2::fromMsg(grip_to_wrist_tf.transform.rotation, transform_quat);
+    quat.setRPY(0, M_PI/8, 0);
+
+    // quat.setRPY(0, 0, 0);
+    quat = quat*transform_quat;
+    quat.normalize();
+
+    goal_pose.pose.orientation = tf2::toMsg(quat);
 
     goal_pose.header.frame_id = ref_frame;
     goal_pose.header.stamp = ros::Time::now();
@@ -244,7 +253,12 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     pick_point_pub.publish(_pick_pose);
     got_pick_pose = true;
 
-    resetSearch();
+    ROS_INFO("Publishing object pick height from table");
+    std_msgs::Float32 object_pick_height;
+    object_pick_height.data = average_point.z - table_z;
+    object_height_pub.publish(object_pick_height);
+
+    // resetSearch();
 }
 
 void CloudObjectFinder::resetSearch()

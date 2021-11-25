@@ -5,12 +5,18 @@ nh{n},
 gac("/gripper_controller/follow_joint_trajectory", true)
 {
     ROS_INFO("Node init strated");
-    pick_pose_sub = nh.subscribe("/pick_point", 5, &ArmInterfaceNode::poseCB, this);
+    pick_pose_sub = nh.subscribe("/pick_point", 5, &ArmInterfaceNode::pickPoseCB, this);
+    drop_pose_sub = nh.subscribe("/drop_point", 5, &ArmInterfaceNode::dropPoseCB, this);
     close_gripper_goal.trajectory = closedGripper();
     open_gripper_goal.trajectory = openedGripper();
     ROS_INFO("Waiting for gripper joint controller server...");
     gac.waitForServer();
     ROS_INFO("Found  gripper joint controller server");
+    
+    // HBBA observer topics
+    bhvr_output_pick_result = nh.advertise<std_msgs::Bool>("/bhvr_output_pick_result", 5);
+    bhvr_output_place_result = nh.advertise<std_msgs::Bool>("/bhvr_output_place_result", 5);
+
     ROS_INFO("Node init done");
 }
 
@@ -69,13 +75,13 @@ trajectory_msgs::JointTrajectory ArmInterfaceNode::openedGripper()
     open_fingers.joint_names[1] = "gripper_right_finger_joint";
     open_fingers.points.resize(1);
     open_fingers.points[0].positions.resize(2);
-    open_fingers.points[0].positions[0] = 0.04;
-    open_fingers.points[0].positions[1] = 0.04;
+    open_fingers.points[0].positions[0] = 0.045;
+    open_fingers.points[0].positions[1] = 0.045;
     open_fingers.points[0].time_from_start = ros::Duration(0.5);
     return open_fingers;
 }
 
-void ArmInterfaceNode::poseCB(const geometry_msgs::PoseStampedConstPtr posestamped)
+void ArmInterfaceNode::pickPoseCB(const geometry_msgs::PoseStampedConstPtr posestamped)
 {
     pick_point = *posestamped;
     got_pick_pose = true;
@@ -85,7 +91,8 @@ void ArmInterfaceNode::poseCB(const geometry_msgs::PoseStampedConstPtr posestamp
     success = gotoGraspPrep();
     if (success)
     {
-        ROS_INFO("Now at grasp preparation pose");
+        ROS_INFO("Now at grasp preparation pose, opening gripper");
+        gac.sendGoalAndWait(open_gripper_goal, ros::Duration(2));
     }
     else
     {
@@ -101,8 +108,7 @@ void ArmInterfaceNode::poseCB(const geometry_msgs::PoseStampedConstPtr posestamp
     auto z  = posestamped->pose.position.z;
     
     ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
-    // success = moveToCartesian(0.4, -0.3, 0.26, -0.011, 1.57, 0.037);
-    success = moveToCartesian(x-0.2, y, z, roll, pitch, yaw);
+    success = moveToCartesian(x-0.2, y, z+0.1, roll, pitch, yaw);
     ros::Duration(1).sleep();
     if (success)
     {
@@ -112,21 +118,101 @@ void ArmInterfaceNode::poseCB(const geometry_msgs::PoseStampedConstPtr posestamp
 
     if (success)
     {
-        ROS_INFO("arm_interface_node: successfully moved to pick point, clsing gripper...");
+        ROS_INFO("arm_interface_node: successfully moved to pick point, closing gripper...");
         gac.sendGoalAndWait(close_gripper_goal, ros::Duration(2));
         ROS_INFO("Closed!");
+        ROS_INFO("Retreating");
+        success = gotoRetreat(pick_point);
     }
     else
         ROS_INFO("arm_interface_node: failed to go to pick point!");
 
-    success = gotoRetreat();
+    
     if (success)
     {
         ROS_INFO("arm_interface_node: successfully retreated from pick point.");
+        ROS_INFO("Going home");
+        success  = goHome();
     }
     else
         ROS_INFO("arm_interface_node: failed to retreat from pick point!");
 
+    std_msgs::Bool pick_success_msg;
+    pick_success_msg.data = success;
+    bhvr_output_pick_result.publish(pick_success_msg);
+}
+
+void ArmInterfaceNode::dropPoseCB(const geometry_msgs::PoseStampedConstPtr posestamped)
+{
+    drop_point = *posestamped;
+    got_drop_pose = true;
+    bool success = false;
+
+    ROS_INFO("Going to drop preparation pose");
+    success = gotoGraspPrep();
+    if (success)
+    {
+        ROS_INFO("Now at drop preparation pose");
+    }
+    else
+    {
+        ROS_ERROR("Failed to go to drop preparation pose in time, will still attempt rest of pick sequence");
+    }
+
+    tf::Quaternion quat;
+    tf::quaternionMsgToTF(posestamped->pose.orientation, quat);
+    double roll, pitch, yaw;
+    tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
+    auto x  = posestamped->pose.position.x;
+    auto y  = posestamped->pose.position.y;
+    auto z  = posestamped->pose.position.z;
+    
+    ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
+    success = moveToCartesian(x-0.2, y, z+0.1, roll, pitch, yaw);
+    ros::Duration(1).sleep();
+    if (success)
+    {
+        ROS_INFO("arm_interface_node: reached first waypoint");
+        success = moveToCartesian(x, y, z, roll, pitch, yaw);
+    }
+
+    if (success)
+    {
+        ROS_INFO("arm_interface_node: successfully moved to drop point, opening gripper...");
+        gac.sendGoalAndWait(open_gripper_goal, ros::Duration(2));
+        ROS_INFO("Opened!");
+    }
+    else
+        ROS_INFO("arm_interface_node: failed to go to drop point!");
+
+    if(success)
+    {
+        success = gotoRetreat(drop_point);
+    }
+    
+    if (success)
+    {
+        ROS_INFO("arm_interface_node: successfully retreated from drop point.");
+        ROS_INFO("Going home");
+        success = goHome();
+    }
+    else
+        ROS_INFO("arm_interface_node: failed to retreat from drop point!");
+
+    std_msgs::Bool drop_success_msg;
+    drop_success_msg.data = success; 
+    bhvr_output_place_result.publish(drop_success_msg);
+    
+}
+
+bool ArmInterfaceNode::goHome()
+{
+    bool success;
+    success = moveToJoint(0.34, 0.20, 0.79, -1.50, 1.60, -1.20, 0.14, 0.0);
+    success = moveToJoint(0.34, 0.20, 0.79, -1.50, 1.60, -1.20, 1.37, 0.0);
+    success = moveToJoint(0.34, 0.20, 0.79, 0.01, 2.10, -1.5, 1.37, 0.0);
+    success = moveToJoint(0.25, 0.20, -1.34, -0.20, 1.94, -1.57, 1.37, 0.0);
+    return success;
 }
 
 bool ArmInterfaceNode::gotoGraspPrep()
@@ -135,29 +221,22 @@ bool ArmInterfaceNode::gotoGraspPrep()
     success = moveToJoint(0.34, 0.20, 0.79, 0.01, 2.10, -1.5, 1.37, 0.0);
     success = moveToJoint(0.34, 0.20, 0.79, -1.50, 1.60, -1.20, 1.37, 0.0);
     success = moveToJoint(0.34, 0.20, 0.79, -1.50, 1.60, -1.20, 0.14, 0.0);
-    gac.sendGoalAndWait(open_gripper_goal, ros::Duration(2));
     return success;
 }
 
-bool ArmInterfaceNode::gotoRetreat()
+bool ArmInterfaceNode::gotoRetreat(const geometry_msgs::PoseStamped posestamped)
 {
-    ROS_INFO("Attempting retreat from pick_pose");
-    if (got_pick_pose)
-    {
-        tf::Quaternion quat;
-        tf::quaternionMsgToTF(pick_point.pose.orientation, quat);
-        double roll, pitch, yaw;
-        tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
-        auto x  = pick_point.pose.position.x;
-        auto y  = pick_point.pose.position.y;
-        auto z  = pick_point.pose.position.z;
-        return moveToCartesian(x-0.1, y, z+0.2, roll, pitch, yaw);
-    }
-    else
-    {
-        ROS_INFO("Could not go to retreat point: no pick pose set");
-        return false;
-    }
+    ROS_INFO("Attempting retreat");
+
+    tf::Quaternion quat;
+    tf::quaternionMsgToTF(posestamped.pose.orientation, quat);
+    double roll, pitch, yaw;
+    tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
+    auto x  = posestamped.pose.position.x;
+    auto y  = posestamped.pose.position.y;
+    auto z  = posestamped.pose.position.z;
+    return moveToCartesian(x-0.1, y, z+0.2, roll, pitch, yaw);
+
 }
 
 // Code to use the arm interface

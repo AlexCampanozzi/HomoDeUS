@@ -1,0 +1,18 @@
+hbba_conf:
+
+- remap: {from: 'points', to: '/xtion/depth_registered/points'}
+
+- procmodule:
+    name: proc_drop_spot_perception
+    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/proc_drop_spot_perception.launch'}
+    input:
+        - points
+    output:
+        - drop_position
+
+- strat:
+    name: ScanCloudForSpaceOnTable
+    class: DropSpotPerception
+    utility: 8
+    modules:
+        - proc_drop_spot_perception

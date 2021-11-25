@@ -6,6 +6,7 @@ hbba_conf:
     priority: 10
     input:
         - /pick_point
+        - /drop_point
         - gripper_controller/follow_joint_trajectory: {src: gripper_controller/follow_joint_trajectory, filtered: false}
         - /tiago_arm_interface/execute_trajectory: {src: /execute_trajectory, filtered: false}
         - /tiago_arm_interface/move_group: {src: /move_group, filtered: false}
@@ -29,10 +30,17 @@ hbba_conf:
         - tiago_arm_interface
     # custom_bringup: "sys(\"rostopic pub /pick_point geometry_msgs/PoseStamped '{header: {seq: 0, stamp: 0, frame_id: base_link}, pose: {position: {x: 0.4, y: -0.3, z: 0.26}, orientation: {x: 1, y: 0, z: 0, w: 1}}}'\")"
 
-# Use this for place once implemented in bhvr
-# - strat:
-#     name: ListenForPlacePoint
-#     class: ListenForPlace
-#     utility: 8
-#     modules:
-#         - tiago_arm_interface
+- strat:
+    name: ListenForPlacePoint
+    class: ListenForPlace
+    utility: 8
+    modules:
+        - tiago_arm_interface
+
+- strat:
+    name: PlacePoint
+    class: Place
+    utility: 8
+    modules:
+        - tiago_arm_interface
+    # custom_bringup: "sys(\"rostopic pub /drop_point geometry_msgs/PoseStamped '{header: {seq: 0, stamp: 0, frame_id: base_link}, pose: {position: {x: 0.4, y: -0.3, z: 0.26}, orientation: {x: 1, y: 0, z: 0, w: 1}}}'\")"

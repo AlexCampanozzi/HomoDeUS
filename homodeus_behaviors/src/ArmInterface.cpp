@@ -18,6 +18,7 @@ ArmInterface::ArmInterface() : _moveGroup("arm_torso"), _ref_frame("base_link")
     _plannerId = "SBLkConfigDefault";
 
     _moveGroup.setPlannerId(_plannerId);
+    _moveGroup.setMaxVelocityScalingFactor(max_vel_factor);
 
     _jointsNames = _moveGroup.getJoints();
 
@@ -44,6 +45,7 @@ ArmInterface::ArmInterface(std::string ref_frame) : _moveGroup("arm_torso"), _re
     _plannerId = "SBLkConfigDefault";
 
     _moveGroup.setPlannerId(_plannerId);
+    _moveGroup.setMaxVelocityScalingFactor(max_vel_factor);
 
     _jointsNames = _moveGroup.getJoints();
 

@@ -3,7 +3,6 @@
 # A simple motivation module to add a test_cloudProc desire and remove it when it is accomplished
 
 import rospy
-import actionlib
 from hbba_msgs.msg import Desire, Event
 from hbba_msgs.srv import AddDesires, RemoveDesires
 from std_msgs.msg import String
@@ -17,33 +16,33 @@ class CloudProcManager:
 
     def add(self):
         des = Desire()
-        des.id          = "test_cloudProc"
-        des.type        = "PointCloudPerception"
+        des.id          = "test_drop_proc"
+        des.type        = "DropSpotPerception"
         des.utility     = 2.0
         des.intensity   = 1.0
 
-        pick_des = Desire()
-        pick_des.id          = "test_pickListenBhvr"
-        pick_des.type        = "ListenForPick"
-        pick_des.utility     = 2.0
-        pick_des.intensity   = 1.0
+        drop_des = Desire()
+        drop_des.id          = "test_drop_listen"
+        drop_des.type        = "ListenForPlace"
+        drop_des.utility     = 2.0
+        drop_des.intensity   = 1.0
 
-        rospy.sleep(2)
-        rospy.logwarn("Adding PointCloudPerception desire")
+        rospy.sleep(5)
+        rospy.logwarn("Adding DropSpotPerception desire")
         self.add_desires.call([des])
-        rospy.logwarn("Adding ListenForPick desire")
-        self.add_desires.call([pick_des])
-        rospy.sleep(2)
-        rospy.logwarn("Publishing desired_object")
-        pub = rospy.Publisher("/desired_object", String, queue_size=5)
-        rospy.sleep(1)
-        pub.publish("apple")
+        rospy.logwarn("Adding ListenForPlace desire")
+        self.add_desires.call([drop_des])
 
     def remove(self):
-        self.rem_desires.call(["test_cloudProc"])
+        self.rem_desires.call(["test_drop_proc"])
+        self.rem_desires.call(["test_drop_listen"])
 
     def removeOnEvent(self, event):
-        if event.desire_type == "test_cloudProc" and event.type == Event.ACC_ON:
+        if event.desire_type == "test_drop_proc" and event.type == Event.ACC_ON:
+            self.rem_desires.call([event.desire])
+        else:
+            pass
+        if event.desire_type == "test_drop_listen" and event.type == Event.ACC_ON:
             self.rem_desires.call([event.desire])
         else:
             pass
