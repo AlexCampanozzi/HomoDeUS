@@ -4,7 +4,7 @@ hbba_conf:
     name: proc_keyword_detection
     launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/proc_keyword_detection.launch'}
     input:
-        - inter_keyword_detection
+        - inter_keyword_detection: {src: inter_keyword_detection, filtered: true, latched: false}
     output:
         - proc_output_keywordDetect
 

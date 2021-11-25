@@ -1,14 +1,17 @@
 #!/usr/bin/env python2
 
+import os 
+import json 
 import rospy
 import actionlib
-from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from actionlib_msgs.msg import *
 from geometry_msgs.msg import Point, Pose
-import tf_lookup.srv
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal, MoveBaseActionResult
 from tf.transformations import quaternion_from_euler, euler_from_quaternion
-import json 
-import os 
+
+import HomoDeUS_common_py.HomoDeUS_common_py as common
+
+
 
 class Navigator:
     def __init__(self):
@@ -25,7 +28,7 @@ class Navigator:
         while(not self.ac.wait_for_server(rospy.Duration.from_sec(5.0)) and not rospy.is_shutdown()):
             rospy.loginfo("Waiting for the move_base action server to come up")
 
-    def goto(self, xGoal, yGoal, oriGoal):
+    def goto(self, xGoal, yGoal, oriGoal, blocking=False):
         goal = MoveBaseGoal()
 
         # set up the frame parameters
@@ -39,25 +42,31 @@ class Navigator:
         goal.target_pose.pose.orientation.z = quaternion[2]
         goal.target_pose.pose.orientation.w = quaternion[3]
 
-        self.gotoGoal(goal)
+        self.gotoGoal(goal, blocking=blocking)
 
-    def gotoGoal(self, goal):
+    def gotoGoal(self, goal, blocking=False):
         rospy.loginfo("Sending goal location ...")
-
-        self.ac.send_goal(goal, self.gotoDoneCB)
-
-        # Old way of doing it, we non-blocking now
-        # self.ac.wait_for_result(rospy.Duration(60))
+        if blocking:
+            self.ac.send_goal(goal)
+            result = self.ac.wait_for_result(rospy.Duration(60))
+            state = self.ac.get_state()
+            return self.handles_result_state(state)
+        else:
+            self.ac.send_goal(goal, self.gotoDoneCB)
+            return True
 
     def gotoDoneCB(self, state, result):
         # We do a bit of witchcraft here and call a method from the child class (HBBA_nav_listener)
         print("result" + str(result))
+        self.handles_result_state(state)
+    
+    def handles_result_state(self,state):
         if(state == GoalStatus.SUCCEEDED):
                 rospy.loginfo("The robot reached the destination")
-                self.doneCB(True)
+                return True
         else:
                 rospy.loginfo("The robot failed to reach the destination")
-                self.doneCB(False)
+                return False
 
     def goalToLandmark(self, goal):
         goal = MoveBaseGoal()
@@ -117,15 +126,4 @@ class Navigator:
         self.ac.cancel_all_goals()
 
     def getCurPose(self):
-        rospy.wait_for_service('/lookupTransform')
-        lookup = rospy.ServiceProxy("/lookupTransform", tf_lookup.srv.lookupTransform)
-        try:
-            response = lookup("map", "base_footprint", rospy.Time())
-        except rospy.ServiceException as exc:
-            print("lookup did not process request: " + str(exc))
-            raise rospy.ServiceException
-        pose = Pose()
-        pose.position = response.transform.transform.translation
-        pose.orientation = response.transform.transform.rotation
-        print(self.landmarks)
-        return pose
+        return common.get_relative_pose('map', 'base_footprint')

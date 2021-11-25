@@ -1,0 +1,9 @@
+hbba_conf:
+
+# keyword detection observer wrapper 
+- motivation:
+    name: motv_test
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/motv_test.launch"}
+    input:
+        - select_desire
+        - remove_desire
