@@ -1,0 +1,5 @@
+<launch>
+  <node name="proc_drop_spot_perception" pkg="homodeus_perceptions" type="proc_drop_spot_perception" output="screen"/>
+</launch>
+
+ <!-- launch-prefix="xterm -e gdb  - -args" -->

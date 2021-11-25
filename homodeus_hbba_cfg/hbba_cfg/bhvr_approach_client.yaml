@@ -13,9 +13,12 @@ hbba_conf:
 
     output:
         - cmd_vel
+        - obs_approach_client
+
+        
             
 - strat:
-    name: TIApproachClient
+    name: ApproachClient
     class: ApproachClient
     utility: 8
     # costs: {move_stack: 1} Can't put this or only one of this or GoTos will be active at a time

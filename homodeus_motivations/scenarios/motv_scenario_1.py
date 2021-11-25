@@ -179,6 +179,7 @@ class Scenario1Manager(ScenarioManagerAction):
         self._feedback.prev_state = self.current_state.get_id()
         
         self.current_state = self.scenario_sequence[self.index]
+        rospy.loginfo("going to next state")
         
         self._feedback.state = self.current_state.get_id()
         

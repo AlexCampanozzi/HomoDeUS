@@ -3,7 +3,7 @@ from std_msgs.msg import String
 from hbba_msgs.msg import Desire, Event
 from ..state import StateBase
 
-class State00(StateBase):
+class State04(StateBase):
     def __init__(self, stateDict):
         StateBase.__init__(self, stateDict)
         

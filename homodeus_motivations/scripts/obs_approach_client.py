@@ -7,6 +7,8 @@ import actionlib
 from yaml import safe_load
 from std_msgs.msg import Bool
 from hbba_msgs.msg import Desire, DesiresSet, Event
+from custom_msgs.msg import GoToResult
+
 
 class ApproachClientObserver:
 
@@ -23,24 +25,26 @@ class ApproachClientObserver:
         self.curDesireSet = desireSet
 
     def listenApproachClient(self):
-        self.goToResultSubscriber = rospy.Subscriber("bhvr_output_res_nav_result", GoToResult, self.listenApproachClientCB)
+        # self.goToResultSubscriber = rospy.Subscriber("/obs_approach_client", Bool, self.listenApproachClientCB)
+        self.goToResultSubscriber = rospy.Subscriber("/bhvr_approach_client/obs_approach_client", Bool, self.listenApproachClientCB)
+        
 
 
     def listenApproachClientCB(self, result):
-        succes = result.result
-        if result.result == True:
+        rospy.loginfo("received something")
+        succes = result.data
+        if result.data == True:
+            rospy.loginfo("data is true")
             for desire in self.curDesireSet.desires:
-                if desire.type == "GoTo":
+                rospy.loginfo(desire)
+                if desire.type == "ApproachClient":
                     paramsDict = safe_load(desire.params)
-                    if equalWithinTolerance(result.x, paramsDict["x"], 0.1) and equalWithinTolerance(result.y, paramsDict["y"], 0.1) and equalWithinTolerance(result.t, paramsDict["t"], 0.1):
-                        rospy.loginfo("Position found within tolerance of a goal position")
-                        event = Event()
-                        event.desire = desire.id
-                        event.desire_type = desire.type
-                        event.type = Event.ACC_ON
-                        self.eventPublisher.publish(event)
-                    else:
-                        print "Position found outside tolerance of a goal position"
+                    rospy.loginfo("Position found within tolerance of a goal position for approach client")
+                    event = Event()
+                    event.desire = desire.id
+                    event.desire_type = desire.type
+                    event.type = Event.ACC_ON
+                    self.eventPublisher.publish(event)
                         
         else:
             # What do we do when GoTo fails?

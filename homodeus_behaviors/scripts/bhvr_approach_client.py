@@ -6,6 +6,8 @@ from sensor_msgs.msg import LaserScan
 import HomoDeUS_common_py as common
 from sensor_msgs.msg import CameraInfo, Image, PointCloud2
 from image_geometry import StereoCameraModel
+from actionlib_msgs.msg import *
+
 
 from geometry_msgs.msg import PoseStamped, PointStamped
 from std_msgs.msg import String, Bool
@@ -22,7 +24,7 @@ class ApproachClient():
         self.bridge = CvBridge()
         self.cameraModel = StereoCameraModel()
         self.depth_image = None
-        self.approach_dist = 1.6
+        self.approach_dist = 1.8
         self.navigator = Navigator()
 
         self.tf_listener = tf.TransformListener()
@@ -31,21 +33,25 @@ class ApproachClient():
         rospy.Subscriber('/xtion/depth_registered/image_raw', Image, self._camera_callback, queue_size=5)
         self.tolerance = 0.15
 
+        self.pubObserver = rospy.Publisher('/bhvr_approach_client/obs_approach_client', Bool, queue_size=5)
 
-        self.vel_publisher = rospy.Publisher("/mobile_base/cmd_vel", Twist, queue_size=5)
-        self.pubObserver = rospy.Publisher('approach_client_observer', Bool, queue_size=5)
+        # self.navigator.gotoLandmark("kitchenEntrance")
 
 
     def _face_callback(self, detections):
 
-        if self.depth_image is not None and self.navigator.goalFinished:
+        # rospy.loginfo(self.navigator.ac.get_state())
+
+        if self.depth_image is not None:
 
             face_depth_view = self.depth_image[detections.faces[0].y: detections.faces[0].y + detections.faces[0].height, 
                                             detections.faces[0].x: detections.faces[0].x + detections.faces[0].width]
 
             face_dist = np.nanmin(face_depth_view)
 
+            # if face_dist > self.approach_dist and not np.isnan(face_dist):
             if face_dist > self.approach_dist + self.tolerance*self.approach_dist and not np.isnan(face_dist):
+
 
                 # considering that the face is centered in the optical frame
                 face_point = np.array([0, 0, face_dist])
@@ -63,8 +69,16 @@ class ApproachClient():
 
                 # self.navigator.goto(map_point.point.x, map_point.point.y, np.pi-np.arctan(map_point.point.x/map_point.point.y))
                 # for megagenial only                
-                self.navigator.goto(map_point.point.x, map_point.point.y, -2.2)
-                rospy.loginfo("approaching detected client")
+                if self.navigator.ac.get_state() == GoalStatus.SUCCEEDED or self.navigator.ac.get_state() == GoalStatus.LOST:
+                    rospy.loginfo("approaching detected client")
+                    result = self.navigator.goto(map_point.point.x, map_point.point.y, -2.2, blocking=True)
+                    rospy.loginfo("result is:")
+                    rospy.loginfo(result)
+
+                    if result:
+                        msg = Bool()
+                        msg.data = True
+                        self.pubObserver.publish(msg)
 
 
     def _camera_callback(self, image):

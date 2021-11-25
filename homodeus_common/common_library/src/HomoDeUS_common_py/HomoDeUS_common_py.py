@@ -10,10 +10,12 @@ import re
 import rospy
 import unicodedata
 
-
 from ctypes import *
-from contextlib import contextmanager
 from hbba_msgs.msg import Desire
+from contextlib import contextmanager
+from geometry_msgs.msg import Pose
+from tf_lookup.srv import lookupTransform
+from tf.transformations import euler_from_quaternion
 
 try:
     import httplib
@@ -38,6 +40,10 @@ def convert_char_array_to_string(char_array):
         return "Error occured: variable non string"
 
 
+def convert_pose_quaternion_to_euler(pose):
+    pose.orientation = list(euler_from_quaternion((pose.orientation.x, pose.orientation.y,pose.orientation.z,pose.orientation.w)))
+    return pose
+    
 def get_file_name(file):
     """
         This function convert an absolute path of a path into the name of the file it points without the extension
@@ -226,6 +232,20 @@ def logfatal(origin, text=""):
             rospy.logfatal(get_file_name(str(origin)) + ": " + text)
     except Exception:
         rospy.logfatal("There was a problem in the common library")
+
+def get_relative_pose(base_frame, moved_frame):
+    rospy.wait_for_service('/lookupTransform')
+    lookup = rospy.ServiceProxy("/lookupTransform", lookupTransform)
+    try:
+        response = lookup(base_frame, moved_frame, rospy.Time())
+    except rospy.ServiceException as exc:
+        rospy.logwarn("lookup did not process request: " + str(exc))
+        raise rospy.ServiceException
+    
+    pose = Pose()
+    pose.position = response.transform.transform.translation
+    pose.orientation = response.transform.transform.rotation
+    return pose
 
 
 class PID:

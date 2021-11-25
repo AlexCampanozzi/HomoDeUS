@@ -1,0 +1,23 @@
+# SLAM Planner can be used either GMapping or static maps as they both provide
+# SLAM strategies, see the related proc modules configurations.
+hbba_conf:
+
+- behavior:
+    name: bhvr_tracking_object
+    launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/bhvr_tracking_object.launch'}
+    priority: 10
+    input:
+        - desired_object: {src: desired_object, filtered: true}
+        - bounding_boxes
+        - move_base: {src: move_base, filtered: false}
+    output:
+        - head_command
+        - bhvr_output_trackingObject_boxes
+            
+- strat:
+    name: bhvr_tracking_object
+    class: Track_object
+    utility: 8
+    modules:
+        - bhvr_tracking_object
+    custom_bringup: "pubString('/desired_object', params.object);"
