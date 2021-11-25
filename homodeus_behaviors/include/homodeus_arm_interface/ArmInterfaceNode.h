@@ -46,7 +46,7 @@ class ArmInterfaceNode: ArmInterface
         ArmInterfaceNode(ros::NodeHandle n);
 
         bool gotoGraspPrep();
-        bool gotoRetreat();
+        bool gotoRetreat(const geometry_msgs::PoseStamped posestamped);
         bool goHome();
 
         void closeHand();

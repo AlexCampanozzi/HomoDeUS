@@ -54,6 +54,7 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
     // Keep only points above floor
     PointCloud scene_cloud_filtered;
 
+    ROS_INFO("Filtering to keep only points above the floor");
     pcl::PassThrough<pcl::PointXYZ> passx;
     passx.setInputCloud(scene_cloud.makeShared());
     passx.setFilterFieldName("z");
@@ -136,6 +137,7 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
 
     // Extract clusters to separate each object
     // Creating the KdTree object for the search method of the extraction
+    ROS_INFO("Separating objects on table into distinct clouds");
     pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
     tree->setInputCloud(noPlane);
 
@@ -197,10 +199,13 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
     while (!drop_y_found)
     {
         search_y = initial_search_y + search_direction*search_count*search_step;
+        ROS_INFO("Current search_y: %f", search_y);
         for (auto zone : object_zones)
         {
-            if (zone.isWithin(search_y))
+            // Search with a 5 cm buffer
+            if (zone.isWithinWtihTol(search_y, 0.05))
             {
+                ROS_INFO("Search_y is within bounds of zone with min=%f and max=%f with tol=%f", zone.min, zone.max, 0.05);
                 search_is_whithin_object = true;
                 break;
             }
@@ -222,30 +227,39 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
                     search_count = 0;
                 }
             }
+            // reset for next attempt
+            search_is_whithin_object = false;
         }
         else
         {
+            ROS_INFO("Found drop_y");
             drop_y_found = true;
         }
     }
     auto drop_y = search_y;
 
+    auto grip_to_wrist_tf =  tfBuffer.lookupTransform("gripper_grasping_frame", "arm_tool_link", ros::Time(0));
+
     geometry_msgs::PoseStamped goal_pose;
 
     // Gripper: no offsets other than wrist to tool, we want the object to be in the middle
     // edge - tool offset + depth to go to
-    goal_pose.pose.position.x = table_edge_x - 0.15 + 0.10;
-    goal_pose.pose.position.y = drop_y;
-
-    goal_pose.pose.position.z = table_z + object_height;
+    goal_pose.pose.position.x = table_edge_x + grip_to_wrist_tf.transform.translation.x + 0.10;
+    goal_pose.pose.position.y = drop_y + grip_to_wrist_tf.transform.translation.y;
+    goal_pose.pose.position.z = table_z + object_height + grip_to_wrist_tf.transform.translation.z;
 
     // TODO: insert orientation from pick here
 
-    // Gripper
-    goal_pose.pose.orientation.x = 1;
-    goal_pose.pose.orientation.y = 0;
-    goal_pose.pose.orientation.z = 0;
-    goal_pose.pose.orientation.w = 1;
+    // Gripper orientation has to match pick form proc_point_cloud_perception.cpp
+    tf2::Quaternion quat, transform_quat;
+    tf2::fromMsg(grip_to_wrist_tf.transform.rotation, transform_quat);
+    quat.setRPY(0, M_PI/8, 0);
+
+    // quat.setRPY(0, 0, 0);
+    quat = quat*transform_quat;
+    quat.normalize();
+
+    goal_pose.pose.orientation = tf2::toMsg(quat);
 
     goal_pose.header.frame_id = ref_frame;
     goal_pose.header.stamp = ros::Time::now();
