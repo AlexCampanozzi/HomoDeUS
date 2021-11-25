@@ -8,7 +8,7 @@ class State00(StateBase):
         StateBase.__init__(self, stateDict)
         
     def _set_id(self):
-        return "GoTo_Table"
+        return "Approach_client"
 
     def add_state_desires(self):
         print("04 init")
