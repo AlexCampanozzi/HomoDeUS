@@ -2,6 +2,7 @@
 from __future__ import division
 import rospy
 from copy import deepcopy
+from std_msgs.msg import Bool
 from head_control.scripts.headController import headController
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
@@ -21,6 +22,7 @@ MV_DURATION = 4
 class lookAround:
     def __init__(self):
         self.head_controller = headController(rate=0.1, head_control_topic="head_command")
+        self.output_pub = rospy.Publisher("bhvr_output_res_looking_around", Bool, queue_size=1)
         self.look_around()
     
     def look_around(self):
@@ -30,6 +32,7 @@ class lookAround:
         while not rospy.is_shutdown():
             goal = trajectory[index]
             self.head_controller.goto_position(True,goal[0],goal[1],MV_DURATION)
+            self.output_pub.publish(True)
             if index < len(trajectory) -1 :
                 index = index + 1   
             else:

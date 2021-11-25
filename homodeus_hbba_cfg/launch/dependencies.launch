@@ -1,3 +1,4 @@
 <launch>
   <node name="headAction" pkg="homodeus_external" type="headController.py" output="screen"/>
+  <include file="$(find darknet_ros)/launch/darknet_ros.launch"/> 
 </launch>

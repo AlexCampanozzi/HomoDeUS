@@ -8,6 +8,7 @@ hbba_conf:
     priority: 5
     output:
         - head_command
+        - bhvr_output_res_looking_around
             
 - strat:
     name: looking_around
@@ -15,4 +16,4 @@ hbba_conf:
     utility: 8
     modules:
         - bhvr_looking_around
-    #custom_bringdn: "pubEmpty('/head_home_reset');"
+    custom_bringdn: "pubBoolean('bhvr_output_res_looking_around', false);"

@@ -6,12 +6,13 @@ from ..state import StateBase
 class State02(StateBase):
     def __init__(self, stateDict):
         StateBase.__init__(self, stateDict)
+        rospy.loginfo('------------------ State 02 Init -----------------------')
 
     def _set_id(self):
         return "GoTo_Kitchen"
 
     def add_state_desires(self):
-        print("00 init")
+        print("02 init")
         self.add("move_to_kitchen_02", "GoToLandmark",  params = "{name: 'kitchen'}")
         self.stateDict["move_to_kitchen_02"] = Event.DES_ON
 

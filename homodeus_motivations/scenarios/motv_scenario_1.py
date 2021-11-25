@@ -9,7 +9,7 @@ from hbba_msgs.srv import AddDesires, RemoveDesires
 from scenario_manager_action_server import ScenarioManagerAction
 import actionlib
 from custom_msgs.msg import scenario_managerAction, scenario_managerResult, scenario_managerFeedback
-from states.scenario_1_states import state_00, state_01, state_02, state_03
+from states.scenario_1_states import state_00, state_01, state_02, state_03, state_04
 
 
 FILE_LOCATION = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))+'/homodeus_common/dialog_answer.json'
@@ -33,12 +33,14 @@ class Scenario1Manager(ScenarioManagerAction):
         self.state_01 = state_01.State01(self.desires)
         self.state_02 = state_02.State02(self.desires)
         self.state_03 = state_03.State03(self.desires)
+        #self.state_04 = state_04.State04(self.desires)
 
         # Add the states to the current states dict for the follow up
         self.add_state(self.state_00)
         self.add_state(self.state_01)
         self.add_state(self.state_02)
         self.add_state(self.state_03)
+        #self.add_state(self.state_04)
 
         # Build the normal scenario_sequence (when everything goes as it should)
         self.scenario_sequence = [self.state_00,self.state_01,self.state_02,self.state_03]
@@ -47,9 +49,11 @@ class Scenario1Manager(ScenarioManagerAction):
         self.current_state = self.scenario_sequence[self.index]
         self._as.register_preempt_callback(self.canceled_cb)
         rospy.wait_for_service("remove_desires")
+        rospy.logwarn("================================= SCENARIO 1 READY ======================================")
+
 
     def add_state(self, state):
-
+        rospy.loginfo("------------------ STATE : "+str(state.get_id())+ " -----------------------")
         key = state.get_id()
 
         if key not in self.states.keys():
@@ -140,8 +144,7 @@ class Scenario1Manager(ScenarioManagerAction):
         self.stopObserving()
     
     def __cancel_current_desires(self):
-        for desire in self.desires:
-            self.rem_desires.call(desire)
+        self.current_state.cleanup()
         self.desires.clear()
 
     def specific_outcome(self):
@@ -155,6 +158,12 @@ class Scenario1Manager(ScenarioManagerAction):
             else:
                 self.menu_selection = dialog_info
                 self.state_03.command = self.menu_selection
+
+    def read_dialog_info(self, file_location):
+        with open(file_location) as file:
+            data = json.load(file)
+            for info in data['dialog']:
+                return info['info']
     
     def last_state(self):
         if len(self.scenario_sequence)-1 <= self.index:

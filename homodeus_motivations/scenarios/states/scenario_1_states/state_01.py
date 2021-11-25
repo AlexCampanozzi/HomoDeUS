@@ -6,6 +6,7 @@ from ..state import StateBase
 class State01(StateBase):
     def __init__(self, stateDict):
         StateBase.__init__(self, stateDict)
+        rospy.loginfo('------------------ State 01 Init -----------------------')
 
     def _set_id(self):
         return "Get_Command"
