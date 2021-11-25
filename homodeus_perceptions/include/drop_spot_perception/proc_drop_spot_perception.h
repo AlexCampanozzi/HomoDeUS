@@ -40,6 +40,10 @@ struct extremities {
   {
     return (val > min && val < max);
   }
+  bool isWithinWtihTol(float val, float tol)
+  {
+    return (val > min-tol && val < max+tol);
+  }
 };
 
 /* DropSpotFinder
