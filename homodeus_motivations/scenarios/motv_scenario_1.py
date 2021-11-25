@@ -45,7 +45,9 @@ class Scenario1Manager(ScenarioManagerAction):
         self.add_state(self.state_04)
 
         # Build the normal scenario_sequence (when everything goes as it should)
-        self.scenario_sequence = [self.state_00, self.state_04, self.state_01, self.state_02, self.state_03]
+        # self.scenario_sequence = [self.state_00, self.state_04, self.state_01, self.state_02, self.state_03]
+        self.scenario_sequence = [self.state_00, self.state_01, self.state_02, self.state_03]
+
         self.index = 0
 
         self.current_state = self.scenario_sequence[self.index]
