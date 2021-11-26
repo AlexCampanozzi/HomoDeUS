@@ -9,7 +9,7 @@ class State00(StateBase):
         rospy.loginfo('------------------ State 00 Init -----------------------')
         
     def _set_id(self):
-        return "GoTo_Table"
+        return "GoTo_Entry"
 
     def add_state_desires(self):
         print("00 init")

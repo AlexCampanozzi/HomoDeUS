@@ -1,5 +1,4 @@
 <launch>
   <node name="bhvr_dialoguing" pkg="homodeus_behaviors" type="bhvr_dialoguing.py" output="screen"/>
-  <node name="talking_action" pkg="homodeus_external" type="talking_action.py"/>
   <param name="on_robot" type="bool" value="False" />
 </launch>

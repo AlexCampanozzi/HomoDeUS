@@ -9,7 +9,7 @@ from hbba_msgs.srv import AddDesires, RemoveDesires
 from scenario_manager_action_server import ScenarioManagerAction
 import actionlib
 from custom_msgs.msg import scenario_managerAction, scenario_managerResult, scenario_managerFeedback
-from states.scenario_1_states import state_00, state_01, state_02, state_03, state_04, state_05
+from states.scenario_1_states import state_00, state_01, state_02, state_03, state_04, state_05, state_06, state_07
 
 
 FILE_LOCATION = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))+'/homodeus_common/dialog_answer.json'
@@ -34,21 +34,23 @@ class Scenario1Manager(ScenarioManagerAction):
         self.state_02 = state_02.State02(self.desires)
         self.state_03 = state_03.State03(self.desires)
         self.state_04 = state_04.State04(self.desires)
-
         self.state_05 = state_05.State05(self.desires) # approach client
+        self.state_06 = state_06.State06(self.desires)
+        self.state_07 = state_07.State07(self.desires)
 
         # Add the states to the current states dict for the follow up
-        self.add_state(self.state_05)
-
         self.add_state(self.state_00)
         self.add_state(self.state_01)
         self.add_state(self.state_02)
         self.add_state(self.state_03)
         self.add_state(self.state_04)
+        self.add_state(self.state_05)
+        self.add_state(self.state_06)
+        self.add_state(self.state_07)
 
 
         # Build the normal scenario_sequence (when everything goes as it should)
-        self.scenario_sequence = [self.state_00,self.state_01,self.state_02,self.state_03,self.state_00, self.state_04, self.state_02]
+        self.scenario_sequence = [self.state_00,self.state_05,self.state_01,self.state_02,self.state_03,self.state_06, self.state_04, self.state_07]
         self.index = 0
 
         self.current_state = self.scenario_sequence[self.index]
@@ -137,13 +139,14 @@ class Scenario1Manager(ScenarioManagerAction):
             self.current_state = self.state_03
         elif state_number == 4:
             self.current_state = self.state_04
+            self.current_state.command = 'apple'
         elif state_number == 5:
             self.current_state = self.state_05
-            self.current_state.command = 'apple'
+            
 
         self._feedback.state = self.current_state.get_id()
         
-        # self._as.publish_feedback(self._feedback)
+        self._as.publish_feedback(self._feedback)
         
         self.current_state.add_state_desires()
 

@@ -3,18 +3,18 @@ from std_msgs.msg import String
 from hbba_msgs.msg import Desire, Event
 from ..state import StateBase
 
-class State05(StateBase):
+class State07(StateBase):
     def __init__(self, stateDict):
         StateBase.__init__(self, stateDict)
         
     def _set_id(self):
-        return "Approach_client"
+        return "Go_back_kitchen"
 
     def add_state_desires(self):
-        print("05 init")
+        print("07 init")
 
-        self.add("approach_client_05", "approach_client")
-        self.stateDict["approach_client_05"] = Event.DES_ON
+        self.add("move_to_start_07", "GoToLandmark",  params = "{name: 'start'}")
+        self.stateDict["move_to_start_07"] = Event.DES_ON
 
     def react_to_event(self):
         for desire in self.stateDict:
@@ -26,5 +26,5 @@ class State05(StateBase):
                 return None
 
     def cleanup(self):
-        self.remove("approach_client_05")
-        self.stateDict.pop("approach_client_05")
+        self.remove("move_to_start_07")
+        self.stateDict.pop("move_to_start_07")
