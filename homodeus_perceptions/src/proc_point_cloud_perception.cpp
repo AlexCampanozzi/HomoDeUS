@@ -11,6 +11,8 @@ CloudObjectFinder::CloudObjectFinder(ros::NodeHandle& nh): _nh(nh)
     filtered_pub = _nh.advertise<sensor_msgs::PointCloud2>("/filtered_cloud", 5);
     pick_point_pub = _nh.advertise<geometry_msgs::PoseStamped>("/pick_point", 5);
     object_height_pub = _nh.advertise<std_msgs::Float32>("/object_pick_height", 1);
+    grip_to_wrist_tf =  tfBuffer.lookupTransform("gripper_grasping_frame", "arm_tool_link", ros::Time(0), ros::Duration(30));
+    std::cout << grip_to_wrist_tf << std::endl;
 }
 
 void CloudObjectFinder::imageInfoCallback(const sensor_msgs::CameraInfoConstPtr& info)
@@ -226,7 +228,7 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     average_point = pcl::PointXYZ(avgX/numpoints, avgY/numpoints, avgZ/numpoints);
 
     // find offset between grasping fram and frame link moveit uses
-    auto grip_to_wrist_tf =  tfBuffer.lookupTransform("gripper_grasping_frame", "arm_tool_link", ros::Time(0));
+    
 
     // TODO: find a way to decide orientation of pick point, either from shape, object identity, or both
 

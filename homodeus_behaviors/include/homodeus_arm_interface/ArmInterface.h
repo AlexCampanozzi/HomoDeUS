@@ -38,7 +38,7 @@ class ArmInterface
 {
     private:
         float _planningTime;
-        float max_vel_factor = 0.8;
+        float max_vel_factor = 0.4;
         std::string _ref_frame;
         std::string _plannerId;
         std::vector<std::string> _jointsNames;

@@ -10,6 +10,9 @@ DropSpotFinder::DropSpotFinder(ros::NodeHandle& nh): _nh(nh)
 
     drop_point_pub = _nh.advertise<geometry_msgs::PoseStamped>("/drop_point", 5);
     plane_cloud_pub = _nh.advertise<sensor_msgs::PointCloud2>("/drop_plane_cloud", 5);
+
+    grip_to_wrist_tf =  tfBuffer.lookupTransform("gripper_grasping_frame", "arm_tool_link", ros::Time(0), ros::Duration(30));
+    ROS_INFO("Drop proc init done");
 }
 
 // void DropSpotFinder::triggerCallback(const std_msgs::EmptyConstPtr& nothing)
@@ -238,7 +241,7 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
     }
     auto drop_y = search_y;
 
-    auto grip_to_wrist_tf =  tfBuffer.lookupTransform("gripper_grasping_frame", "arm_tool_link", ros::Time(0));
+    
 
     geometry_msgs::PoseStamped goal_pose;
 
