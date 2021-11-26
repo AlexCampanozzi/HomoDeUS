@@ -91,7 +91,8 @@ void ArmInterfaceNode::pickPoseCB(const geometry_msgs::PoseStampedConstPtr poses
     success = gotoGraspPrep();
     if (success)
     {
-        ROS_INFO("Now at grasp preparation pose");
+        ROS_INFO("Now at grasp preparation pose, opening gripper");
+        gac.sendGoalAndWait(open_gripper_goal, ros::Duration(2));
     }
     else
     {
@@ -107,12 +108,10 @@ void ArmInterfaceNode::pickPoseCB(const geometry_msgs::PoseStampedConstPtr poses
     auto z  = posestamped->pose.position.z;
     
     ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
-    // success = moveToCartesian(0.4, -0.3, 0.26, -0.011, 1.57, 0.037);
-    success = moveToCartesian(x-0.2, y, z, roll, pitch, yaw);
-    ros::Duration(1).sleep();
+    success = moveToCartesian(x-0.2, y, z+0.05, roll, pitch, yaw);
     if (success)
     {
-        ROS_INFO("arm_interface_node: reached first waypoint");
+        ROS_INFO("arm_interface_node: reached first wayp1oint");
         success = moveToCartesian(x, y, z, roll, pitch, yaw);
     }
 
@@ -122,7 +121,7 @@ void ArmInterfaceNode::pickPoseCB(const geometry_msgs::PoseStampedConstPtr poses
         gac.sendGoalAndWait(close_gripper_goal, ros::Duration(2));
         ROS_INFO("Closed!");
         ROS_INFO("Retreating");
-        success = gotoRetreat();
+        success = gotoRetreat(pick_point);
     }
     else
         ROS_INFO("arm_interface_node: failed to go to pick point!");
@@ -131,7 +130,7 @@ void ArmInterfaceNode::pickPoseCB(const geometry_msgs::PoseStampedConstPtr poses
     if (success)
     {
         ROS_INFO("arm_interface_node: successfully retreated from pick point.");
-        ROS_INFO("Going home");
+        ROS_INFO("Going to carrying pose");
         success  = goHome();
     }
     else
@@ -146,10 +145,11 @@ void ArmInterfaceNode::dropPoseCB(const geometry_msgs::PoseStampedConstPtr poses
 {
     drop_point = *posestamped;
     got_drop_pose = true;
-    bool success = false;
+    bool success = true;
 
     ROS_INFO("Going to drop preparation pose");
     success = gotoGraspPrep();
+    // success = moveToJoint(0.35, 0.15, 0.00, -1.08, 2.29, 0.33, 0.27, -2.07);
     if (success)
     {
         ROS_INFO("Now at drop preparation pose");
@@ -168,8 +168,7 @@ void ArmInterfaceNode::dropPoseCB(const geometry_msgs::PoseStampedConstPtr poses
     auto z  = posestamped->pose.position.z;
     
     ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
-    success = moveToCartesian(x, y, z+0.2, roll, pitch, yaw);
-    ros::Duration(1).sleep();
+    success = moveToCartesian(x-0.2, y, z+0.05, roll, pitch, yaw);
     if (success)
     {
         ROS_INFO("arm_interface_node: reached first waypoint");
@@ -187,7 +186,7 @@ void ArmInterfaceNode::dropPoseCB(const geometry_msgs::PoseStampedConstPtr poses
 
     if(success)
     {
-        success = gotoRetreat();
+        success = gotoRetreat(drop_point);
     }
     
     if (success)
@@ -215,35 +214,40 @@ bool ArmInterfaceNode::goHome()
     return success;
 }
 
+bool ArmInterfaceNode::gotoCarryPose()
+{
+    bool success;
+    // success = moveToJoint(0.30, 0.10, 0.00, -1.72, 2.21, 0.00, 0.05, 0.00);
+    success = moveToJoint(0.35, 0.15, 0.00, -1.08, 2.29, 0.33, 0.27, -2.07);
+
+    ros::Duration(1).sleep();
+
+    success = moveToJoint(0.20, 0.20, 0.0, 0.0,  2.18, -1.17, 1.01, -1.78);
+    return success;
+}
+
 bool ArmInterfaceNode::gotoGraspPrep()
 {
     bool success;
     success = moveToJoint(0.34, 0.20, 0.79, 0.01, 2.10, -1.5, 1.37, 0.0);
     success = moveToJoint(0.34, 0.20, 0.79, -1.50, 1.60, -1.20, 1.37, 0.0);
     success = moveToJoint(0.34, 0.20, 0.79, -1.50, 1.60, -1.20, 0.14, 0.0);
-    gac.sendGoalAndWait(open_gripper_goal, ros::Duration(2));
     return success;
 }
 
-bool ArmInterfaceNode::gotoRetreat()
+bool ArmInterfaceNode::gotoRetreat(const geometry_msgs::PoseStamped posestamped)
 {
-    ROS_INFO("Attempting retreat from pick_pose");
-    if (got_pick_pose)
-    {
-        tf::Quaternion quat;
-        tf::quaternionMsgToTF(pick_point.pose.orientation, quat);
-        double roll, pitch, yaw;
-        tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
-        auto x  = pick_point.pose.position.x;
-        auto y  = pick_point.pose.position.y;
-        auto z  = pick_point.pose.position.z;
-        return moveToCartesian(x-0.1, y, z+0.2, roll, pitch, yaw);
-    }
-    else
-    {
-        ROS_INFO("Could not go to retreat point: no pick pose set");
-        return false;
-    }
+    ROS_INFO("Attempting retreat");
+
+    tf::Quaternion quat;
+    tf::quaternionMsgToTF(posestamped.pose.orientation, quat);
+    double roll, pitch, yaw;
+    tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
+    auto x  = posestamped.pose.position.x;
+    auto y  = posestamped.pose.position.y;
+    auto z  = posestamped.pose.position.z;
+    return moveToCartesian(x-0.1, y, z+0.2, roll, pitch, yaw);
+
 }
 
 // Code to use the arm interface

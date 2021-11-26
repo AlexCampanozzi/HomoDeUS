@@ -1,0 +1,8 @@
+hbba_conf:
+- motivation:
+    name: place_observer
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/obs_place.launch"}
+    input:
+        - bhvr_output_place_result
+    output:
+        - events

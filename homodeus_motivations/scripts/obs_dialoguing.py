@@ -30,23 +30,23 @@ class dialogObserver:
         self.dialogSubscriber = rospy.Subscriber("bhvr_output_res_dialRelevant", String, self.listenDialogCB)
 
     def listenDialogCB(self, relevant_infos):
-            result = relevant_infos.data
-            for desire in self.curDesireSet.desires:
-                if desire.type == "Dialoguing":
-                    event = Event()
-                    event.desire = desire.id
-                    event.desire_type = desire.type
-                    if result != '':
-                        rospy.loginfo("Dialogue return a relevant information")
-                        self.write_dialog_info(result, FILE_LOCATION)
-                        event.type = Event.ACC_ON
-                    elif result == 'interruption':
-                        # Nothing to do here since the desire is already being removed
-                        pass
-                    else:
-                        rospy.loginfo('Dialogue did not return anything')
-                        event.type = Event.ACC_OFF
-                    self.eventPublisher.publish(event)
+        result = relevant_infos.data
+        for desire in self.curDesireSet.desires:
+            if desire.type == "Dialoguing":
+                event = Event()
+                event.desire = desire.id
+                event.desire_type = desire.type
+                if result != '':
+                    rospy.loginfo("Dialogue return a relevant information")
+                    self.write_dialog_info(result, FILE_LOCATION)
+                    event.type = Event.ACC_ON
+                elif result == 'interruption':
+                    # Nothing to do here since the desire is already being removed
+                    pass
+                else:
+                    rospy.loginfo('Dialogue did not return anything')
+                    event.type = Event.ACC_OFF
+                self.eventPublisher.publish(event)
 
     def write_dialog_info(self, result, file_location):
         data = {}

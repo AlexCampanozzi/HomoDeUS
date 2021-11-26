@@ -40,6 +40,10 @@ struct extremities {
   {
     return (val > min && val < max);
   }
+  bool isWithinWtihTol(float val, float tol)
+  {
+    return (val > min-tol && val < max+tol);
+  }
 };
 
 /* DropSpotFinder
@@ -67,6 +71,7 @@ protected:
   // for debug
   sensor_msgs::PointCloud2 filtered_cloud;
   geometry_msgs::PoseStamped _drop_pose;
+  geometry_msgs::TransformStamped grip_to_wrist_tf;
   ros::Publisher drop_point_pub;
   ros::Publisher plane_cloud_pub;
   sensor_msgs::PointCloud2 plane_cloud;

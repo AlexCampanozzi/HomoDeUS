@@ -1,6 +1,7 @@
 <launch>
   <include file="$(find tiago_gazebo)/launch/tiago_gazebo.launch">
 		<arg name="world" value="homodeus_office"/>
+    <arg name="end_effector" value="pal-gripper"/>
   </include>
   <include file="$(find homodeus_hbba_cfg)/launch/conf_nav_simul.launch"></include>
   

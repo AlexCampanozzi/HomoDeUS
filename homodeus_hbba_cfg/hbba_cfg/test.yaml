@@ -3,7 +3,6 @@ hbba_conf:
 - remap: {from: 'head_command',          to: '/head_controller/command'}
 - remap: {from: 'bounding_boxes',        to: '/darknet_ros/bounding_boxes'}
 - launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/dependencies.launch'}
-- launch: {pkg: 'darknet_ros', path: 'launch/darknet_ros.launch'}
 
 - include: {pkg: 'hbba_synth', file: 'common.yaml'}
 

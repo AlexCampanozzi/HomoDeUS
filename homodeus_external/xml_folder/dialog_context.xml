@@ -11,6 +11,7 @@
             <answer rel_info="scenario_1" prefix="do ">scenario one</answer>
             <answer rel_info="scenario_1" prefix="do ">first scenario</answer>
             <answer rel_info="scenario_1" prefix="do ">take order</answer>
+            <answer rel_info="scenario_1" prefix="do ">take orders</answer>
             <answer rel_info="scenario_1" prefix="do ">see client</answer>
             <answer rel_info="scenario_1" prefix="do ">script one</answer>
             
@@ -94,7 +95,7 @@
             <question>Can I take your order?</question>
             <question>What would you like to eat</question>
             <question>What would satisfy your appetite?</question>
-            <question>Hungry? I'm here to take your command</question>
+            <question>Hungry? I'm here to take your order</question>
         </begin>
         <listen>
             <answer rel_info="apple">apple</answer>
@@ -139,8 +140,8 @@
             <answer> Goodbye</answer>
         </nothing>
         <feedback>
-            <question>Just to be sure, you command </question>
-            <question>Did I note your order well, you order </question>
+            <question>Just to be sure, you ordered </question>
+            <question>Did I note your order well, you ordered </question>
             <question>Correct me if I am wrong, but you've ask for </question>
         </feedback>
     </menu_selection>

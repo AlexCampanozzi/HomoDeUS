@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-
+from __future__ import print_function
 # A simple module to publish events based on the results of Pick actions
 
 import rospy
 from hbba_msgs.msg import Desire, DesiresSet, Event
 from std_msgs.msg import Bool
-from __future__ import print_function
+
 
 class PickObserver:
 
@@ -23,6 +23,7 @@ class PickObserver:
         self.goToResultSubscriber = rospy.Subscriber("/bhvr_output_pick_result", Bool, self.listenPickResultCB)
 
     def listenPickResultCB(self, result):
+        rospy.logwarn("************* PICK RESULT: " + str(result.data) + " **************")
         success = result.data
         if success == True:
             for desire in self.curDesireSet.desires:

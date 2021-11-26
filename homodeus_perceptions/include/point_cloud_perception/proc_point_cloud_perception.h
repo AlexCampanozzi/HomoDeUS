@@ -56,6 +56,8 @@ protected:
   sensor_msgs::PointCloud2 _filtered_cloud;
   sensor_msgs::PointCloud2 _noplane_cloud;
   geometry_msgs::PoseStamped _pick_pose;
+  geometry_msgs::TransformStamped grip_to_wrist_tf;
+
   ros::Publisher filtered_pub;
   ros::Publisher noplane_pub;
   ros::Publisher pick_point_pub;

@@ -13,7 +13,8 @@ hbba_conf:
         - /tiago_arm_interface/pickup: {src: /pickup, filtered: false}
         - /tiago_arm_interface/place: {src: /place, filtered: false}
     output:
-        - dummy
+        - bhvr_output_pick_result
+        - bhvr_output_place_result
       
 - strat:
     name: ListenForPickPoint

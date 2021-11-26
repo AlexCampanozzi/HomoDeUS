@@ -6,8 +6,11 @@ hbba_conf:
     name: bhvr_looking_around
     launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/bhvr_looking_around.launch'}
     priority: 5
+    input:
+        - bhvr_output_detect_object
     output:
         - head_command
+        - bhvr_output_res_looking_around
             
 - strat:
     name: looking_around
@@ -15,4 +18,4 @@ hbba_conf:
     utility: 8
     modules:
         - bhvr_looking_around
-    #custom_bringdn: "pubEmpty('/head_home_reset');"
+    custom_bringdn: "pubBoolean('bhvr_output_res_looking_around', false);"

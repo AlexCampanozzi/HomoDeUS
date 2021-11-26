@@ -1,0 +1,8 @@
+hbba_conf:
+- motivation:
+    name: tracking_object_observer
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/obs_tracking_object.launch"}
+    input:
+        - bhvr_output_trackingObject_boxes
+    output:
+        - events
