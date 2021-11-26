@@ -37,7 +37,7 @@ class ApproachClientObserver:
             rospy.loginfo("data is true")
             for desire in self.curDesireSet.desires:
                 rospy.loginfo(desire)
-                if desire.type == "ApproachClient":
+                if desire.type == "approach_client":
                     paramsDict = safe_load(desire.params)
                     rospy.loginfo("Position found within tolerance of a goal position for approach client")
                     event = Event()

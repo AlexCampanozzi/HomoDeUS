@@ -13,7 +13,7 @@ class State04(StateBase):
     def add_state_desires(self):
         print("04 init")
 
-        self.add("approach_client_00", "ApproachClient")
+        self.add("approach_client_00", "approach_client")
         self.stateDict["approach_client_00"] = Event.DES_ON
 
     def react_to_event(self):

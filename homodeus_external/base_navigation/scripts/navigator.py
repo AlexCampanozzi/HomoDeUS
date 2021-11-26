@@ -11,10 +11,11 @@ from tf.transformations import quaternion_from_euler, euler_from_quaternion
 
 import HomoDeUS_common_py.HomoDeUS_common_py as common
 
+
+
 class Navigator:
     def __init__(self):
         self.landmarks = {}
-        #self.doneCB = False
         landmarks_file = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))+'/homodeus_common/landmarks.json'
 
         with open(landmarks_file) as json_file:
@@ -62,9 +63,11 @@ class Navigator:
     def handles_result_state(self,state):
         if(state == GoalStatus.SUCCEEDED):
                 rospy.loginfo("The robot reached the destination")
+                self.doneCB(True)
                 return True
         else:
                 rospy.loginfo("The robot failed to reach the destination")
+                self.doneCB(False)
                 return False
 
     def goalToLandmark(self, goal):
@@ -127,5 +130,5 @@ class Navigator:
     def getCurPose(self):
         return common.get_relative_pose('map', 'base_footprint')
 
-    def doneCB(self, bool):
+    def doneCB(self,bool):
         pass

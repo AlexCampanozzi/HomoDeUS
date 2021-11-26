@@ -21,6 +21,7 @@ import numpy as np
 
 class ApproachClient():
     def __init__(self):
+        rospy.sleep(2.0)
         self.bridge = CvBridge()
         self.cameraModel = StereoCameraModel()
         self.depth_image = None
@@ -29,8 +30,15 @@ class ApproachClient():
 
         self.tf_listener = tf.TransformListener()
 
-        rospy.Subscriber('/proc_output_face_positions', FacePositions, self._face_callback, queue_size=5)
-        rospy.Subscriber('/xtion/depth_registered/image_raw', Image, self._camera_callback, queue_size=5)
+        # rospy.Subscriber('bhvr_input_face', FacePositions, self._face_callback, queue_size=5)
+        rospy.Subscriber('bhvr_input_image', Image, self._camera_callback, queue_size=5)
+        # rospy.Subscriber('bhvr_input_face/proc_output_face_positions', FacePositions, self._face_callback, queue_size=5)
+        # rospy.Subscriber('bhvr_input_image/xtion/depth_registered/image_raw', Image, self._camera_callback, queue_size=5)
+        # rospy.Subscriber('/bhvr_input_face/proc_output_face_positions', FacePositions, self._face_callback, queue_size=5)
+        # rospy.Subscriber('/bhvr_input_image/xtion/depth_registered/image_raw', Image, self._camera_callback, queue_size=5)
+        # /bhvr_approach_client/bhvr_input_image/xtion/depth_registered/image_raw
+        rospy.Subscriber('proc_output_face_positions', FacePositions, self._face_callback, queue_size=5)
+        # rospy.Subscriber('xtion/depth_registered/image_raw', Image, self._camera_callback, queue_size=5)
         self.tolerance = 0.15
 
         self.pubObserver = rospy.Publisher('/bhvr_approach_client/obs_approach_client', Bool, queue_size=5)
@@ -40,7 +48,7 @@ class ApproachClient():
 
     def _face_callback(self, detections):
 
-        # rospy.loginfo(self.navigator.ac.get_state())
+        # rospy.loginfo("approach client face CB")
 
         if self.depth_image is not None:
 
@@ -83,13 +91,14 @@ class ApproachClient():
 
     def _camera_callback(self, image):
 
-        self.depth_image = self.bridge.imgmsg_to_cv2(image, "passthrough")      
+        self.depth_image = self.bridge.imgmsg_to_cv2(image, "passthrough")
+        # rospy.loginfo("camera cb")      
 
 
 if __name__ == "__main__":
 
     try:
-        rospy.init_node('approachClient', anonymous=False)
+        rospy.init_node('approach_client', anonymous=False)
         approachClient = ApproachClient()
         rospy.spin()
 

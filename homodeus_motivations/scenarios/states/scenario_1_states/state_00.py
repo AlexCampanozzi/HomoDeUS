@@ -12,15 +12,17 @@ class State00(StateBase):
 
     def add_state_desires(self):
         print("00 init")
-        # self.add("move_to_table_00", "GoToLandmark",  params = "{name: 'kitchenEntrance'}")
-        self.add("move_to_table_00", "GoToLandmark",  params = "{name: 'table1'}")
+        self.add("move_to_table_00", "GoToLandmark",  params = "{name: 'kitchenEntrance'}")
         self.stateDict["move_to_table_00"] = Event.DES_ON
 
     def react_to_event(self):
         for desire in self.stateDict:
             if self.stateDict[desire] == Event.ACC_ON:
+                rospy.logwarn("event acc on")
                 return True
             elif self.stateDict[desire] == Event.ACC_OFF:
+                rospy.logwarn("event acc off")
+
                 return False
             else:
                 return None
