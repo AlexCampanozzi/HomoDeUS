@@ -18,6 +18,7 @@ hbba_conf:
 # Perceptions
 - include: {pkg: 'homodeus_hbba_cfg', file: 'proc_keyword_detection.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'proc_point_cloud_perception.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'proc_drop_spot_perception.yaml'}
 
 # Motivations
 - include: {pkg: 'homodeus_hbba_cfg', file: 'motv_scenario_selector.yaml'}
@@ -31,6 +32,7 @@ hbba_conf:
 - include: {pkg: 'homodeus_hbba_cfg', file: 'obs_tracking_object.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'obs_looking_around.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'obs_pick.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'obs_place.yaml'}
 
 
 # - include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_motv_test_desire.yaml'}

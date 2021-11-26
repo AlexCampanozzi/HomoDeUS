@@ -141,7 +141,7 @@
         </nothing>
         <feedback>
             <question>Just to be sure, you ordered </question>
-            <question>Did I note your order well, you order </question>
+            <question>Did I note your order well, you ordered </question>
             <question>Correct me if I am wrong, but you've ask for </question>
         </feedback>
     </menu_selection>

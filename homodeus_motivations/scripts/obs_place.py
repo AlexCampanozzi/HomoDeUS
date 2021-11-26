@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-
+from __future__ import print_function
 # A simple module to publish events based on the results of Place actions
 
 import rospy
 from hbba_msgs.msg import Desire, DesiresSet, Event
 from std_msgs.msg import Bool
-from __future__ import print_function
+
 
 class PlaceObserver:
 

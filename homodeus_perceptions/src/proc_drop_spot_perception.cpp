@@ -249,14 +249,14 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
     // edge - tool offset + depth to go to
     goal_pose.pose.position.x = table_edge_x + grip_to_wrist_tf.transform.translation.x + 0.10;
     goal_pose.pose.position.y = drop_y + grip_to_wrist_tf.transform.translation.y;
-    goal_pose.pose.position.z = table_z + object_height + grip_to_wrist_tf.transform.translation.z + 0.08;
+    goal_pose.pose.position.z = table_z + object_height + grip_to_wrist_tf.transform.translation.z + 0.03;
 
     // TODO: insert orientation from pick here
 
     // Gripper orientation has to match pick form proc_point_cloud_perception.cpp
     tf2::Quaternion quat, transform_quat;
     tf2::fromMsg(grip_to_wrist_tf.transform.rotation, transform_quat);
-    quat.setRPY(0, M_PI/8, 0);
+    quat.setRPY(0, 0, 0);
 
     // quat.setRPY(0, 0, 0);
     quat = quat*transform_quat;

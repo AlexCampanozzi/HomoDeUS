@@ -4457,16 +4457,6 @@
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='bowl'>
-        <pose frame=''>-2.30004 -0.149992 1.015 -2.5e-05 2.9e-05 0.000263</pose>
-        <scale>1 1 1</scale>
-        <link name='link'>
-          <pose frame=''>-2.30004 -0.149992 1.015 -2.5e-05 2.9e-05 0.000263</pose>
-          <velocity>-0 -0 -0.004891 1e-06 -0 0</velocity>
-          <acceleration>0 0 -9.81 0 -0 0</acceleration>
-          <wrench>0 0 -0.981 0 -0 0</wrench>
-        </link>
-      </model>
       <model name='cabinet'>
         <pose frame=''>2 1 0 0 -0 0</pose>
         <scale>1 1 1</scale>
@@ -4960,33 +4950,39 @@
       <static>0</static>
       <link name='link'>
         <inertial>
-          <pose frame=''>0.001311 -0.003861 0.036337 1.28659 -0.495792 -1.57796</pose>
-          <mass>0.000246595</mass>
+          <pose>0.0013105802251075094 -0.003861242636253375 0.03633673271131293 0 0 0</pose>
+          <mass>0.1</mass>
           <inertia>
-            <ixx>1.53466e-07</ixx>
-            <ixy>-1.32349e-23</ixy>
-            <ixz>-3.30872e-24</ixz>
-            <iyy>1.52372e-07</iyy>
-            <iyz>0</iyz>
-            <izz>1.50583e-07</izz>
-          </inertia>
+            <ixx>0.001</ixx>
+            <ixy>0.000</ixy>
+            <ixz>0.000</ixz>
+            <iyy>0.001</iyy>
+            <iyz>0.000</iyz>
+            <izz>0.001</izz>
+            </inertia>
         </inertial>
         <collision name='collision'>
+         <pose>0 -0.005 0.03 0 -0 0 </pose>
           <geometry>
-            <mesh>
-              <uri>model://013_apple/google_16k/textured.obj</uri>
-            </mesh>
+           <box>
+            <size>0.06 0.06 0.06</size>
+           </box>
           </geometry>
           <surface>
             <contact>
-              <ode/>
+              <ode>
+                <kp>1000000.0</kp>
+                <kd>100.0</kd>
+                <max_vel>1.0</max_vel>
+                <min_depth>0.0025</min_depth>
+              </ode>
             </contact>
             <bounce/>
             <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
+             <ode>
+              <mu>30</mu>
+              <mu2>30</mu2>
+             </ode>
             </friction>
           </surface>
           <max_contacts>10</max_contacts>
@@ -5009,55 +5005,6 @@
         <kinematic>0</kinematic>
       </link>
       <pose frame=''>-2.5008 -0.661096 0 0 -0 0</pose>
-    </model>
-    <model name='bowl'>
-      <link name='link'>
-        <inertial>
-          <pose frame=''>0 0 0.0175 0 -0 0</pose>
-          <mass>0.1</mass>
-          <inertia>
-            <ixx>0.000250308</ixx>
-            <ixy>0</ixy>
-            <ixz>0</ixz>
-            <iyy>0.000250308</iyy>
-            <iyz>0</iyz>
-            <izz>0.0004802</izz>
-          </inertia>
-        </inertial>
-        <collision name='collision'>
-          <pose frame=''>0 0 0.0175 0 -0 0</pose>
-          <geometry>
-            <cylinder>
-              <radius>0.098</radius>
-              <length>0.035</length>
-            </cylinder>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>model://bowl/meshes/bowl.dae</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <self_collide>0</self_collide>
-        <enable_wind>0</enable_wind>
-        <kinematic>0</kinematic>
-      </link>
-      <pose frame=''>-2.39914 -0.228068 0 0 -0 0</pose>
     </model>
     <model name='banana'>
       <static>0</static>
@@ -5481,33 +5428,39 @@
       <static>0</static>
       <link name='link'>
         <inertial>
-          <pose frame=''>-0.007142 -0.018368 0.033634 -1.83141 0.386611 2.97317</pose>
-          <mass>0.000202723</mass>
+          <pose>0.0013105802251075094 -0.003861242636253375 0.03633673271131293 0 0 0</pose>
+          <mass>0.1</mass>
           <inertia>
-            <ixx>1.09679e-07</ixx>
-            <ixy>0</ixy>
-            <ixz>9.92617e-24</ixz>
-            <iyy>1.07389e-07</iyy>
-            <iyz>1.65436e-23</iyz>
-            <izz>1.06575e-07</izz>
+            <ixx>0.001</ixx>
+            <ixy>0.000</ixy>
+            <ixz>0.000</ixz>
+            <iyy>0.001</iyy>
+            <iyz>0.000</iyz>
+            <izz>0.001</izz>
           </inertia>
         </inertial>
         <collision name='collision'>
+          <pose>-0.005 -0.0152 0.035 0 -0 0 </pose>
           <geometry>
-            <mesh>
-              <uri>model://017_orange/google_16k/textured.obj</uri>
-            </mesh>
+           <box>
+            <size>0.06 0.06 0.06</size>
+           </box>
           </geometry>
           <surface>
             <contact>
-              <ode/>
+              <ode>
+                <kp>1000000.0</kp>
+                <kd>100.0</kd>
+                <max_vel>1.0</max_vel>
+                <min_depth>0.0025</min_depth>
+              </ode>
             </contact>
             <bounce/>
             <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
+             <ode>
+              <mu>30</mu>
+              <mu2>30</mu2>
+             </ode>
             </friction>
           </surface>
           <max_contacts>10</max_contacts>

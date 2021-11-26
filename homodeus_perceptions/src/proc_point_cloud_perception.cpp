@@ -240,14 +240,14 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     // Gripper: no offsets other than wrist to tool, we want the object to be in the middle
     goal_pose.pose.position.x = average_point.x + grip_to_wrist_tf.transform.translation.x;
     goal_pose.pose.position.y = average_point.y + grip_to_wrist_tf.transform.translation.y;
-    goal_pose.pose.position.z = average_point.z + grip_to_wrist_tf.transform.translation.z + 0.08;
+    goal_pose.pose.position.z = average_point.z + grip_to_wrist_tf.transform.translation.z;
 
     // TODO: insert orientation here
 
     // Gripper
     tf2::Quaternion quat, transform_quat;
     tf2::fromMsg(grip_to_wrist_tf.transform.rotation, transform_quat);
-    quat.setRPY(0, M_PI/8, 0);
+    quat.setRPY(0,0, 0);
 
     // quat.setRPY(0, 0, 0);
     quat = quat*transform_quat;

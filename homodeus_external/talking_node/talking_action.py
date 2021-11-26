@@ -81,7 +81,7 @@ class talkingSynthesizer:
         self.tts_action.set_succeeded(result)
 
     def __interrupt_action_cb(self): # pygame interrompt lui même le texte avec une nouvelle requête "say"
-        rospy.warn('tts action is being interrupted')
+        rospy.logwarn('tts action is being interrupted')
         pygame.mixer.music.stop()
         result = ttsActionResult()
         result.success = True

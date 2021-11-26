@@ -23,6 +23,8 @@ class lookAround:
     def __init__(self):
         self.head_controller = headController(rate=0.1, head_control_topic="head_command")
         self.output_pub = rospy.Publisher("bhvr_output_res_looking_around", Bool, queue_size=1)
+        self.sub_detect = rospy.Subscriber("bhvr_output_detect_object", Bool, self.detect_objectCB, queue_size=1)
+        self.stop_sending = False
         self.look_around()
     
     def look_around(self):
@@ -30,13 +32,14 @@ class lookAround:
         index = 0
         rospy.logwarn("======================= lookAround ready =======================")
         while not rospy.is_shutdown():
-            goal = trajectory[index]
-            self.head_controller.goto_position(True,goal[0],goal[1],MV_DURATION)
-            self.output_pub.publish(True)
-            if index < len(trajectory) -1 :
-                index = index + 1   
-            else:
-                index = 0
+            if not self.stop_sending:
+                goal = trajectory[index]
+                self.head_controller.goto_position(True,goal[0],goal[1],MV_DURATION)
+                self.output_pub.publish(True)
+                if index < len(trajectory) -1 :
+                    index = index + 1   
+                else:
+                    index = 0
             rospy.sleep(MV_DURATION)
 
     def get_divided_trajectory(self,goal,divider):
@@ -46,6 +49,15 @@ class lookAround:
             new_goal = [goal[0] * (index+1)*ratio , goal[1] * (index+1)*ratio, MV_DURATION*(divider-index)]
             goal_list.append(new_goal)
         return goal_list
+
+    def detect_objectCB(self,data):
+        if data.data:
+            self.stop_sending = True
+            rospy.sleep(MV_DURATION)
+            self.head_controller.stop_repeated_sending()
+        else:
+            self.stop_sending = False
+
 
     def get_trajectory(self):
         goal_ur_corner = [MAX_REACHEABLE_RIGHT*SECURITY_FACTOR, MAX_REACHEABLE_HEIGHT]

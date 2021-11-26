@@ -33,17 +33,17 @@ class Scenario1Manager(ScenarioManagerAction):
         self.state_01 = state_01.State01(self.desires)
         self.state_02 = state_02.State02(self.desires)
         self.state_03 = state_03.State03(self.desires)
-        #self.state_04 = state_04.State04(self.desires)
+        self.state_04 = state_04.State04(self.desires)
 
         # Add the states to the current states dict for the follow up
         self.add_state(self.state_00)
         self.add_state(self.state_01)
         self.add_state(self.state_02)
         self.add_state(self.state_03)
-        #self.add_state(self.state_04)
+        self.add_state(self.state_04)
 
         # Build the normal scenario_sequence (when everything goes as it should)
-        self.scenario_sequence = [self.state_00,self.state_01,self.state_02,self.state_03,self.state_00]
+        self.scenario_sequence = [self.state_00,self.state_01,self.state_02,self.state_03,self.state_00, self.state_04, self.state_02]
         self.index = 0
 
         self.current_state = self.scenario_sequence[self.index]
@@ -159,6 +159,7 @@ class Scenario1Manager(ScenarioManagerAction):
             else:
                 self.menu_selection = dialog_info
                 self.state_03.command = self.menu_selection
+                self.state_04.command = self.menu_selection
 
     def read_dialog_info(self, file_location):
         with open(file_location) as file:

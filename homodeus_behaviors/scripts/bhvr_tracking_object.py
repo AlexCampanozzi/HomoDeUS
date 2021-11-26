@@ -2,7 +2,7 @@
 import time
 import math
 import rospy
-from std_msgs.msg import Bool, String
+from std_msgs.msg import Bool, String, Empty
 from sensor_msgs.msg import CameraInfo
 from darknet_ros_msgs.msg import BoundingBoxes
 from head_control.scripts.headController import headController
@@ -26,6 +26,7 @@ class ObjectTracking:
         rospy.Subscriber('bounding_boxes',BoundingBoxes, self._head_cb,queue_size= 1)
         #rospy.Subscriber('/proc_output_face_positions', FacePositions, self._head_callback, queue_size=5)
         rospy.Subscriber('/desired_object', String, self._desired_obj_cb, queue_size=5)
+        rospy.Subscriber('/bhvr_tracking_object_interrupt', Empty, self._interrupt_cb, queue_size=5)
 
         if mode == "remote":
             camera_info = rospy.wait_for_message("/usb_cam/camera_info", CameraInfo)
@@ -36,6 +37,7 @@ class ObjectTracking:
         self.img_center_y = camera_info.width // 2
 
         self.perception_pub = rospy.Publisher('bhvr_output_trackingObject_boxes',BoundingBoxes, queue_size=1)
+        self.detect_pub =  rospy.Publisher('bhvr_output_detect_object',Bool, queue_size=1)
         #self.pub = rospy.Publisher('head_command', JointTrajectory, queue_size=2)
         self.head_controller = headController(rate=0.05, head_control_topic='head_command')
 
@@ -55,6 +57,7 @@ class ObjectTracking:
         if self.desired_object is not None:
             desired_obj_position = self._detect_desired_object(boxes)
             if desired_obj_position:
+                self.detect_pub.publish(True)
                 self._center_desired_object(desired_obj_position)
 
 
@@ -67,6 +70,7 @@ class ObjectTracking:
     
     def _center_desired_object(self, obj_position):
         if not self._object_centered(obj_position):
+            rospy.logwarn("------not object centered--------")
             self.result_sent = False
             commands = self.convert_pixel_to_command(obj_position[0],obj_position[1])
             self.head_controller.goto_position(repeat=False,x=commands[0],y= commands[1],duration=1.)
@@ -75,6 +79,7 @@ class ObjectTracking:
             rospy.logwarn("**********ASK TO CENTERED*****************")
             self.head_controller.center_base()
         elif not self.result_sent:
+            rospy.logwarn("------ should send result of object tracking--------")
             commands = self.head_controller.get_head_angles() # stay at that position
             self.head_controller.goto_position(repeat=True,x=commands[0],y= commands[1],duration=1.)
             self.perception_pub.publish(self.current_boxes)
@@ -121,6 +126,11 @@ class ObjectTracking:
     def _distance_from_img_center(self, obj_position):
         answer = math.sqrt((self.img_center_x - obj_position[0])**2 + (self.img_center_y - obj_position[1])**2)
         return answer
+
+    def _interrupt_cb(self, data):
+        self.head_controller.stop_repeated_sending()
+        self.head_controller.home_cb('nothing')
+
 
 if __name__ == "__main__":
 
