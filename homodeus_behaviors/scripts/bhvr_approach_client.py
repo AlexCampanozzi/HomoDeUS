@@ -21,7 +21,6 @@ import numpy as np
 
 class ApproachClient():
     def __init__(self):
-        rospy.sleep(2.0)
         self.bridge = CvBridge()
         self.cameraModel = StereoCameraModel()
         self.depth_image = None
