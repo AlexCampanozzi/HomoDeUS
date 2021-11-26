@@ -42,7 +42,7 @@ class Navigator:
         goal.target_pose.pose.orientation.z = quaternion[2]
         goal.target_pose.pose.orientation.w = quaternion[3]
 
-        self.gotoGoal(goal, blocking=blocking)
+        return self.gotoGoal(goal, blocking=blocking)
 
     def gotoGoal(self, goal, blocking=False):
         rospy.loginfo("Sending goal location ...")

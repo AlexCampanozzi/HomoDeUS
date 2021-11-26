@@ -9,7 +9,7 @@ from hbba_msgs.srv import AddDesires, RemoveDesires
 from scenario_manager_action_server import ScenarioManagerAction
 import actionlib
 from custom_msgs.msg import scenario_managerAction, scenario_managerResult, scenario_managerFeedback
-from states.scenario_1_states import state_00, state_01, state_02, state_03, state_04
+from states.scenario_1_states import state_00, state_01, state_02, state_03, state_04, state_05
 
 
 FILE_LOCATION = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))+'/homodeus_common/dialog_answer.json'
@@ -35,12 +35,17 @@ class Scenario1Manager(ScenarioManagerAction):
         self.state_03 = state_03.State03(self.desires)
         self.state_04 = state_04.State04(self.desires)
 
+        self.state_05 = state_05.State05(self.desires) # approach client
+
         # Add the states to the current states dict for the follow up
+        self.add_state(self.state_05)
+
         self.add_state(self.state_00)
         self.add_state(self.state_01)
         self.add_state(self.state_02)
         self.add_state(self.state_03)
         self.add_state(self.state_04)
+
 
         # Build the normal scenario_sequence (when everything goes as it should)
         self.scenario_sequence = [self.state_00,self.state_01,self.state_02,self.state_03,self.state_00, self.state_04, self.state_02]
@@ -98,7 +103,8 @@ class Scenario1Manager(ScenarioManagerAction):
             else: 
                 self.__cancel_current_desires()
 
-            self.current_state = self.state_00
+            # self.current_state = self.state_00
+            self.current_state = self.scenario_sequence[self.index]
             self.current_state.add_state_desires()
             while self._as.is_active():
                 time.sleep(2)
@@ -129,6 +135,10 @@ class Scenario1Manager(ScenarioManagerAction):
             self.current_state = self.state_02
         elif state_number == 3:
             self.current_state = self.state_03
+        elif state_number == 4:
+            self.current_state = self.state_04
+        elif state_number == 5:
+            self.current_state = self.state_05
             self.current_state.command = 'apple'
 
         self._feedback.state = self.current_state.get_id()
@@ -184,6 +194,7 @@ class Scenario1Manager(ScenarioManagerAction):
         self._feedback.prev_state = self.current_state.get_id()
         
         self.current_state = self.scenario_sequence[self.index]
+        rospy.logerr("----------------going to next state--------------")
         
         self._feedback.state = self.current_state.get_id()
         

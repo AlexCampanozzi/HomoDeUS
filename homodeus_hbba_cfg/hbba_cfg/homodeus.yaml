@@ -10,6 +10,7 @@ hbba_conf:
 - include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_dialoguing.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_nav_actionLib.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_talking.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_approach_client.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_looking_around.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_tracking_object.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_arm_interface.yaml'}
@@ -17,6 +18,7 @@ hbba_conf:
 
 # Perceptions
 - include: {pkg: 'homodeus_hbba_cfg', file: 'proc_keyword_detection.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'proc_face_detection.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'proc_point_cloud_perception.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'proc_drop_spot_perception.yaml'}
 
@@ -29,6 +31,7 @@ hbba_conf:
 - include: {pkg: 'homodeus_hbba_cfg', file: 'gotoLandmark_observer.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'obs_dialoguing.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'obs_talking.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'obs_approach_client.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'obs_tracking_object.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'obs_looking_around.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'obs_pick.yaml'}

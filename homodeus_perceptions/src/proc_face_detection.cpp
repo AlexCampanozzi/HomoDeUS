@@ -13,7 +13,8 @@ FaceDetector::FaceDetector(ros::NodeHandle& nh, std::string mode):
   _nh(nh)
 {
   // Image topics
-  std::string imageTopic = "/homodeus_proc_face_detection/proc_input_camera_feed";
+  //std::string imageTopic = "/homodeus_proc_face_detection/proc_input_camera_feed";
+  std::string imageTopic = "/xtion/rgb/image_raw";
 
   image_transport::ImageTransport imageTransport(nh);
 
@@ -141,6 +142,7 @@ Outputs:        None
 */
 void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
 {
+    // ROS_INFO("face CB");
     cv::Mat img;
     cv::Rect r;
 
@@ -192,7 +194,7 @@ void FaceDetector::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     {
       publishDetections(faces);
       observerMsg.data = true;
-      ROS_INFO("face detected");
+      // ROS_INFO("face detected");
     }
     else
     {

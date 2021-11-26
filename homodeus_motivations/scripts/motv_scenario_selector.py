@@ -18,6 +18,8 @@ class Scenario_Selector:
         #initialise scenario_client so it can be modified later
         self.scenario_client = None
 
+        rospy.sleep(2.0)
+
 
         # The input of the module
         self.input_motv_keyword = rospy.Subscriber("/proc_output_keywordDetect", Bool, self.listen_Keyword_cb, queue_size=10)
