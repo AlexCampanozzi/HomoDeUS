@@ -108,10 +108,10 @@ void ArmInterfaceNode::pickPoseCB(const geometry_msgs::PoseStampedConstPtr poses
     auto z  = posestamped->pose.position.z;
     
     ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
-    success = moveToCartesian(x-0.2, y, z+0.1, roll, pitch, yaw);
+    success = moveToCartesian(x-0.2, y, z+0.05, roll, pitch, yaw);
     if (success)
     {
-        ROS_INFO("arm_interface_node: reached first waypoint");
+        ROS_INFO("arm_interface_node: reached first wayp1oint");
         success = moveToCartesian(x, y, z, roll, pitch, yaw);
     }
 
@@ -131,7 +131,7 @@ void ArmInterfaceNode::pickPoseCB(const geometry_msgs::PoseStampedConstPtr poses
     {
         ROS_INFO("arm_interface_node: successfully retreated from pick point.");
         ROS_INFO("Going to carrying pose");
-        success  = gotoCarryPose();
+        success  = goHome();
     }
     else
         ROS_INFO("arm_interface_node: failed to retreat from pick point!");
@@ -148,8 +148,8 @@ void ArmInterfaceNode::dropPoseCB(const geometry_msgs::PoseStampedConstPtr poses
     bool success = true;
 
     ROS_INFO("Going to drop preparation pose");
-    // success = gotoGraspPrep();
-    success = moveToJoint(0.35, 0.15, 0.00, -1.08, 2.29, 0.33, 0.27, -2.07);
+    success = gotoGraspPrep();
+    // success = moveToJoint(0.35, 0.15, 0.00, -1.08, 2.29, 0.33, 0.27, -2.07);
     if (success)
     {
         ROS_INFO("Now at drop preparation pose");
@@ -168,7 +168,7 @@ void ArmInterfaceNode::dropPoseCB(const geometry_msgs::PoseStampedConstPtr poses
     auto z  = posestamped->pose.position.z;
     
     ROS_INFO("arm_interface_node: will attempt to move the arm in cartesian space.");
-    success = moveToCartesian(x-0.2, y, z+0.1, roll, pitch, yaw);
+    success = moveToCartesian(x-0.2, y, z+0.05, roll, pitch, yaw);
     if (success)
     {
         ROS_INFO("arm_interface_node: reached first waypoint");

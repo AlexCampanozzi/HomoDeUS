@@ -1,7 +1,6 @@
 hbba_conf:
 
 - remap: {from: 'points', to: '/xtion/depth_registered/points'}
-- remap: {from: 'bounding_boxes', to: '/darknet_ros/bounding_boxes'}
 
 - procmodule:
     name: proc_point_cloud_perception
@@ -9,7 +8,7 @@ hbba_conf:
     input:
         - points
         # TODO: Remap this to future output of object tracking
-        - bounding_boxes
+        - bhvr_output_trackingObject_boxes
     output:
         - pick_position
 

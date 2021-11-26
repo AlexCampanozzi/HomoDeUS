@@ -84,7 +84,7 @@ class Talking_module:
         self.output_bhvr_result.publish(True)
 
     def interrupt_cb(self,interrupt):
-        rospy.logwar("Interrupting talking bhvr")
+        rospy.loginfo("Interrupting talking bhvr")
         if interrupt.data:
             self.output_bhvr_command.cancel_all_goals()
 

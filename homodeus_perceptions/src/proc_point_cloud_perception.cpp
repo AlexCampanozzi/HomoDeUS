@@ -2,7 +2,7 @@
 
 CloudObjectFinder::CloudObjectFinder(ros::NodeHandle& nh): _nh(nh)
 {
-    _detection_sub = _nh.subscribe("bounding_boxes", 5, &CloudObjectFinder::detectionCallback, this);
+    _detection_sub = _nh.subscribe("/bhvr_output_trackingObject_boxes", 5, &CloudObjectFinder::detectionCallback, this);
     image_info_sub  = _nh.subscribe("/xtion/rgb/camera_info", 5, &CloudObjectFinder::imageInfoCallback, this);
     desired_object_sub  = _nh.subscribe("/desired_object", 5, &CloudObjectFinder::desiredObjectCallback, this);
     tfListenerPtr = new tf2_ros::TransformListener(tfBuffer);
@@ -28,7 +28,7 @@ void CloudObjectFinder::imageInfoCallback(const sensor_msgs::CameraInfoConstPtr&
 void CloudObjectFinder::desiredObjectCallback(const std_msgs::StringConstPtr& type)
 {
     desired_object_type = type->data;
-    ROS_INFO("Now looking for %s", desired_object_type.c_str());
+    ROS_WARN("*********************Now looking for %s", desired_object_type.c_str());
 }
 
 void CloudObjectFinder::detectionCallback(const darknet_ros_msgs::BoundingBoxesConstPtr& msg)
@@ -117,7 +117,15 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     passy.setFilterLimits(detectedY-box_half_height, detectedY+box_half_height);
     //pass.setFilterLimitsNegative (true);
     // passy.filter(point_cloud_xyfiltered);
-    passy.filter(point_cloud_filtered);
+    passy.filter(point_cloud_xyfiltered);
+
+    pcl::PassThrough<pcl::PointXYZ> passz;
+    passz.setInputCloud(point_cloud_xyfiltered.makeShared());
+    passz.setFilterFieldName("z");
+    passz.setFilterLimits(0, 1.5);
+    //pass.setFilterLimitsNegative (true);
+    // passy.filter(point_cloud_xyfiltered);
+    passz.filter(point_cloud_filtered);
 
     ROS_INFO("Filtered with passthrough");
 
@@ -176,7 +184,7 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     }
     float table_z = maxz;
 
-    pcl::PassThrough<pcl::PointXYZ> passz;
+    // pcl::PassThrough<pcl::PointXYZ> passz;
     passz.setInputCloud(point_cloud_filtered.makeShared());
     passz.setFilterFieldName("z");
     passz.setFilterLimits(-999, maxz);
@@ -232,14 +240,14 @@ void CloudObjectFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& ms
     // Gripper: no offsets other than wrist to tool, we want the object to be in the middle
     goal_pose.pose.position.x = average_point.x + grip_to_wrist_tf.transform.translation.x;
     goal_pose.pose.position.y = average_point.y + grip_to_wrist_tf.transform.translation.y;
-    goal_pose.pose.position.z = average_point.z + grip_to_wrist_tf.transform.translation.z + 0.08;
+    goal_pose.pose.position.z = average_point.z + grip_to_wrist_tf.transform.translation.z;
 
     // TODO: insert orientation here
 
     // Gripper
     tf2::Quaternion quat, transform_quat;
     tf2::fromMsg(grip_to_wrist_tf.transform.rotation, transform_quat);
-    quat.setRPY(0, M_PI/8, 0);
+    quat.setRPY(0,0, 0);
 
     // quat.setRPY(0, 0, 0);
     quat = quat*transform_quat;

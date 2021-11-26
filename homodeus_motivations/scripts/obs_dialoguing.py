@@ -40,18 +40,13 @@ class dialogObserver:
                     rospy.loginfo("Dialogue return a relevant information")
                     self.write_dialog_info(result, FILE_LOCATION)
                     event.type = Event.ACC_ON
-                if result == 'interruption':
+                elif result == 'interruption':
                     # Nothing to do here since the desire is already being removed
                     pass
                 else:
                     rospy.loginfo('Dialogue did not return anything')
                     event.type = Event.ACC_OFF
                 self.eventPublisher.publish(event)
-            else:
-                rospy.loginfo("Position found outside tolerance of a goal position")
-        else:
-            # What do we do when GoTo fails?
-            pass
 
     def write_dialog_info(self, result, file_location):
         data = {}

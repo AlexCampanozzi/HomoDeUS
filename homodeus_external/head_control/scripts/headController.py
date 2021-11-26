@@ -95,7 +95,7 @@ class headController:
     def is_base_align(self):
         if self.nav is None:
             self.nav=Navigator()
-        min_range = 0.15 # 10 degrees in rad
+        min_range = 0.20 # 10 degrees in rad
         pose_head = self.get_head_pose()
         return (abs(pose_head.orientation[2]) < min_range)
 

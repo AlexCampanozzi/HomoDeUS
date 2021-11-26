@@ -13,6 +13,7 @@ hbba_conf:
     output:
         - head_command
         - bhvr_output_trackingObject_boxes
+        - bhvr_output_detect_object
             
 - strat:
     name: bhvr_tracking_object
@@ -20,4 +21,5 @@ hbba_conf:
     utility: 8
     modules:
         - bhvr_tracking_object
-    custom_bringup: "pubString('/desired_object', params.object);"
+    custom_bringup: "pubString('/desired_object', params.object);" 
+    custom_bringdn: "pubEmpty('/bhvr_tracking_object_interrupt');"

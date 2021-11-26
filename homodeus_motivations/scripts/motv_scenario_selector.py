@@ -37,9 +37,10 @@ class Scenario_Selector:
         self.desire_dialoguing_id = "listen_for_task"
         self.desire_keyword_id = "hear_his_name"
         self.do_not_restart = False
+        rospy.sleep(5)
         # ajout de desire
         common.add_desire(self,desire_id=self.desire_keyword_id,desire_type="Keyword_detection",desire_utility=8, \
-            desire_intensity=50, desire_params = "{value: 'robot'}")
+            desire_intensity=50, desire_params = "{value: 'roboto'}")
         self.current_desire = self.desire_keyword_id
 
         rospy.loginfo('--------------BOOT SEQUENCE COMPLETED----------------------')
@@ -53,10 +54,7 @@ class Scenario_Selector:
         detection: Bool()
             if the robot heard or not it's name
         """
-        if self.do_not_restart:
-            self.do_not_restart = False
-            return
-        if detection.data and not self.do_not_restart:
+        if detection.data :
             rospy.logwarn("------------------------")
             # self.add_desire(desire_id=self.desire_pause_id,desire_type="pause",desire_utility=5.0,desire_intensity=100.00)
             common.add_desire(self,desire_id=self.desire_dialoguing_id, desire_type= "Dialoguing", desire_utility=5.0, \
@@ -86,7 +84,7 @@ class Scenario_Selector:
 
         self.rem_desires_service.call([self.desire_dialoguing_id])
         common.add_desire(self,desire_id=self.desire_keyword_id,desire_type="Keyword_detection",desire_utility=8, \
-            desire_intensity=50, desire_params = "{value: 'robot'}")
+            desire_intensity=50, desire_params = "{value: 'roboto'}")
         self.current_desire = self.desire_keyword_id
 
     def scenario_selector_cb(self, scenario_number):

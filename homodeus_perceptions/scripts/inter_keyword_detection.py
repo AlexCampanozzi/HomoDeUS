@@ -57,6 +57,8 @@ class Inter_keyword_detection:
         """
         while not rospy.is_shutdown():
             detection = self.keyword_recognizer.wait_for_keyword()
+            if detection:
+                rospy.logwarn("---------------------KEY WORK DETECTED FOR REAL---------------------")
             self.output_perc.publish(detection)
 
     def node_shutdown(self):

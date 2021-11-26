@@ -88,6 +88,10 @@ class KeywordRecognizer:
                 return False
             # If the keyword was recognized
             if self.decoder.hyp() is not None and not self.set_new_keyword:
+                #PRINTING KEYWORD DETECTION
+                words=[]
+                [words.append(seg.word) for seg in self.decoder.seg()]
+                rospy.logwarn(str(words))
                 self.decoder.end_utt()
                 return True
 
@@ -97,7 +101,6 @@ class KeywordRecognizer:
                 return False
         else:
             time.sleep(0.5)
-            return False
 
     def set_keyword(self, keyword, threshold=1e-12):
         """

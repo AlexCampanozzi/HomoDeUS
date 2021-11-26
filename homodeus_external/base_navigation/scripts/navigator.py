@@ -63,9 +63,11 @@ class Navigator:
     def handles_result_state(self,state):
         if(state == GoalStatus.SUCCEEDED):
                 rospy.loginfo("The robot reached the destination")
+                self.doneCB(True)
                 return True
         else:
                 rospy.loginfo("The robot failed to reach the destination")
+                self.doneCB(False)
                 return False
 
     def goalToLandmark(self, goal):
@@ -127,3 +129,6 @@ class Navigator:
 
     def getCurPose(self):
         return common.get_relative_pose('map', 'base_footprint')
+
+    def doneCB(self,bool):
+        pass

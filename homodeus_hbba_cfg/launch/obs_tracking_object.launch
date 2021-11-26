@@ -1,0 +1,3 @@
+<launch>
+    <node name="obs_tracking_object" pkg="homodeus_motivations" type="obs_tracking_object.py" output="screen"/>
+</launch>

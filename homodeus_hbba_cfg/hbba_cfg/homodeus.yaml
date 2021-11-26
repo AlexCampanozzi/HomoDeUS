@@ -1,7 +1,9 @@
 hbba_conf:
 
 - remap: {from: 'head_command',          to: '/head_controller/command'}
+- remap: {from: 'bounding_boxes',        to: '/darknet_ros/bounding_boxes'}
 - launch: {pkg: 'homodeus_hbba_cfg', path: 'launch/dependencies.launch'}
+
 - include: {pkg: 'hbba_synth', file: 'common.yaml'}
 
 # Behaviors:
@@ -9,10 +11,14 @@ hbba_conf:
 - include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_nav_actionLib.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_talking.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_looking_around.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_tracking_object.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'bhvr_arm_interface.yaml'}
 
 
 # Perceptions
 - include: {pkg: 'homodeus_hbba_cfg', file: 'proc_keyword_detection.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'proc_point_cloud_perception.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'proc_drop_spot_perception.yaml'}
 
 # Motivations
 - include: {pkg: 'homodeus_hbba_cfg', file: 'motv_scenario_selector.yaml'}
@@ -23,6 +29,10 @@ hbba_conf:
 - include: {pkg: 'homodeus_hbba_cfg', file: 'gotoLandmark_observer.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'obs_dialoguing.yaml'}
 - include: {pkg: 'homodeus_hbba_cfg', file: 'obs_talking.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'obs_tracking_object.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'obs_looking_around.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'obs_pick.yaml'}
+- include: {pkg: 'homodeus_hbba_cfg', file: 'obs_place.yaml'}
 
 
 # - include: {pkg: 'homodeus_hbba_cfg', file: 'homodeus_motv_test_desire.yaml'}
@@ -33,4 +43,3 @@ hbba_conf:
     microphone: 1
     speaker: 1
     move_stack: 1
-    head: 2
