@@ -48,6 +48,7 @@ class ArmInterfaceNode: ArmInterface
         bool gotoGraspPrep();
         bool gotoRetreat(const geometry_msgs::PoseStamped posestamped);
         bool goHome();
+        bool gotoCarryPose();
 
         void closeHand();
 };
