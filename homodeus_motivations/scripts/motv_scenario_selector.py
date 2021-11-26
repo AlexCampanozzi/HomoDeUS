@@ -37,7 +37,7 @@ class Scenario_Selector:
         self.desire_dialoguing_id = "listen_for_task"
         self.desire_keyword_id = "hear_his_name"
         self.do_not_restart = False
-        rospy.sleep(10)
+        rospy.sleep(5)
         # ajout de desire
         common.add_desire(self,desire_id=self.desire_keyword_id,desire_type="Keyword_detection",desire_utility=8, \
             desire_intensity=50, desire_params = "{value: 'roboto'}")
@@ -84,7 +84,7 @@ class Scenario_Selector:
 
         self.rem_desires_service.call([self.desire_dialoguing_id])
         common.add_desire(self,desire_id=self.desire_keyword_id,desire_type="Keyword_detection",desire_utility=8, \
-            desire_intensity=50, desire_params = "{value: 'robot'}")
+            desire_intensity=50, desire_params = "{value: 'roboto'}")
         self.current_desire = self.desire_keyword_id
 
     def scenario_selector_cb(self, scenario_number):

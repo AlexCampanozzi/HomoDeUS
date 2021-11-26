@@ -246,7 +246,7 @@ void DropSpotFinder::cloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg)
     // edge - tool offset + depth to go to
     goal_pose.pose.position.x = table_edge_x + grip_to_wrist_tf.transform.translation.x + 0.10;
     goal_pose.pose.position.y = drop_y + grip_to_wrist_tf.transform.translation.y;
-    goal_pose.pose.position.z = table_z + object_height + grip_to_wrist_tf.transform.translation.z;
+    goal_pose.pose.position.z = table_z + object_height + grip_to_wrist_tf.transform.translation.z + 0.08;
 
     // TODO: insert orientation from pick here
 

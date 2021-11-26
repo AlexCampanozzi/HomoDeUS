@@ -70,10 +70,12 @@ class KeywordRecognizer:
 
             # Waiting for the keyword to be said
             
-            while ((self.decoder.hyp() is None) and
-                    (time.time() < max_time_waiting) and
-                    not(self.set_new_keyword) and
-                    not rospy.is_shutdown()):
+            while (
+                (self.decoder.hyp() is None) and
+                (time.time() < max_time_waiting) and
+                not(self.set_new_keyword) and
+                not rospy.is_shutdown()
+            ):
                 buffer = self.stream.read(1024)
 
                 if buffer:
@@ -84,7 +86,6 @@ class KeywordRecognizer:
                 rospy.loginfo("setting new keyword")
                 self.decoder.end_utt()
                 return False
-
             # If the keyword was recognized
             if self.decoder.hyp() is not None and not self.set_new_keyword:
                 #PRINTING KEYWORD DETECTION

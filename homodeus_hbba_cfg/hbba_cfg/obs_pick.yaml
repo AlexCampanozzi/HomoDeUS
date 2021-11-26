@@ -1,0 +1,8 @@
+hbba_conf:
+- motivation:
+    name: pick_observer
+    launch: {pkg: "homodeus_hbba_cfg", path: "launch/obs_pick.launch"}
+    input:
+        - bhvr_output_pick_result
+    output:
+        - events

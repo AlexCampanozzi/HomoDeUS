@@ -25,7 +25,7 @@ class ObjectTracking:
         self.desired_object = None
         rospy.Subscriber('bounding_boxes',BoundingBoxes, self._head_cb,queue_size= 1)
         #rospy.Subscriber('/proc_output_face_positions', FacePositions, self._head_callback, queue_size=5)
-        rospy.Subscriber('desired_object', String, self._desired_obj_cb, queue_size=5)
+        rospy.Subscriber('/desired_object', String, self._desired_obj_cb, queue_size=5)
 
         if mode == "remote":
             camera_info = rospy.wait_for_message("/usb_cam/camera_info", CameraInfo)
@@ -72,6 +72,7 @@ class ObjectTracking:
             self.head_controller.goto_position(repeat=False,x=commands[0],y= commands[1],duration=1.)
         elif not self.head_controller.is_base_align():
             self.result_sent = False
+            rospy.logwarn("**********ASK TO CENTERED*****************")
             self.head_controller.center_base()
         elif not self.result_sent:
             commands = self.head_controller.get_head_angles() # stay at that position

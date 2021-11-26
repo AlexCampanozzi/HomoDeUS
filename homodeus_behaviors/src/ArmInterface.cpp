@@ -19,7 +19,7 @@ ArmInterface::ArmInterface() : _moveGroup("arm_torso"), _ref_frame("base_link")
 
     _moveGroup.setPlannerId(_plannerId);
     _moveGroup.setMaxVelocityScalingFactor(max_vel_factor);
-
+    _moveGroup.setNumPlanningAttempts(5);
     _jointsNames = _moveGroup.getJoints();
 
     // Using a factor of 1.0 at first, we'll see if this value needs to be changed
@@ -46,7 +46,7 @@ ArmInterface::ArmInterface(std::string ref_frame) : _moveGroup("arm_torso"), _re
 
     _moveGroup.setPlannerId(_plannerId);
     _moveGroup.setMaxVelocityScalingFactor(max_vel_factor);
-
+    _moveGroup.setNumPlanningAttempts(5);
     _jointsNames = _moveGroup.getJoints();
 
     // Using a factor of 1.0 at first, we'll see if this value needs to be changed

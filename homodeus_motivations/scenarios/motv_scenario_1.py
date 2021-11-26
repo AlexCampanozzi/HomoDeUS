@@ -43,7 +43,7 @@ class Scenario1Manager(ScenarioManagerAction):
         #self.add_state(self.state_04)
 
         # Build the normal scenario_sequence (when everything goes as it should)
-        self.scenario_sequence = [self.state_00,self.state_01,self.state_02,self.state_03]
+        self.scenario_sequence = [self.state_00,self.state_01,self.state_02,self.state_03,self.state_00]
         self.index = 0
 
         self.current_state = self.scenario_sequence[self.index]
@@ -129,10 +129,11 @@ class Scenario1Manager(ScenarioManagerAction):
             self.current_state = self.state_02
         elif state_number == 3:
             self.current_state = self.state_03
+            self.current_state.command = 'apple'
 
         self._feedback.state = self.current_state.get_id()
         
-        self._as.publish_feedback(self._feedback)
+        # self._as.publish_feedback(self._feedback)
         
         self.current_state.add_state_desires()
 
