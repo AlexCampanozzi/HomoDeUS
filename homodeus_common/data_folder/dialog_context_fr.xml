@@ -11,6 +11,7 @@
             <answer rel_info="scenario_1" prefix="do ">premier sénario</answer>
             <answer rel_info="scenario_1" prefix="do ">scénario un</answer>
             <answer rel_info="scenario_1" prefix="do ">prendre la commande</answer>
+            <answer rel_info="scenario_1" prefix="do ">passer la commande</answer>
             <answer rel_info="scenario_1" prefix="do ">situation un</answer>
             <answer rel_info="scenario_1" prefix="do ">première situation</answer>
             

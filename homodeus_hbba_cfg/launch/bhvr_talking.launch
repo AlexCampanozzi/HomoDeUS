@@ -1,4 +1,4 @@
 <launch>
   <node name="bhvr_talking" pkg="homodeus_behaviors" type="bhvr_talking.py"/>
-  <param name="on_robot" type="bool" value="False" />
+  <rosparam file="$(find rosparams)/homodeus_params.yaml" />
 </launch>

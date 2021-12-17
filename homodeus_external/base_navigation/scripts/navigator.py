@@ -16,7 +16,7 @@ import HomoDeUS_common_py.HomoDeUS_common_py as common
 class Navigator:
     def __init__(self):
         self.landmarks = {}
-        landmarks_file = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))+'/homodeus_common/landmarks.json'
+        landmarks_file = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))+'/homodeus_common/data_folder/landmarks.json'
 
         with open(landmarks_file) as json_file:
             self.landmarks = json.load(json_file)

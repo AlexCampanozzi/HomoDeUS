@@ -28,12 +28,15 @@ class Dialoguing_module:
     This class provides a sort of chatbot so the robot can have fluid interaction with people
     """
 
-    def __init__(self, language = "en-GB"):
-
-        dialog_context_xml_path=os.path.join(os.path.dirname(__file__), '../../homodeus_external/xml_folder/dialog_context.xml') 
+    def __init__(self, language = "en"):
+        if language == 'fr':
+            dialog_context_xml_path=os.path.join(os.path.dirname(__file__), '../../homodeus_common/data_folder/dialog_context_fr.xml') 
+            self.language = 'fr-CA'
+        else:
+            dialog_context_xml_path=os.path.join(os.path.dirname(__file__), '../../homodeus_common/data_folder/dialog_context.xml') 
+            self.language = 'en-US'
         self.dialog_context = ET.parse(dialog_context_xml_path).getroot()
-
-        self.language = language
+        
         
         # initialisation of global class variables
         self.selected_context =  ""
@@ -64,7 +67,7 @@ class Dialoguing_module:
         # dialog only use tts_server when it's run on the robot
         self.connect_to_tts_server()
         
-        self.speech_recognizer = sr.SpeechRecognizer()
+        self.speech_recognizer = sr.SpeechRecognizer(self.language)
         
         
     def connect_to_tts_server(self):
@@ -90,14 +93,13 @@ class Dialoguing_module:
             the context to use when surfing in the XML file
         """
         # the new context is ignored if a dialog is happening right now
-        rospy.logwarn("--------------NEW CONTEXT-----------------")
         if not self.dialoguing_now:
             self._reset_values()
             if self.dialog_context.getiterator(context.data):
                 self.selected_context = context.data
                 self.dialoguing()
             else:
-                rospy.logerr("non usable context")
+                rospy.logwarn("non usable context")
         else:
             rospy.loginfo("ignoring new context")
 
@@ -149,7 +151,7 @@ class Dialoguing_module:
 
         self.output_bhvr_command.send_goal_and_wait(goal=goal)
 
-        rospy.logwarn(TtsText)
+        # rospy.logwarn(TtsText)
 
     def dialoguing(self):
         """
@@ -400,7 +402,8 @@ if __name__ == "__main__":
     """
     try:
         rospy.init_node(common.get_file_name(__file__))
-        node = Dialoguing_module()
+        lang = rospy.get_param('lang','en')
+        node = Dialoguing_module(lang)
         rospy.on_shutdown(node.node_shutdown)
         rospy.spin()
 

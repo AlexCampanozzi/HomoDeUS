@@ -60,7 +60,6 @@ class Scenario1Manager(ScenarioManagerAction):
 
 
     def add_state(self, state):
-        rospy.loginfo("------------------ STATE : "+str(state.get_id())+ " -----------------------")
         key = state.get_id()
 
         if key not in self.states.keys():
@@ -114,10 +113,9 @@ class Scenario1Manager(ScenarioManagerAction):
             pass
             # no stuff
     def test_state_cb(self, state_number):
-        rospy.loginfo("---------------- A specific test has been called ----------------")
         state_number = state_number.data
         
-        if state_number < 0 or state_number > 3:
+        if state_number < 0 or state_number > 7:
             rospy.logwarn("This state number currently doesn't exist")
             return
         
@@ -196,9 +194,7 @@ class Scenario1Manager(ScenarioManagerAction):
         self.index = self.index+1
         self._feedback.prev_state = self.current_state.get_id()
         
-        self.current_state = self.scenario_sequence[self.index]
-        rospy.logerr("----------------going to next state--------------")
-        
+        self.current_state = self.scenario_sequence[self.index]        
         self._feedback.state = self.current_state.get_id()
         
         self._as.publish_feedback(self._feedback)

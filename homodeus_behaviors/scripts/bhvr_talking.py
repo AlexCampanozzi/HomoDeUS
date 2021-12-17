@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 import rospy
+import time
 import actionlib
 import traceback
 import pal_interaction_msgs.msg
@@ -23,7 +24,11 @@ class Talking_module:
         text: String
             What the robot should say 
         """
-        self.language = language
+        if language == 'fr':
+            self.language = 'fr-FR'
+        else:
+            self.language = 'en-GB'
+            
         self.talking_text = text
         # Goal input
         self.input_bhvr_goal = rospy.Subscriber("/bhvr_input_goal_talking",data_class=String,callback=self.action_Cb,queue_size=10)
@@ -102,7 +107,8 @@ if __name__ == "__main__":
     """
     try:
         rospy.init_node(common.get_file_name(__file__))
-        node = Talking_module()
+        lang = rospy.get_param('lang', 'en')
+        node = Talking_module(lang)
         rospy.on_shutdown(node.node_shutdown)
         rospy.spin()
 

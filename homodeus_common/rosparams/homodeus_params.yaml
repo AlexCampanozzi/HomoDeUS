@@ -1,2 +1,4 @@
 camera_mode: "robot"
+on_robot: False
+lang: 'fr'
 #camera_mode: "remote"
