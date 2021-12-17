@@ -15,4 +15,5 @@ hbba_conf:
     costs: {microphone: 1}
     modules:
         - proc_keyword_detection
-    custom_bringup: "pubString('/desire_keyword', params.value);"
+    custom_bringup: "pubString('/desire_keyword', params.keyword);"
+    

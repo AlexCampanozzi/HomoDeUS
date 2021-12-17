@@ -19,6 +19,7 @@ add_message_files(
   GoToResult.msg
   FacePosition.msg
   FacePositions.msg
+  TestDesire.msg
 )
 
 ## Generate actions in the 'action' folder

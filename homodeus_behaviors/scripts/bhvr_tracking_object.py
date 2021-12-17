@@ -43,8 +43,6 @@ class ObjectTracking:
 
         self.distance_threshold = 20
         
-        #self.pid_x = common.PID(self.img_center_x, K_P=-0.00010, K_I=-0.0001, K_D=-0.00005)
-        #self.pid_y = common.PID(self.img_center_y, K_P=-0.00010, K_I=-0.0001, K_D=-0.00005)
 
     def _desired_obj_cb(self, d_object):
         rospy.loginfo("desired object receive: " + str(d_object.data))
@@ -70,16 +68,13 @@ class ObjectTracking:
     
     def _center_desired_object(self, obj_position):
         if not self._object_centered(obj_position):
-            rospy.logwarn("------not object centered--------")
             self.result_sent = False
             commands = self.convert_pixel_to_command(obj_position[0],obj_position[1])
             self.head_controller.goto_position(repeat=False,x=commands[0],y= commands[1],duration=1.)
         elif not self.head_controller.is_base_align():
             self.result_sent = False
-            rospy.logwarn("**********ASK TO CENTERED*****************")
             self.head_controller.center_base()
         elif not self.result_sent:
-            rospy.logwarn("------ should send result of object tracking--------")
             commands = self.head_controller.get_head_angles() # stay at that position
             self.head_controller.goto_position(repeat=True,x=commands[0],y= commands[1],duration=1.)
             self.perception_pub.publish(self.current_boxes)

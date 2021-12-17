@@ -134,5 +134,4 @@ if __name__ == '__main__':
 #    talkClient.say("Interruption?")
 #    t.toc()
 #    time.sleep(5)
-#    exit()
-
+#    exit(

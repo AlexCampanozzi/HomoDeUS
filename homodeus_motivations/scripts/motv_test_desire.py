@@ -8,6 +8,7 @@ import time
 from std_msgs.msg import UInt16, Empty
 from hbba_msgs.msg import Desire, Event
 from hbba_msgs.srv import AddDesires, RemoveDesires
+from custom_msgs.msg import TestDesire
 
 class testManager:
     """
@@ -16,56 +17,123 @@ class testManager:
     def __init__(self):
         self.add_desires    = rospy.ServiceProxy('add_desires', AddDesires)
         self.rem_desires    = rospy.ServiceProxy('remove_desires', RemoveDesires)
-        self.sub            = rospy.Subscriber('select_desire',UInt16, self.motv_cb, queue_size=5)
-        self.sub            = rospy.Subscriber('remove_desire',Empty, self.remove_cb, queue_size=5)
-        self.desire_track_object = 'test_track'
-        self.desire_look_around = 'test_look'
+        self.sub            = rospy.Subscriber('select_desire',TestDesire, self.motv_cb, queue_size=5)
+        self.sub            = rospy.Subscriber('remove_desire',UInt16, self.remove_cb, queue_size=5)
+        
+        # all desires id
+        self.desire_track_object = 'test_objectTracking'
+        self.desire_look_around = 'test_lookAround'
+        self.desire_talking = 'test_talking'
+        self.desire_keyword = 'test_keyword'
+        self.desire_dialog = 'test_dialog'
+        self.desire_pick = 'test_pick'
+        self.desire_place = 'test_place'
+        self.desire_approach_client = 'approach_client'
+        
+
         self.current_desire = []
         rospy.wait_for_service("add_desires")
 
     def motv_cb(self, desire):
-        desire = desire.data
-        rospy.logwarn('adding new desire ' + str(desire))
-        if desire == 1:
-            self.add_track_object()
-        if desire == 2:
-            self.add_look_around()
-        if desire == 3:
-            self.add_track_object()
-            self.add_look_around()
+        rospy.logwarn('adding new desire ' + str(desire.desire_id))
+        if desire.desire_id == 1:
+            self.add(self.desire_track_object, "Track_object", "{object: '"+ desire.param + "'}")
+        if desire.desire_id == 2:
+            self.add(self.desire_look_around, "Look")
+        if desire.desire_id == 3:
+            self.add(self.desire_talking, "Talking", "{TtsText: '"+ desire.param + "'}")
+        if desire.desire_id == 4:
+            self.add(self.desire_keyword, "Keyword_detection", "{keyword: 'roboto'}")
+        if desire.desire_id == 5:
+            self.add(self.desire_dialog, "Dialoguing", "{context: '"+ desire.param + "'}")
+        if desire.desire_id == 6:
+            self.add(self.desire_pick, "Pick", "{object: '"+ desire.param + "'}")
+        if desire.desire_id == 7:
+            self.add(self.desire_place, "Place", "{object: '"+ desire.param + "'}")
+        if desire.desire_id == 8:
+            self.add(self.desire_approach_client, "approach_client")
         
-    def remove_cb(self,empty):
-        rospy.logwarn('removing current desire')
-        rospy.logwarn(str(self.current_desire))
-        if self.current_desire:
-            self.rem_desires.call(self.current_desire)
-            del self.current_desire[:]
+    def remove_cb(self,desireNumber):
 
-    def add_track_object(self):
+        if desireNumber.data==0:
+            #remove all
+            if self.current_desire:
+                self.rem_desires.call(self.current_desire)
+                del self.current_desire[:]
+        else:
+            self.remove(desireNumber.data)
+
+    def remove(self,desireNumber):
+        if desireNumber == 1:
+            if self.desire_track_object in self.current_desire:
+                self.rem_desires.call([self.desire_track_object])
+                self.current_desire.remove(self.desire_track_object)
+            else:
+                rospy.logwarn("ObjectTracking desire wasn't even add")
+
+        if desireNumber == 2:
+            if self.desire_track_object in self.current_desire:
+                self.rem_desires.call([self.desire_look_around])
+                self.current_desire.remove(self.desire_track_object)
+            else:
+                rospy.logwarn("LookingAround desire wasn't even add")
+
+        if desireNumber == 3:
+            if self.desire_track_object in self.current_desire:
+                self.rem_desires.call([self.desire_talking])
+                self.current_desire.remove(self.desire_track_object)
+            else:
+                rospy.logwarn("Talking desire wasn't even add")
+                self.rem_desires.call([self.desire_talking])
+    
+        if desireNumber == 4:
+            if self.desire_track_object in self.current_desire:
+                self.rem_desires.call([self.desire_keyword])
+                self.current_desire.remove(self.desire_keyword)
+            else:
+                rospy.logwarn("KeywordDetection desire wasn't even add")
+            
+        if desireNumber == 5:
+            if self.desire_track_object in self.current_desire:
+                self.rem_desires.call([self.desire_dialog])
+                self.current_desire.remove(self.desire_dialog)
+            else:
+                rospy.logwarn("Dialog desire wasn't even add")
+            
+        if desireNumber == 6:
+            if self.desire_track_object in self.current_desire:
+                self.rem_desires.call([self.desire_pick])
+                self.current_desire.remove(self.desire_pick)
+            else:
+                rospy.logwarn("Pick desire wasn't even add")
+            
+        if desireNumber == 7:
+            if self.desire_track_object in self.current_desire:
+                self.rem_desires.call([self.desire_place])
+                self.current_desire.remove(self.desire_place)
+            else:
+                rospy.logwarn("Place desire wasn't even add")
+            
+        if desireNumber == 8:
+            if self.desire_approach_client in self.current_desire:
+                self.rem_desires.call([self.desire_approach_client])
+                self.current_desire.remove(self.desire_approach_client)
+            else:
+                rospy.logwarn("ApproachClient desire wasn't even add")
+
+    def add(self,des_id, des_type, params=""):
         des = Desire()
-        des.id          = self.desire_track_object
-        des.type        = "Track_object"
+        des.id          = des_id
+        des.type        = des_type
         des.utility     = 6.0
         des.intensity   = 3.0
-        des.params      = "{object: 'bottle'}"
+        if params:
+            des.params      = params
 
+        rospy.logwarn(des)
         self.add_desires.call([des])
-        self.current_desire.append(self.desire_track_object)
-        # Help to spot when the desire has been added so it is more easy to follow after
+        self.current_desire.append(des_id)
 
-    def add_look_around(self):
-        des = Desire()
-        des.id          = self.desire_look_around
-        des.type        = "Look"
-        des.utility     = 6.0
-        des.intensity   = 1.0
-
-        self.add_desires.call([des])
-        self.current_desire.append(self.desire_look_around)
-        # Help to spot when the desire has been added so it is more easy to follow after
-
-    def remove(self):
-        self.rem_desires.call(["testing_desire"])
 
     def removeOnEvent(self, event):
         if event.desire_type == "Listening" and event.type == Event.ACC_ON:
@@ -79,7 +147,7 @@ class testManager:
 
 if __name__ == "__main__":
     try:
-        rospy.init_node("motv_goto_test")
+        rospy.init_node("motv_test_all")
 
         node = testManager()
         # Note to self: see about using IW ruleset instead to remove desires
