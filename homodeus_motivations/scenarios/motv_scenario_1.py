@@ -115,7 +115,7 @@ class Scenario1Manager(ScenarioManagerAction):
     def test_state_cb(self, state_number):
         state_number = state_number.data
         
-        if state_number < 0 or state_number > 3:
+        if state_number < 0 or state_number > 7:
             rospy.logwarn("This state number currently doesn't exist")
             return
         
