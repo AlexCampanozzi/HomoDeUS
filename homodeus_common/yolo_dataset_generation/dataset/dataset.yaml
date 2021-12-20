@@ -1,0 +1,10 @@
+names:
+- pringles
+- apple
+- plate
+- mug
+- banana
+- cheezit
+nc: 6
+train: ./dataset/images/
+val: ./dataset/images/
