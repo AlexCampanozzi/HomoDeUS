@@ -21,59 +21,59 @@ else
 fi
 
 
-if test -d ./catkin_ws; then
-    echo "WARNING: The catkin workspace already exists!"
-    read -p "Are you sure you want to delete the current catkin workspace? [y/n]: " clear_repo
+# if test -d ./catkin_ws; then
+#    echo "WARNING: The catkin workspace already exists!"
+#    read -p "Are you sure you want to delete the current catkin workspace? [y/n]: " clear_repo
 
-    if [ $clear_repo == "y" ]; then
-        echo '* Deleting the old catkin workspace...'
-        rm -rf ./catkin_ws
-    else
-        exit 1
-    fi
+#    if [ $clear_repo == "y" ]; then
+#        echo '* Deleting the old catkin workspace...'
+#        rm -rf ./catkin_ws
+#    else
+#        exit 1
+#    fi
 
-fi
+# fi
 
-echo '* Creating a new catkin workspace at the root...'
-mkdir catkin_ws
-cd ./catkin_ws
-mkdir src
-cd ./src
+# echo '* Creating a new catkin workspace at the root...'
+# mkdir catkin_ws
+# cd ./catkin_ws
+# mkdir src
+# cd ./src
 
-echo '* Cloning the HomoDeUS repo...'
+# echo '* Cloning the HomoDeUS repo...'
 
-cd ~/.ssh
-if ! test -f ./id_rsa.pub; then
-    echo "WARNING: Looks like you don't have a valid key to clone the repo."
-    echo "* Checking if XClip is installed..."
-    if ! dpkg -l "xclip"; then
-        echo "* Installing XClip..."
-        sudo apt install xclip
-    else
-        echo "XClip is OK..."
-    fi
+# cd ~/.ssh
+# if ! test -f ./id_rsa.pub; then
+#    echo "WARNING: Looks like you don't have a valid key to clone the repo."
+#    echo "* Checking if XClip is installed..."
+#    if ! dpkg -l "xclip"; then
+#        echo "* Installing XClip..."
+#        sudo apt install xclip
+#    else
+#        echo "XClip is OK..."
+#    fi
 
-    echo "* Follow the instructions to generate a SSH key..."
-    ssh-keygen
-    xclip -selection clipboard < ~/.ssh/id_rsa.pub
+#    echo "* Follow the instructions to generate a SSH key..."
+#    ssh-keygen
+#    xclip -selection clipboard < ~/.ssh/id_rsa.pub
 
-    echo "* Copied the key to your clipboard. Add it on GitHub."
-    read -p "Press enter when it's done..."
-fi
+#    echo "* Copied the key to your clipboard. Add it on GitHub."
+#    read -p "Press enter when it's done..."
+# fi
 
-read -p 'Git username: ' username
-read -sp 'Git password: ' password
-echo ''
-read -p 'Branch to checkout (master recommended): ' branch_name
-git config --global user.name $username
-git config --global user.password $password
+# read -p 'Git username: ' username
+# read -sp 'Git password: ' password
+# echo ''
+# read -p 'Branch to checkout (master recommended): ' branch_name
+# git config --global user.name $username
+# git config --global user.password $password
 
-cd ~/catkin_ws/src
+# cd ~/catkin_ws/src
 #git clone git@github.com:AlexCampanozzi/HomoDeUS.git
 #git checkout -b $branch_name
-git clone --branch $branch_name git@github.com:AlexCampanozzi/HomoDeUS.git
+# git clone --branch $branch_name git@github.com:AlexCampanozzi/HomoDeUS.git
 
-read -p 'Do you also wish to clone PAL Robotics repos [y/n]: ' clone_pal
+read -p 'Do you wish to clone PAL Robotics repos [y/n]: ' clone_pal
 
 if [ $clone_pal == "y" ]; then
     echo '* Cloning PAL Robotics repos...'
