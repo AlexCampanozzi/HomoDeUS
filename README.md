@@ -49,22 +49,6 @@ then clone the repo in src
 
 	git clone git@github.com:AlexCampanozzi/HomoDeUS.git
 
-# Clone HBBA
-To make the project work you will also need HBBA. Complete documentation is at https://github.com/introlab/HBBA
-
-	git clone git@github.com:introlab/HBBA.git
-	cd iw_translator/or_tools/
-	./generate_dpkg.sh
-	sudo dpkg -i or-tools_ubuntu-18.04_v7.1.6720.deb
-
-# Clone darknet_ros
-You will also need to clone YOLO. Complete documentation at https://github.com/leggedrobotics/darknet_ros
-
-	cd ~/catkin_ws/src
-	git clone --recursive git@github.com:leggedrobotics/darknet_ros.git
-	cd ../
-	catkin_make -DCMAKE_BUILD_TYPE=Release
-
 ## Install the necessary packages and modules
 # Install Pip
 Since the project is on ROS Melodic, it is in Python 2.7 by default. Pip deprecated support for Python 2.7 so it can't be installed directly. You will have to install it manually from the source.
@@ -79,24 +63,10 @@ This will install the last compatible version of pip.
 # Install dependencies
 
 	cd ~/catkin_ws/src/HomoDeUS
-	./install_dependencies.sh
-
-# Initialize git submodules for HBBA
-	
-	cd ~/catkin_ws/src/HBBA
-	git submodule init
-	git submodule update
-
-## Create the Gazebo world
-
-To be able to save changes, the Gazebo world used for the project is in a folder on the GitHub, you will have to copy it to your computer's folder to be able to use it in Gazebo
-
-	sudo cp ~/catkin_ws/src/HomoDeUS/homodeus_common/worlds/homodeus_office.world /opt/pal/ferrum/share/pal_gazebo_worlds/worlds
+	./homodeus_setup.sh
 
 ## Build the project
 
-	cd ~/catkin_ws
-	source devel/setup.bash
 	catkin_make
 
 
