@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
     try:
         rospy.init_node('faceTracking', anonymous=False)
-        mode = rospy.get_param('camera_mode')
+        mode = rospy.get_param('camera_mode', 'simul')
         print("Face tracking camera mode: " + mode)
         faceTracking = FaceTracking(mode)
         rospy.spin()
